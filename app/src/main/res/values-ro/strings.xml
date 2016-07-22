@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">Origami</string>
-    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_maps">Harta</string>
 
 
-    <string name="sign_in">Login</string>
+    <string name="sign_in">Intră în cont</string>
     <string name="green_theme">Green Theme</string>
     <string name="purple_theme">Purple Theme</string>
     <string name="use_theme_header">Use theme:</string>
@@ -23,8 +23,8 @@
     <string name="unknown_response">Unexpected onActivityResult response code</string>
     <string name="ok_label">OK</string>
     <string name="unknown_sign_in_response">Unknown response from AuthUI sign-in</string>
-    <string name="sign_in_cancelled">Sign in cancelled</string>
-    <string name="signed_in_header">My Profile</string>
+    <string name="sign_in_cancelled">Logarea anulata</string>
+    <string name="signed_in_header">Profilul Meu</string>
     <string name="sign_out">Sign out</string>
     <string name="delete_account_label">Delete account</string>
     <string name="sign_out_failed">Sign out failed</string>
@@ -33,6 +33,6 @@
     <string name="profile_picture_content_desc">Profile picture</string>
     <string name="default_theme">Default theme</string>
     <string name="configuration_required">Configuration is required - see README.md</string>
-    <string name="action_profile">Profile</string>
-    <string name="choose_language">Choose the language</string>
+    <string name="action_profile">Profil</string>
+    <string name="choose_language">Alege limba</string>
 </resources>
