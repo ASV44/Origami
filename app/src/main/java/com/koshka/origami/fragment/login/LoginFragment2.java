@@ -1,4 +1,4 @@
-package com.koshka.origami.login.fragments;
+package com.koshka.origami.fragment.login;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,14 +10,14 @@ import android.view.ViewGroup;
 import com.koshka.origami.R;
 
 /**
- * Created by imuntean on 7/20/16.
+ * Created by imuntean on 7/19/16.
  */
-public class MyOrigamiListFragment extends Fragment {
+public class LoginFragment2 extends Fragment {
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_my_origami, container, false);
+        return inflater.inflate(R.layout.login_fragment2, container, false);
     }
 
     @Override

@@ -44,6 +44,7 @@ dependencies {
     compile "com.google.firebase:firebase-database:${project.ext.firebase_version}"
     compile "com.google.firebase:firebase-auth:${project.ext.firebase_version}"
     compile "com.google.android.gms:play-services-auth:${project.ext.firebase_version}"
+    compile "com.google.firebase:firebase-invites:${project.ext.firebase_version}"
 
     compile 'com.jakewharton:butterknife:8.0.1'
     compile 'com.github.bumptech.glide:glide:3.7.0'

@@ -1,4 +1,4 @@
-package com.koshka.origami.login;
+package com.koshka.origami.activity.main;
 
 import android.app.Activity;
 import android.content.Context;
@@ -19,16 +19,12 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.EmailAuthProvider;
-import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.koshka.origami.R;
-
-import java.util.Iterator;
+import com.koshka.origami.activity.login.LoginActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -67,7 +63,7 @@ public class UserProfileActivity extends Activity{
             return;
         }
 
-        setContentView(R.layout.signed_in_layout);
+        setContentView(R.layout.user_profile_layout);
         ButterKnife.bind(this);
         populateProfile();
     }

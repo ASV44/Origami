@@ -1,11 +1,8 @@
-package com.koshka.origami.login.fragments;
+package com.koshka.origami.fragment.main;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,27 +12,19 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
+import com.koshka.origami.activity.main.MainActivity;
 import com.koshka.origami.R;
 import com.koshka.origami.model.Friend;
-import com.koshka.origami.model.FriendHolder;
 import com.koshka.origami.model.User;
-import com.koshka.origami.utils.FirebaseMeUser;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,9 +33,9 @@ import butterknife.OnClick;
 /**
  * Created by imuntean on 7/20/16.
  */
-public class FriendListFragment extends Fragment {
+public class FriendsFragment extends Fragment {
 
-    private final static String TAG = "FriendList";
+    private static final String TAG = MainActivity.class.getSimpleName();
 
 
     @BindView(R.id.friendListView)
@@ -57,6 +46,9 @@ public class FriendListFragment extends Fragment {
 
     @BindView(R.id.add_friend_button)
     Button addFriendButton;
+
+    @BindView(R.id.invite_button)
+    Button inviteFriendButton;
 
     @BindView(R.id.delete_friend_button)
     Button deleteFriendButton;
@@ -71,6 +63,8 @@ public class FriendListFragment extends Fragment {
     private DatabaseReference mRef;
     private DatabaseReference mFriendsRef;
     private FirebaseAuth mAuth;
+
+    private String friendUid ;
 
 
 
@@ -162,7 +156,17 @@ public class FriendListFragment extends Fragment {
                     friend.setDisplayName(user.getDisplayName());
                     friend.setEmail(user.getEmail());
                     friend.setUid(user.getUid());
-                mMe.push().setValue(friend);
+                    mMe.push().setValue(friend);
+                    DatabaseReference mUserRef = mRef.child("users").child(user.getUid()).child("friendList");
+                    Friend friend2 = new Friend();
+                    friend2.setUid(mAuth.getCurrentUser().getUid());
+                    friend2.setEmail(mAuth.getCurrentUser().getEmail());
+                    friend2.setDisplayName(mAuth.getCurrentUser().getDisplayName());
+                    mUserRef.push().setValue(friend2);
+
+
+
+
                 } else {
 
                     userResult.setText("Doesn't exist");
@@ -213,6 +217,12 @@ public class FriendListFragment extends Fragment {
 
     }
 
+    @OnClick(R.id.invite_button)
+    public void inviteFriend(View view){
+
+
+
+    }
 
 
 }

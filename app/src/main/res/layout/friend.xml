@@ -7,29 +7,29 @@
     android:paddingBottom="5dp"
     android:paddingTop="5dp">
 
-<LinearLayout
-    android:id="@+id/friend"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginLeft="26dp"
-    android:layout_marginRight="26dp"
-    android:orientation="vertical"
-    android:padding="10dp">
-
-    <TextView
-        style="@style/TextAppearance.AppCompat.Medium"
-        android:id="@+id/friend_name"
+    <LinearLayout
+        android:id="@+id/friend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
-        tools:text="Friend Name" />
+        android:layout_marginLeft="26dp"
+        android:layout_marginRight="26dp"
+        android:orientation="vertical"
+        android:padding="10dp">
 
-    <TextView
-        style="@style/TextAppearance.AppCompat.Small"
-        android:id="@+id/friend_email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="Friend Email" />
+        <TextView
+            android:id="@+id/friend_name"
+            style="@style/TextAppearance.AppCompat.Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            tools:text="Friend Name" />
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/friend_email"
+            style="@style/TextAppearance.AppCompat.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Friend Email" />
+
+    </LinearLayout>
 </RelativeLayout>

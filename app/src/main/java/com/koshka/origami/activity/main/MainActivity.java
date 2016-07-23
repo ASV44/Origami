@@ -1,4 +1,4 @@
-package com.koshka.origami;
+package com.koshka.origami.activity.main;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,36 +8,22 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.koshka.origami.login.LoginActivity;
-import com.koshka.origami.login.UserProfileActivity;
-import com.koshka.origami.login.fragments.CreateOrigamiFragment;
-import com.koshka.origami.login.fragments.Fragment1;
-import com.koshka.origami.login.fragments.Fragment2;
-import com.koshka.origami.login.fragments.Fragment3;
-import com.koshka.origami.login.fragments.FriendListFragment;
-import com.koshka.origami.login.fragments.MyOrigamiListFragment;
-import com.koshka.origami.model.Friend;
-import com.koshka.origami.model.Origami;
-import com.koshka.origami.model.User;
-
-import java.util.ArrayList;
+import com.koshka.origami.R;
+import com.koshka.origami.activity.login.LoginActivity;
+import com.koshka.origami.fragment.main.FriendsFragment;
+import com.koshka.origami.fragment.main.OrigamiFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Created by imuntean on 7/20/16.
@@ -58,8 +44,6 @@ public class MainActivity extends AppCompatActivity {
     View mRootView;
 
 
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,8 +62,8 @@ public class MainActivity extends AppCompatActivity {
         // Create the adapter that will return a fragment for each section
         mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             private final Fragment[] mFragments = new Fragment[]{
-                    new MyOrigamiListFragment(),
-                    new FriendListFragment(),
+                    new OrigamiFragment(),
+                    new FriendsFragment(),
 
 
             };
@@ -111,6 +95,12 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeButtonEnabled(false); // disable the button
+            actionBar.setDisplayHomeAsUpEnabled(false); // remove the left caret
+            actionBar.setDisplayShowHomeEnabled(false); // remove the icon
+        }
     }
 
     public static Intent createIntent(Context context) {

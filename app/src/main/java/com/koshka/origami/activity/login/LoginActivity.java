@@ -1,6 +1,5 @@
-package com.koshka.origami.login;
+package com.koshka.origami.activity.login;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,16 +21,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
-import com.koshka.origami.MainActivity;
 import com.koshka.origami.R;
-import com.koshka.origami.login.fragments.Fragment1;
-import com.koshka.origami.login.fragments.Fragment2;
-import com.koshka.origami.login.fragments.Fragment3;
+import com.koshka.origami.activity.main.MainActivity;
+import com.koshka.origami.fragment.login.LoginFragment1;
+import com.koshka.origami.fragment.login.LoginFragment2;
+import com.koshka.origami.fragment.login.LoginFragment3;
 
 
 import java.util.ArrayList;
@@ -47,19 +46,18 @@ import me.relex.circleindicator.CircleIndicator;
  */
 public class LoginActivity extends AppCompatActivity {
 
-    private static final String UNCHANGED_CONFIG_VALUE = "CHANGE-ME";
-
     private static final String GOOGLE_TOS_URL =
             "https://www.google.com/policies/terms/";
-
     private static final int RC_SIGN_IN = 100;
+
     private int backButtonCount;
+
+    private FragmentPagerAdapter mPagerAdapter;
+    private ViewPager mViewPager;
+
 
     @BindView(R.id.sign_in)
     Button mSignIn;
-
-    @BindView(R.id.language_button)
-    Button languageButton;
 
     @BindView(android.R.id.content)
     View mRootView;
@@ -67,9 +65,11 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.title_text)
     TextView titleTextView;
 
+    @BindView(R.id.language_text_button)
+    ImageButton languageTextButton;
 
-    private FragmentPagerAdapter mPagerAdapter;
-    private ViewPager mViewPager;
+    Locale myLocale;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -87,9 +87,9 @@ public class LoginActivity extends AppCompatActivity {
         // Create the adapter that will return a fragment for each section
         mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             private final Fragment[] mFragments = new Fragment[]{
-                    new Fragment1(),
-                    new Fragment2(),
-                    new Fragment3(),
+                    new LoginFragment1(),
+                    new LoginFragment2(),
+                    new LoginFragment3(),
 
 
             };
@@ -107,7 +107,7 @@ public class LoginActivity extends AppCompatActivity {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mPagerAdapter);
-        mViewPager.setCurrentItem(0);
+        mViewPager.setCurrentItem(1);
         CircleIndicator indicator = (CircleIndicator) findViewById(R.id.indicator);
         indicator.setViewPager(mViewPager);
 
@@ -115,10 +115,6 @@ public class LoginActivity extends AppCompatActivity {
 
         titleTextView.setTypeface(font);
 
-
-       /* if (!isGoogleConfigured() || !isFacebookConfigured()) {
-            showSnackbar(R.string.configuration_required);
-        }*/
     }
 
     @OnClick(R.id.sign_in)
@@ -135,58 +131,9 @@ public class LoginActivity extends AppCompatActivity {
 
         }
        else {
-            Snackbar.make(mRootView, "No internet connection", Snackbar.LENGTH_LONG).show();
+            showSnackbar(R.string.no_internet_connection);
         }
     }
-
-    @OnClick(R.id.language_button)
-    public void changeLanguage(View view) {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.choose_language)
-                .setItems(R.array.languages, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which){
-                            case 0:
-                                setLocale("en");
-                                Snackbar.make(mRootView, ""+which, Snackbar.LENGTH_SHORT).show();
-                                break;
-                            case 1:
-                                setLocale("rus");
-                                break;
-                            case 2:
-                               setLocale("fr");
-                                break;
-                            case 3:
-                                setLocale("de");
-                                break;
-                            case 4:
-                                setLocale("es");
-                                break;
-                            case 5:
-                                setLocale("ro");
-                            default: setLocale("en");
-                                break;
-                        }
-                    }
-                });
-    builder.show();
-
-
-    }
-
-    private void setLocale(String lang) {
-        Locale myLocale = new Locale(lang);
-        Resources res = getResources();
-        DisplayMetrics dm = res.getDisplayMetrics();
-        Configuration conf = res.getConfiguration();
-        conf.locale = myLocale;
-        res.updateConfiguration(conf, dm);
-        Intent refresh = new Intent(this, LoginActivity.class);
-        startActivity(refresh);
-        finish();
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -194,7 +141,6 @@ public class LoginActivity extends AppCompatActivity {
             handleSignInResponse(resultCode, data);
             return;
         }
-
         showSnackbar(R.string.unknown_response);
     }
 
@@ -229,36 +175,13 @@ public class LoginActivity extends AppCompatActivity {
     @MainThread
     private String[] getSelectedProviders() {
         ArrayList<String> selectedProviders = new ArrayList<>();
-
             selectedProviders.add(AuthUI.EMAIL_PROVIDER);
-
-       /* if (mUseFacebookProvider.isChecked()) {
-            selectedProviders.add(AuthUI.FACEBOOK_PROVIDER);
-        }
-
-        if (mUseGoogleProvider.isChecked()) {
-            selectedProviders.add(AuthUI.GOOGLE_PROVIDER);
-        }*/
-
         return selectedProviders.toArray(new String[selectedProviders.size()]);
     }
 
     @MainThread
     private String getSelectedTosUrl() {
-
         return GOOGLE_TOS_URL;
-    }
-
-    @MainThread
-    private boolean isGoogleConfigured() {
-        return !UNCHANGED_CONFIG_VALUE.equals(
-                getResources().getString(R.string.default_web_client_id));
-    }
-
-    @MainThread
-    private boolean isFacebookConfigured() {
-        return !UNCHANGED_CONFIG_VALUE.equals(
-                getResources().getString(R.string.facebook_application_id));
     }
 
     @MainThread
@@ -266,6 +189,12 @@ public class LoginActivity extends AppCompatActivity {
         Snackbar.make(mRootView, errorMessageRes, Snackbar.LENGTH_LONG).show();
     }
 
+    @MainThread
+    private void showShortSnackbar(@StringRes int errorMessageRes) {
+        Snackbar.make(mRootView, errorMessageRes, Snackbar.LENGTH_SHORT).show();
+    }
+
+    //util method for intent creation from other activities
     public static Intent createIntent(Context context) {
         Intent in = new Intent();
         in.setClass(context, LoginActivity.class);
@@ -280,15 +209,62 @@ public class LoginActivity extends AppCompatActivity {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         } else {
-            //Toast.makeText(this, "Press the back button once again to close the application.", Toast.LENGTH_SHORT).show();
-            Snackbar.make(mRootView, "Press back once again to close the application.", Snackbar.LENGTH_SHORT).show();
+           showShortSnackbar(R.string.press_back);
             backButtonCount++;
         }
     }
 
+    //Check if there is internet connection
     private boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
         return cm.getActiveNetworkInfo() != null;
     }
+
+
+    @OnClick(R.id.language_text_button)
+    public void changeLanguageButton(final View view){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.choose_language)
+                .setItems(R.array.languages, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case 0:
+                                setLocale("en");
+                                break;
+                            case 1:
+                                setLocale("ru");
+                                break;
+                            case 2:
+                                setLocale("fr");
+                                break;
+                            case 3:
+                                setLocale("de");
+                                break;
+                            case 4:
+                                setLocale("es");
+                                break;
+                            case 5:
+                                setLocale("ro");
+                                break;
+                            default: setLocale("en");
+                                break;
+                        }
+                    }
+                });
+        builder.show();
+    }
+
+    public void setLocale(String lang) {
+
+        myLocale = new Locale(lang);
+        Resources res = getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        Configuration conf = res.getConfiguration();
+        conf.locale = myLocale;
+        res.updateConfiguration(conf, dm);
+        Intent refresh = new Intent(this, LoginActivity.class);
+        startActivity(refresh);
+    }
+
+
 }

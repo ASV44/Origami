@@ -1,19 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <array name="indicator_colors">
-        <item>@color/indicator_1</item>
-        <item>@color/indicator_2</item>
-        <item>@color/indicator_3</item>
-        <item>@color/indicator_4</item>
-    </array>
 
     <array name="languages">
         <item>English</item>
         <item>Pусский</item>
         <item>Français</item>
         <item>Deutsch</item>
-        <item>Spanish</item>
-        <item>Romana</item>
-
+        <item>Español</item>
+        <item>Română</item>
     </array>
+
 </resources>
