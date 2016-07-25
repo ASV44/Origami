@@ -18,6 +18,16 @@
     <color name="material_purple_a700">#AA00FF</color>
 
     <color name="material_red_a200">#FF5252</color>
+    <color name="transparent1">#14000000</color>
+    <color name="transparent2">#44000000</color>
+    <color name="transparent3">#1e000000</color>
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
+    <color name="blue">#7733B5E5</color>
+    <color name="frame">@android:color/black</color>
+    <color name="apptheme_color">#33b5e5</color>
+    <color name="inset">#9000</color>
+    <color name="transparent4">#6b000000</color>
+    <color name="transparent5">#96000000</color>
+    <color name="semi_transparent_black">#7f000000</color>
 </resources>

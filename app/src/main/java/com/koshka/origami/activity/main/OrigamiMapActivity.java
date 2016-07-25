@@ -1,6 +1,7 @@
 package com.koshka.origami.activity.main;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Camera;
 import android.graphics.Color;
@@ -9,15 +10,27 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -34,8 +47,10 @@ import com.nightonke.boommenu.Types.BoomType;
 import com.nightonke.boommenu.Types.ButtonType;
 import com.nightonke.boommenu.Types.PlaceType;
 import com.nightonke.boommenu.Util;
+import com.search.material.library.MaterialSearchView;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -51,12 +66,14 @@ public class OrigamiMapActivity extends AppCompatActivity implements OnMapReadyC
     @BindView(R.id.boom_menu_button)
     BoomMenuButton boomMenuButton;
 
-    @BindView(R.id.search_location_button)
-    Button searchLocationButton;
+  /*  @BindView(R.id.search_location_button)
+    Button searchLocationButton;*/
 
     private boolean init = false;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private boolean mPermissionDenied = false;
+
+    private MaterialSearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +84,62 @@ public class OrigamiMapActivity extends AppCompatActivity implements OnMapReadyC
                 .findFragmentById(R.id.origami_map);
         mapFragment.getMapAsync(this);
         ButterKnife.bind(this);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.origami_map_toolbar);
+        setSupportActionBar(toolbar);
+
+        searchView = (MaterialSearchView) findViewById(R.id.search_view);
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                mMap.clear();
+                String location = query;
+                List<Address> addressList = null;
+                if (location != null || !location.equals("")){
+
+                    Geocoder geocoder = new Geocoder(getApplicationContext());
+                    try{
+                        addressList = geocoder.getFromLocationName(location,1);
+                    }catch (IOException e){
+
+                    }
+                    Address address = addressList.get(0);
+                    LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+                    mMap.addMarker(new MarkerOptions().position(latLng));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+
+            }
+        });
+
+        searchView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+        });
+
+        SearchAdapter adapter = new SearchAdapter();
+        searchView.setAdapter(adapter);
+
+
     }
 
     @Override
@@ -235,7 +308,7 @@ public class OrigamiMapActivity extends AppCompatActivity implements OnMapReadyC
         return false;
     }
 
-    @OnClick(R.id.search_location_button)
+  /*  @OnClick(R.id.search_location_button)
     public void searchLocation(View view){
         mMap.clear();
         EditText locationText = (EditText) findViewById(R.id.locationText);
@@ -253,6 +326,136 @@ public class OrigamiMapActivity extends AppCompatActivity implements OnMapReadyC
             LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
             mMap.addMarker(new MarkerOptions().position(latLng));
             mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+        }
+    }*/
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_origami_map, menu);
+
+        MenuItem item = menu.findItem(R.id.action_search);
+        searchView.setMenuItem(item);
+
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (searchView.isSearchOpen()) {
+            searchView.closeSearch();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == MaterialSearchView.REQUEST_VOICE && resultCode == RESULT_OK) {
+            ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            if (matches != null && matches.size() > 0) {
+                String searchWrd = matches.get(0);
+                if (!TextUtils.isEmpty(searchWrd)) {
+                    searchView.setQuery(searchWrd, false);
+                }
+            }
+
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+    private class SearchAdapter extends BaseAdapter implements Filterable {
+
+        private ArrayList<String> data;
+
+        private String[] typeAheadData;
+
+        LayoutInflater inflater;
+
+        public SearchAdapter() {
+            inflater = LayoutInflater.from(OrigamiMapActivity.this);
+            data = new ArrayList<String>();
+            typeAheadData = getResources().getStringArray(R.array.state_array_full);
+        }
+
+
+        @Override
+        public Filter getFilter() {
+            Filter filter = new Filter() {
+                @Override
+                protected FilterResults performFiltering(CharSequence constraint) {
+                    FilterResults filterResults = new FilterResults();
+                    if (!TextUtils.isEmpty(constraint)) {
+                        // Retrieve the autocomplete results.
+                        List<String> searchData = new ArrayList<>();
+
+                        for (String str : typeAheadData) {
+                            if (str.toLowerCase().startsWith(constraint.toString().toLowerCase())) {
+                                searchData.add(str);
+                            }
+                        }
+
+                        // Assign the data to the FilterResults
+                        filterResults.values = searchData;
+                        filterResults.count = searchData.size();
+                    }
+                    return filterResults;
+                }
+
+                @Override
+                protected void publishResults(CharSequence constraint, Filter.FilterResults results) {
+                    if (results.values != null) {
+                        data = (ArrayList<String>) results.values;
+                        notifyDataSetChanged();
+                    }
+                }
+            };
+            return filter;
+        }
+
+        @Override
+        public int getCount() {
+            return data.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return data.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            MyViewHolder mViewHolder;
+
+            if (convertView == null) {
+                convertView = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+                mViewHolder = new MyViewHolder(convertView);
+                convertView.setTag(mViewHolder);
+            } else {
+                mViewHolder = (MyViewHolder) convertView.getTag();
+            }
+
+            String currentListData = (String) getItem(position);
+
+            mViewHolder.textView.setText(currentListData);
+
+            return convertView;
+        }
+
+
+        private class MyViewHolder {
+            TextView textView;
+
+            public MyViewHolder(View convertView) {
+                textView = (TextView) convertView.findViewById(android.R.id.text1);
+            }
         }
     }
 }

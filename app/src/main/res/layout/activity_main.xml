@@ -32,7 +32,6 @@
         android:layout_margin="20dp"
         app:boom_inActionBar="false"
         app:boom_button_color="@color/colorPrimary"
-        app:boom_button_pressed_color="@color/colorPrimary"
-        />
+        app:boom_button_pressed_color="@color/colorPrimary" />
 
 </RelativeLayout>
