@@ -60,4 +60,8 @@
     <string name="progress_dialog_sending">Sending…</string>
     <string name="progress_dialog_signing_in">Signing in…</string>
     <string name="progress_dialog_signing_up">Signing up…</string>
+
+    <string name="origami_text">Welcome to Origami world!</string>
+    <string name="origami_name">Ghost Origami</string>
+    <string name="default_photo_url">http://209.132.179.3/uploads/big/2df7cab0a2305743db864ef472b6c8b9.png</string>
 </resources>

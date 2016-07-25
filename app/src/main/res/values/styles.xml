@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -25,4 +25,12 @@
         <item name="colorButtonNormal">@color/material_red_a200</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
+
+    <style name="TranslucentThemeNoActionBar" parent="AppTheme.NoActionBar">
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
+
 </resources>

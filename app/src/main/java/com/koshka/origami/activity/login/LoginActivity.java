@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.main.MainActivity;
 import com.koshka.origami.fragment.login.LoginFragment1;
@@ -74,6 +75,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ;
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {

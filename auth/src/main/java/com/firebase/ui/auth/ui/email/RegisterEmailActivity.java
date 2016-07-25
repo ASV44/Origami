@@ -16,6 +16,7 @@ package com.firebase.ui.auth.ui.email;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -32,10 +33,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.firebase.ui.auth.R;
-import com.firebase.ui.auth.model.FirstOrigami;
-import com.firebase.ui.auth.model.Friend;
-import com.firebase.ui.auth.model.Origami;
-import com.firebase.ui.auth.model.User;
 import com.firebase.ui.auth.ui.ActivityHelper;
 import com.firebase.ui.auth.ui.AppCompatBase;
 import com.firebase.ui.auth.ui.ExtraConstants;
@@ -46,6 +43,7 @@ import com.firebase.ui.auth.ui.email.field_validators.EmailFieldValidator;
 import com.firebase.ui.auth.ui.email.field_validators.PasswordFieldValidator;
 import com.firebase.ui.auth.ui.email.field_validators.RequiredFieldValidator;
 import com.firebase.ui.auth.util.FirebaseAuthWrapperFactory;
+import com.firebase.ui.database.DatabaseRefUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -54,7 +52,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.koshka.origami.model.Friend;
+import com.koshka.origami.model.GhostOrigami;
+import com.koshka.origami.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +69,8 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
     private PasswordFieldValidator mPasswordFieldValidator;
     private RequiredFieldValidator mNameValidator;
     private ImageView mTogglePasswordImage;
+    private FirebaseAuth mAuth;
+    private DatabaseReference mMeRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -199,25 +201,23 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
             finish(RESULT_OK, new Intent());
         }
     }
-    //TODO: Should check very carefully if that user does not exist by email
+    //Initialization of user in firebase database
+    //Using setValue because it's only once
     private void initUserInDatabase(){
+        mAuth = FirebaseAuth.getInstance();
+        mMeRef = DatabaseRefUtil.getUserRefByUid(mAuth.getCurrentUser().getUid());
 
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference mUserRef;
-        mUserRef = mRef.child("users").child(mAuth.getCurrentUser().getUid());
-
+        Resources res = getResources();
         User user = new User();
 
         user.setEmail(mAuth.getCurrentUser().getEmail());
         user.setUid(mAuth.getCurrentUser().getUid());
         user.setDisplayName(mAuth.getCurrentUser().getDisplayName());
-        user.setCountry("No country was set");
+        user.setPhotoUrl(res.getString(R.string.default_photo_url));
 
-        FirstOrigami origami = new FirstOrigami();
-        origami.setAuthorUid("Ghost");
-        origami.setEphemeral(true);
-        origami.setText("This is your first origami");
+        GhostOrigami origami = new GhostOrigami();
+        origami.setText(res.getString(R.string.origami_text));
+        origami.setOrigamiName(res.getString(R.string.origami_name));
 
         List<Friend> initFriendList = new ArrayList<>();
         Friend ghostFriend = new Friend();
@@ -226,15 +226,12 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
         initFriendList.add(ghostFriend);
 
         user.setFriendList(initFriendList);
-        List<Origami> starterOrigamiList = new ArrayList<Origami>();
-        starterOrigamiList.add(origami);
-        user.setOrigamiList(starterOrigamiList);
 
-        mUserRef.setValue(user, new DatabaseReference.CompletionListener() {
+        mMeRef.setValue(user, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference reference) {
                 if (databaseError != null) {
-                    Log.e(TAG, "Failed to write message", databaseError.toException());
+                    Log.e(TAG, "Failed to store user to db", databaseError.toException());
                 }
             }
         });
