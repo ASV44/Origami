@@ -73,6 +73,7 @@
 
     <!--ERROR MESSAGES-->
     <string name="no_internet_connection">No internet connection!</string>
+    <string name="no_place">You didn\'t pick a place</string>
 
     <!-- ACTION BAR -->
     <string name="action_profile">Profile</string>
@@ -122,5 +123,7 @@
     <string name="share_example_text">This is a share example of BoomMenuButton.</string>
 
     <string name="share_line_width">Line Width</string>
+
+    <string name="origami1">Origami</string>
 
 </resources>

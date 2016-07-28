@@ -3,14 +3,14 @@ package com.koshka.origami.activity.main;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.MainThread;
+import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -18,38 +18,59 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.firebase.ui.database.DatabaseRefUtil;
+import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.login.LoginActivity;
 import com.koshka.origami.fragment.main.FriendsFragment;
 import com.koshka.origami.fragment.main.OrigamiFragment;
-import com.nightonke.boommenu.BoomMenuButton;
-import com.nightonke.boommenu.Types.BoomType;
-import com.nightonke.boommenu.Types.ButtonType;
-import com.nightonke.boommenu.Types.PlaceType;
-import com.nightonke.boommenu.Util;
-
-import java.util.Random;
+import com.koshka.origami.placepicker.GooglePlacePickerActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by imuntean on 7/20/16.
  */
-public class MainActivity extends AppCompatActivity implements BoomMenuButton.OnSubButtonClickListener {
+public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
+
     private final static String TAG = "MainActivity";
 
     private FragmentPagerAdapter mPagerAdapter;
-    private ViewPager mViewPager;
     private int backButtonCount;
+
+    @BindView(R.id.mainViewPager)
+    ViewPager mViewPager;
 
     @BindView(android.R.id.content)
     View mRootView;
 
-    @BindView(R.id.boom_menu_button)
-    BoomMenuButton boomMenuButton;
+    @BindView(R.id.multiple_actions2)
+    FloatingActionsMenu floatingMenu;
+
+    @BindView(R.id.create_origami_button)
+    FloatingActionButton createOrigamiButton;
+
+    @BindView(R.id.add_friend_button)
+    FloatingActionButton addFriendButton;
+
+    @BindView(R.id.invite_friend_button)
+    FloatingActionButton inviteFriendButton;
+
+    @BindView(R.id.tabs)
+    TabLayout tabLayout;
+
+
+    private DatabaseReference connectedRef;
+    private ValueEventListener isConnectedListener;
 
     private boolean init = false;
 
@@ -64,11 +85,53 @@ public class MainActivity extends AppCompatActivity implements BoomMenuButton.On
             return;
         }
 
-
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        // Create the adapter that will return a fragment for each section
+        mViewPager.setAdapter(getmPagerAdapter());
+        mViewPager.setCurrentItem(0);
+        mViewPager.addOnPageChangeListener(this);
+
+        decideMenuButtonElements(mViewPager.getCurrentItem());
+
+        tabLayout.setupWithViewPager(mViewPager);
+
+        final ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeButtonEnabled(false); // disable the button
+            actionBar.setDisplayHomeAsUpEnabled(false); // remove the left caret
+            actionBar.setDisplayShowHomeEnabled(false); // remove the icon
+        }
+
+        connectedRef = DatabaseRefUtil.getmConnectedRef();
+        isConnectedListener = new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                boolean connected = dataSnapshot.getValue(Boolean.class);
+                if (connected) {
+                    actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
+                    getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
+                } else {
+                    actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.material_red_a200)));
+                    getWindow().setStatusBarColor(getResources().getColor(R.color.material_red_a2001));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.err.println("Listener was cancelled");
+            }
+        };
+
+        connectedRef.addValueEventListener(isConnectedListener);
+
+
+    }
+
+    // Create the adapter that will return a fragment for each section
+    private FragmentPagerAdapter getmPagerAdapter() {
+
         mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             private final Fragment[] mFragments = new Fragment[]{
                     new OrigamiFragment(),
@@ -96,20 +159,7 @@ public class MainActivity extends AppCompatActivity implements BoomMenuButton.On
                 return mFragmentNames[position];
             }
         };
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.mainViewPager);
-        mViewPager.setAdapter(mPagerAdapter);
-        mViewPager.setCurrentItem(0);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
-
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setHomeButtonEnabled(false); // disable the button
-            actionBar.setDisplayHomeAsUpEnabled(false); // remove the left caret
-            actionBar.setDisplayShowHomeEnabled(false); // remove the icon
-        }
+        return mPagerAdapter;
     }
 
     public static Intent createIntent(Context context) {
@@ -157,103 +207,43 @@ public class MainActivity extends AppCompatActivity implements BoomMenuButton.On
         }
     }
 
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
 
-        // Use a param to record whether the boom button has been initialized
-        // Because we don't need to init it again when onResume()
-        if (init) return;
-        init = true;
-
-        initBoom();
+    @MainThread
+    private void showShortSnackbar(@StringRes int errorMessageRes) {
+        Snackbar.make(mRootView, errorMessageRes, Snackbar.LENGTH_SHORT).show();
     }
 
-    private void initBoom() {
-        int number = 6;
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-        Drawable[] drawables = new Drawable[number];
-        int[] drawablesResource = new int[]{
-                R.drawable.mark,
-                R.drawable.refresh,
-                R.drawable.copy,
-                R.drawable.heart,
-                R.drawable.info,
-                R.drawable.like,
-                R.drawable.record,
-                R.drawable.search,
-                R.drawable.settings
-        };
-        for (int i = 0; i < number; i++)
-            drawables[i] = ContextCompat.getDrawable(this, drawablesResource[i]);
+    }
 
-        String[] STRINGS = new String[]{
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                ""
-        };
-        String[] strings = new String[number];
-        for (int i = 0; i < number; i++)
-            strings[i] = STRINGS[i];
+    @Override
+    public void onPageSelected(int position) {
+      decideMenuButtonElements(position);
+    }
 
-        int[][] colors = new int[number][2];
-        for (int i = 0; i < number; i++) {
-            colors[i][1] = getRandomColor();
-            colors[i][0] = Util.getInstance().getPressedColor(colors[i][1]);
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
+
+    private void decideMenuButtonElements(int position){
+        if (position == 0){
+            addFriendButton.setVisibility(View.GONE);
+            inviteFriendButton.setVisibility(View.GONE);
+            createOrigamiButton.setVisibility(View.VISIBLE);
+            floatingMenu.collapse();
+        } else {
+            createOrigamiButton.setVisibility(View.GONE);
+            addFriendButton.setVisibility(View.VISIBLE);
+            inviteFriendButton.setVisibility(View.VISIBLE);
+            floatingMenu.collapse();
         }
-
-        new BoomMenuButton.Builder()
-                .subButtons(drawables, colors, strings)
-                .button(ButtonType.CIRCLE)
-                .boom(BoomType.HORIZONTAL_THROW)
-                .place(getPlaceType())
-                .boomButtonShadow(Util.getInstance().dp2px(2), Util.getInstance().dp2px(2))
-                .subButtonsShadow(Util.getInstance().dp2px(2), Util.getInstance().dp2px(2))
-                .shareStyle(3f, getRandomColor(), getRandomColor())
-                .frames(200)
-                .duration(300)
-                .delay(50)
-                .init(boomMenuButton);
-        boomMenuButton.setOnSubButtonClickListener(this);
     }
 
-    private PlaceType getPlaceType() {
-        return PlaceType.CIRCLE_6_1;
-    }
-
-    private String[] Colors = {
-            "#F44336",
-            "#E91E63",
-            "#9C27B0",
-            "#2196F3",
-            "#03A9F4",
-            "#00BCD4",
-            "#009688",
-            "#4CAF50",
-            "#8BC34A",
-            "#CDDC39",
-            "#FFEB3B",
-            "#FFC107",
-            "#FF9800",
-            "#FF5722",
-            "#795548",
-            "#9E9E9E",
-            "#607D8B"};
-
-    public int getRandomColor() {
-        Random random = new Random();
-        int p = random.nextInt(Colors.length);
-        return Color.parseColor(Colors[p]);
-    }
-
-    @Override
-    public void onClick(int buttonIndex) {
-
+    @OnClick(R.id.create_origami_button)
+    public void createOrigami(View view){
+        startActivity(new Intent(this, GooglePlacePickerActivity.class));
     }
 }

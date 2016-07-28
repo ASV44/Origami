@@ -18,6 +18,7 @@
     <color name="material_purple_a700">#AA00FF</color>
 
     <color name="material_red_a200">#FF5252</color>
+    <color name="material_red_a2001">#FFFF4B4B</color>
     <color name="transparent1">#14000000</color>
     <color name="transparent2">#44000000</color>
     <color name="transparent3">#1e000000</color>
@@ -30,4 +31,35 @@
     <color name="transparent4">#6b000000</color>
     <color name="transparent5">#96000000</color>
     <color name="semi_transparent_black">#7f000000</color>
+
+    <color name="card_action_inverted">@android:color/white</color>
+
+    <color name="card_content_textcolor">#444</color>
+
+    <color name="card_action_bg">#DDD</color>
+    <color name="card_action_item_bg">#F4F4F4</color>
+
+    <!-- Neutral Actions -->
+    <color name="card_action_focused">#FFE3F4FC</color>
+    <color name="card_action">#FF47B4EA</color>
+    <color name="card_action_ripple">#CC47B4EA</color>
+
+    <!-- Negative Actions -->
+    <color name="card_action_negative_focused">#FFFBCBCA</color>
+    <color name="card_action_negative">#FFF64940</color>
+    <color name="card_action_negative_ripple">#CCF64940</color>
+
+    <!-- Positive Actions -->
+    <color name="card_action_positive_focused">#FFE4F0AF</color>
+    <color name="card_action_positive">#FFA0CC00</color>
+    <color name="card_action_positive_ripple">#CCA0CC00</color>
+
+    <color name="black_semi_transparent">#B2000000</color>
+    <color name="background">#e5e5e5</color>
+    <color name="half_black">#808080</color>
+    <color name="white_pressed">#f1f1f1</color>
+    <color name="pink">#e91e63</color>
+    <color name="pink_pressed">#ec407a</color>
+    <color name="blue_semi_transparent">#805677fc</color>
+    <color name="blue_semi_transparent_pressed">#80738ffe</color>
 </resources>

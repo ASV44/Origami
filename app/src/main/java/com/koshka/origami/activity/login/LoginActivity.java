@@ -26,13 +26,11 @@ import android.widget.TextView;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.main.MainActivity;
 import com.koshka.origami.fragment.login.LoginFragment1;
 import com.koshka.origami.fragment.login.LoginFragment2;
 import com.koshka.origami.fragment.login.LoginFragment3;
-
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -55,6 +53,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private FragmentPagerAdapter mPagerAdapter;
     private ViewPager mViewPager;
+    private Locale myLocale;
 
 
     @BindView(R.id.sign_in)
@@ -69,13 +68,9 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.language_text_button)
     ImageButton languageTextButton;
 
-    Locale myLocale;
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ;
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
@@ -95,6 +90,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
             };
+
             @Override
             public Fragment getItem(int position) {
                 return mFragments[position];
@@ -121,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @OnClick(R.id.sign_in)
     public void signIn(View view) {
-        if (isNetworkConnected() == true){
+        if (isNetworkConnected() == true) {
             startActivityForResult(
                     AuthUI.getInstance().createSignInIntentBuilder()
                             .setTheme(getSelectedTheme())
@@ -131,11 +127,11 @@ public class LoginActivity extends AppCompatActivity {
                             .build(),
                     RC_SIGN_IN);
 
-        }
-       else {
+        } else {
             showSnackbar(R.string.no_internet_connection);
         }
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -177,7 +173,7 @@ public class LoginActivity extends AppCompatActivity {
     @MainThread
     private String[] getSelectedProviders() {
         ArrayList<String> selectedProviders = new ArrayList<>();
-            selectedProviders.add(AuthUI.EMAIL_PROVIDER);
+        selectedProviders.add(AuthUI.EMAIL_PROVIDER);
         return selectedProviders.toArray(new String[selectedProviders.size()]);
     }
 
@@ -211,7 +207,7 @@ public class LoginActivity extends AppCompatActivity {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         } else {
-           showShortSnackbar(R.string.press_back);
+            showShortSnackbar(R.string.press_back);
             backButtonCount++;
         }
     }
@@ -224,12 +220,12 @@ public class LoginActivity extends AppCompatActivity {
 
 
     @OnClick(R.id.language_text_button)
-    public void changeLanguageButton(final View view){
+    public void changeLanguageButton(final View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.choose_language)
                 .setItems(R.array.languages, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        switch (which){
+                        switch (which) {
                             case 0:
                                 setLocale("en");
                                 break;
@@ -248,7 +244,8 @@ public class LoginActivity extends AppCompatActivity {
                             case 5:
                                 setLocale("ro");
                                 break;
-                            default: setLocale("en");
+                            default:
+                                setLocale("en");
                                 break;
                         }
                     }

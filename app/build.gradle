@@ -48,6 +48,7 @@ dependencies {
     compile "com.google.android.gms:play-services-auth:${project.ext.firebase_version}"
     compile "com.google.firebase:firebase-invites:${project.ext.firebase_version}"
     compile "com.google.firebase:firebase-messaging:${project.ext.firebase_version}"
+    compile "com.google.android.gms:play-services:${project.ext.firebase_version}"
 
     compile 'com.jakewharton:butterknife:8.0.1'
     compile 'com.github.bumptech.glide:glide:3.7.0'
@@ -57,7 +58,7 @@ dependencies {
     compile 'me.relex:circleindicator:1.2.1@aar'
     compile 'com.nightonke:boommenu:1.0.9'
     compile 'br.com.mauker.materialsearchview:materialsearchview:1.1.2'
-
-    compile 'com.google.android.gms:play-services:9.2.1'
+    compile 'com.getbase:floatingactionbutton:1.10.1'
+    
 }
 apply plugin: 'com.google.gms.google-services'
