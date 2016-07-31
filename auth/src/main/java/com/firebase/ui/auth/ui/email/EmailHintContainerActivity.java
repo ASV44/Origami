@@ -61,7 +61,7 @@ public class EmailHintContainerActivity extends AppCompatBase {
             if (credential == null) {
                 // If the hint picker is cancelled show the SignInNoPasswordActivity
                 startActivityForResult(
-                        SignInNoPasswordActivity.createIntent(
+                        SignInActivity.createIntent(
                                 this,
                                 mActivityHelper.getFlowParams(),
                                 null),

@@ -54,9 +54,6 @@ public class UserProfileActivity extends AppCompatActivity implements ValueEvent
     @BindView(R.id.user_email)
     TextView mUserEmail;
 
-    @BindView(R.id.isConnected)
-    TextView isConnected;
-
     @BindView(R.id.user_display_name)
     TextView mUserDisplayName;
 
@@ -64,7 +61,6 @@ public class UserProfileActivity extends AppCompatActivity implements ValueEvent
     private FirebaseAuth mAuth;
 
     private DatabaseReference connectedRef;
-    private ValueEventListener isConnectedListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -131,7 +127,6 @@ public class UserProfileActivity extends AppCompatActivity implements ValueEvent
 
         }
         mMeRef.removeEventListener(this);
-        connectedRef.removeEventListener(isConnectedListener);
     }
 
 
@@ -155,27 +150,6 @@ public class UserProfileActivity extends AppCompatActivity implements ValueEvent
     @MainThread
     private void populateProfile() {
 
-        connectedRef = DatabaseRefUtil.getmConnectedRef();
-        isConnectedListener = new ValueEventListener(){
-
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                boolean connected = dataSnapshot.getValue(Boolean.class);
-                if (connected) {
-                    isConnected.setText("connected");
-                } else {
-                    isConnected.setText("disconnected");
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                System.err.println("Listener was cancelled");
-            }
-        };
-
-        connectedRef.addValueEventListener(isConnectedListener);
-
     }
 
     @MainThread
@@ -196,7 +170,7 @@ public class UserProfileActivity extends AppCompatActivity implements ValueEvent
         if (dataSnapshot.getValue() != null){
             User user = dataSnapshot.getValue(User.class);
             mUserEmail.setText(user.getEmail());
-            mUserDisplayName.setText(user.getDisplayName());
+            mUserDisplayName.setText(user.getNickname());
             if (user.getPhotoUrl() != null) {
                 Glide.with(getApplicationContext())
                         .load(user.getPhotoUrl())

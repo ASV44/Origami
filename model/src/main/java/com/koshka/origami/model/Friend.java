@@ -8,18 +8,16 @@ public class Friend {
     private String uid;
     private String email;
     private String displayName;
+    private String nickname;
 
     public Friend() {
     }
 
-    public Friend(String displayName, String uid, String email) {
-        this.displayName = displayName;
+    public Friend(String uid, String email, String displayName, String nickname) {
         this.uid = uid;
         this.email = email;
-    }
-
-    public Friend(String email) {
-        this.email = email;
+        this.displayName = displayName;
+        this.nickname = nickname;
     }
 
     public String getUid() {
@@ -44,5 +42,13 @@ public class Friend {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 }

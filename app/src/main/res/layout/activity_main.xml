@@ -1,75 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
-    android:fitsSystemWindows="true"
-    tools:context=".activity.main.MainActivity">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
 
     <android.support.v4.view.ViewPager
-        android:id="@+id/mainViewPager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@+id/tabs" />
-
-    <android.support.design.widget.TabLayout
-        android:id="@+id/tabs"
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-
-    <com.getbase.floatingactionbutton.FloatingActionsMenu
-        android:id="@+id/multiple_actions2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        fab:fab_addButtonColorNormal="@color/colorPrimaryDark"
-        fab:fab_addButtonColorPressed="@color/colorPrimary"
-        fab:fab_addButtonPlusIconColor="@color/white"
-        fab:fab_labelStyle="@style/menu_labels_style"
-        android:layout_marginBottom="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginEnd="16dp"
-        android:visibility="visible">
-
-
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/add_friend_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            fab:fab_colorNormal="@color/colorPrimary"
-            fab:fab_title="Add friend"
-            fab:fab_colorPressed="@color/white_pressed" />
-
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/invite_friend_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            fab:fab_colorNormal="@color/colorPrimary"
-            fab:fab_title="Invite friend"
-            fab:fab_colorPressed="@color/white_pressed"
-            fab:fab_icon="@drawable/search"/>
-
-
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/create_origami_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            fab:fab_colorNormal="@color/white_ish"
-            fab:fab_title="Create origami"
-            fab:fab_colorPressed="@color/white_pressed"
-            fab:fab_icon="@drawable/origami"/>
-
-
-
-    </com.getbase.floatingactionbutton.FloatingActionsMenu>
-
-
-
-</RelativeLayout>
+        android:id="@+id/main_pager"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
+</LinearLayout>

@@ -18,6 +18,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
+import android.util.Patterns;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -30,10 +31,17 @@ import com.firebase.ui.auth.ui.AppCompatBase;
 import com.firebase.ui.auth.ui.ExtraConstants;
 import com.firebase.ui.auth.ui.FlowParameters;
 import com.firebase.ui.auth.ui.email.field_validators.EmailFieldValidator;
+import com.firebase.ui.database.DatabaseRefUtil;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.koshka.origami.model.User;
 
 public class SignInNoPasswordActivity extends AppCompatBase implements View.OnClickListener {
     private EditText mEmailEditText;
-    private EmailFieldValidator mEmailFieldValidator;
     private AcquireEmailHelper mAcquireEmailHelper;
 
     @Override
@@ -44,8 +52,6 @@ public class SignInNoPasswordActivity extends AppCompatBase implements View.OnCl
         setContentView(R.layout.signin_no_password_layout);
 
         String email = getIntent().getStringExtra(ExtraConstants.EXTRA_EMAIL);
-        mEmailFieldValidator = new EmailFieldValidator(
-                (TextInputLayout) findViewById(R.id.input_layout_email));
         mEmailEditText = (EditText) findViewById(R.id.email);
         if (email != null) {
             mEmailEditText.setText(email);
@@ -66,12 +72,12 @@ public class SignInNoPasswordActivity extends AppCompatBase implements View.OnCl
 
     @Override
     public void onClick(View view) {
-        if (!mEmailFieldValidator.validate(mEmailEditText.getText())) {
-            return;
-        }
-        mActivityHelper.showLoadingDialog(R.string.progress_dialog_loading);
-        String email = mEmailEditText.getText().toString();
-        mAcquireEmailHelper.checkAccountExists(email);
+            mActivityHelper.showLoadingDialog(R.string.progress_dialog_loading);
+            String email = mEmailEditText.getText().toString();
+            mAcquireEmailHelper.checkAccountExists(email);
+
+
+
     }
 
     public static Intent createIntent(

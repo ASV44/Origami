@@ -15,28 +15,18 @@
 */
 package com.koshka.origami.placepicker;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.MainThread;
-import android.support.annotation.StringRes;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.NavUtils;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.ui.database.DatabaseRefUtil;
 import com.google.android.gms.location.places.Place;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.koshka.origami.R;
-import com.koshka.origami.activity.main.MainActivity;
 import com.koshka.origami.model.SimpleTextOrigami;
 import com.koshka.origami.placepicker.cardstream.CardStream;
 import com.koshka.origami.placepicker.cardstream.CardStreamFragment;
@@ -44,7 +34,6 @@ import com.koshka.origami.placepicker.cardstream.CardStreamState;
 import com.koshka.origami.placepicker.cardstream.OnCardClickListener;
 import com.koshka.origami.placepicker.cardstream.StreamRetentionFragment;
 import com.koshka.origami.placepicker.common.activities.SampleActivityBase;
-import com.nightonke.boommenu.BoomMenuButton;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -84,7 +73,7 @@ public class GooglePlacePickerActivity extends SampleActivityBase implements Car
         }
 
         // Use fragment as click listener for cards, but must implement correct interface
-        if (!(fragment instanceof OnCardClickListener)){
+        if (!(fragment instanceof OnCardClickListener)) {
             throw new ClassCastException("PlacePickerFragment must " +
                     "implement OnCardClickListener interface.");
         }
@@ -122,26 +111,26 @@ public class GooglePlacePickerActivity extends SampleActivityBase implements Car
     }
 
     @OnClick(R.id.place_origami_button)
-    public void placeOrigami(View view){
+    public void placeOrigami(View view) {
         FragmentManager fm = getSupportFragmentManager();
         PlacePickerFragment fragment =
                 (PlacePickerFragment) fm.findFragmentByTag(FRAGTAG);
         Place place = fragment.getPlace();
-        if (place != null){
+        if (place != null) {
 
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
             DatabaseReference ref = DatabaseRefUtil.getUserRefByUid(mAuth.getCurrentUser().getUid());
 
             SimpleTextOrigami origami = new SimpleTextOrigami();
             origami.setPlaceId(place.getId());
-            if (editOrigamiText.getText() != null){
+            if (editOrigamiText.getText() != null) {
                 origami.setText(editOrigamiText.getText().toString());
             } else {
                 origami.setText("No text");
             }
 
             ref.child("origamiList").push().setValue(origami);
-        }else {
+        } else {
 
         }
 

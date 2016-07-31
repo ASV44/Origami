@@ -13,7 +13,6 @@ import android.support.annotation.MainThread;
 import android.support.annotation.StringRes;
 import android.support.annotation.StyleRes;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -28,9 +27,8 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.main.MainActivity;
-import com.koshka.origami.fragment.login.LoginFragment1;
-import com.koshka.origami.fragment.login.LoginFragment2;
-import com.koshka.origami.fragment.login.LoginFragment3;
+import com.koshka.origami.fragment.login.LoginFragmentPagerAdapter;
+import com.koshka.origami.ui.ParallaxPagerTransformer;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -50,11 +48,11 @@ public class LoginActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 100;
 
     private int backButtonCount;
-
-    private FragmentPagerAdapter mPagerAdapter;
-    private ViewPager mViewPager;
     private Locale myLocale;
 
+
+    @BindView(R.id.login_pager)
+    ViewPager mPager;
 
     @BindView(R.id.sign_in)
     Button mSignIn;
@@ -67,6 +65,8 @@ public class LoginActivity extends AppCompatActivity {
 
     @BindView(R.id.language_text_button)
     ImageButton languageTextButton;
+
+    private FragmentPagerAdapter mPagerAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,33 +81,15 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
-        // Create the adapter that will return a fragment for each section
-        mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
-            private final Fragment[] mFragments = new Fragment[]{
-                    new LoginFragment1(),
-                    new LoginFragment2(),
-                    new LoginFragment3(),
+        /*mPager.setBackgroundColor(0xFF000000);*/
+        ParallaxPagerTransformer pt = new ParallaxPagerTransformer((R.id.image));
+        pt.setBorder(0);
+        pt.setSpeed(0.7f);
+        mPager.setPageTransformer(false, pt);
+        mPager.setAdapter(new LoginFragmentPagerAdapter(getSupportFragmentManager()));
 
-
-            };
-
-            @Override
-            public Fragment getItem(int position) {
-                return mFragments[position];
-            }
-
-            @Override
-            public int getCount() {
-                return mFragments.length;
-            }
-
-        };
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mPagerAdapter);
-        mViewPager.setCurrentItem(1);
         CircleIndicator indicator = (CircleIndicator) findViewById(R.id.indicator);
-        indicator.setViewPager(mViewPager);
+        indicator.setViewPager(mPager);
 
         final Typeface font = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/actonia.ttf");
 

@@ -7,12 +7,12 @@
     tools:context=".activity.login.LoginActivity">
 
     <android.support.v4.view.ViewPager
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/indicator"
-        android:layout_below="@+id/title_text" />
-
+        android:id="@+id/login_pager"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_weight="1"
+        android:layout_below="@+id/title_text"
+        android:layout_above="@+id/indicator" />
     <Button
         android:id="@+id/sign_in"
         style="@style/Widget.AppCompat.Button.Colored"
@@ -33,11 +33,10 @@
         android:layout_height="wrap_content"
         android:text="Origami"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="80dp"
+        android:textSize="100dp"
         android:textStyle="bold"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="140dp" />
+        android:layout_centerHorizontal="true" />
 
     <me.relex.circleindicator.CircleIndicator
         android:id="@+id/indicator"

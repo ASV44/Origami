@@ -1,37 +1,12 @@
 package com.koshka.origami.activity.main;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Camera;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
 import android.os.Bundle;
-import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Filter;
-import android.widget.Filterable;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.ui.database.DatabaseRefUtil;
 import com.google.android.gms.common.ConnectionResult;
@@ -40,44 +15,23 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.koshka.origami.R;
-import com.koshka.origami.model.Origami;
 import com.koshka.origami.model.SimpleTextOrigami;
 import com.koshka.origami.utils.PermissionUtils;
-import com.nightonke.boommenu.BoomMenuButton;
-import com.nightonke.boommenu.Types.BoomType;
-import com.nightonke.boommenu.Types.ButtonType;
-import com.nightonke.boommenu.Types.PlaceType;
-import com.nightonke.boommenu.Util;
-import com.search.material.library.MaterialSearchView;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.internal.Utils;
 
-public class OrigamiMapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, ActivityCompat.OnRequestPermissionsResultCallback, GoogleApiClient.OnConnectionFailedListener ,ValueEventListener{
+public class OrigamiMapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, ActivityCompat.OnRequestPermissionsResultCallback, GoogleApiClient.OnConnectionFailedListener, ValueEventListener {
 
     private GoogleMap mMap;
 
@@ -86,7 +40,6 @@ public class OrigamiMapActivity extends AppCompatActivity implements OnMapReadyC
     private boolean mPermissionDenied = false;
 
     private GoogleApiClient mGoogleApiClient;
-
 
 
     @Override
@@ -192,7 +145,7 @@ public class OrigamiMapActivity extends AppCompatActivity implements OnMapReadyC
 
     @Override
     public void onDataChange(DataSnapshot dataSnapshot) {
-        for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
             final SimpleTextOrigami post = postSnapshot.getValue(SimpleTextOrigami.class);
 
             Places.GeoDataApi.getPlaceById(mGoogleApiClient, post.getPlaceId())
@@ -201,7 +154,7 @@ public class OrigamiMapActivity extends AppCompatActivity implements OnMapReadyC
                         public void onResult(PlaceBuffer places) {
                             if (places.getStatus().isSuccess() && places.getCount() > 0) {
                                 final Place myPlace = places.get(0);
-                                MarkerOptions marker = new MarkerOptions().position(myPlace.getLatLng()).title(post.getText());
+                                MarkerOptions marker = new MarkerOptions().position(myPlace.getLatLng()).title(post.getText()).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
                                 mMap.addMarker(marker);
                             } else {
                             }

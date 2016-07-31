@@ -25,6 +25,7 @@ import android.support.v4.content.ContextCompat;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.util.Patterns;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
@@ -50,14 +51,19 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.koshka.origami.model.Friend;
 import com.koshka.origami.model.GhostOrigami;
 import com.koshka.origami.model.User;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RegisterEmailActivity extends AppCompatBase implements View.OnClickListener {
     private static final int RC_SAVE_CREDENTIAL = 3;
@@ -107,9 +113,14 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
         mEmailFieldValidator = new EmailFieldValidator((TextInputLayout) findViewById(R.id
                 .email_layout));
 
-        if (email != null) {
+        //Check if that extra was email or nickname
+        boolean emailValid = Patterns.EMAIL_ADDRESS.matcher(email).matches();
+        if (email != null && emailValid) {
             mEmailEditText.setText(email);
             mEmailEditText.setEnabled(false);
+        } else if (email != null){
+            mNameEditText.setText(email);
+            mNameEditText.setEnabled(false);
         }
         setUpTermsOfService();
         Button createButton = (Button) findViewById(R.id.button_create);
@@ -155,42 +166,67 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
         }
     }
 
-    private void registerUser(String email, final String name, final String password) {
+    private void registerUser(final String email, final String nickname, final String password) {
         final FirebaseAuth firebaseAuth = mActivityHelper.getFirebaseAuth();
-        // create the user
-        firebaseAuth.createUserWithEmailAndPassword(email, password)
-                .addOnFailureListener(new TaskFailureLogger(TAG, "Error creating user"))
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            final FirebaseUser firebaseUser = task.getResult().getUser();
-                            Task<Void> updateTask = firebaseUser.updateProfile(
-                                    new UserProfileChangeRequest
-                                            .Builder()
-                                            .setDisplayName(name).build());
-                            updateTask
-                                    .addOnFailureListener(new TaskFailureLogger(
-                                            TAG, "Error setting display name"))
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            mActivityHelper.dismissDialog();
-                                            if (task.isSuccessful()) {
-                                                startSaveCredentials(firebaseUser, password);
-                                            }
-                                        }
-                                    });
-                        } else {
-                            mActivityHelper.dismissDialog();
-                            String errorMessage = task.getException().getLocalizedMessage();
-                            errorMessage = errorMessage.substring(errorMessage.indexOf(":") + 1);
-                            TextInputLayout emailInput =
-                                    (TextInputLayout) findViewById(R.id.email_layout);
-                            emailInput.setError(errorMessage);
-                        }
-                    }
-                });
+
+        DatabaseReference mUsernameRef = DatabaseRefUtil.getmUsersRef();
+
+        final String lowerCaseUserName = nickname.toLowerCase();
+
+        Query mUsernameQuery = mUsernameRef.orderByChild("nickname").equalTo(lowerCaseUserName);
+        mUsernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists()) {
+                    firebaseAuth.createUserWithEmailAndPassword(email, password)
+                            .addOnFailureListener(new TaskFailureLogger(TAG, "Error creating user"))
+                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        final FirebaseUser firebaseUser = task.getResult().getUser();
+                                        Task<Void> updateTask = firebaseUser.updateProfile(
+                                                new UserProfileChangeRequest
+                                                        .Builder()
+                                                        .setDisplayName(lowerCaseUserName).build());
+                                        updateTask
+                                                .addOnFailureListener(new TaskFailureLogger(
+                                                        TAG, "Error setting display name"))
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        mActivityHelper.dismissDialog();
+                                                        if (task.isSuccessful()) {
+                                                            startSaveCredentials(firebaseUser, password);
+                                                        }
+                                                    }
+                                                });
+                                    } else {
+                                        mActivityHelper.dismissDialog();
+                                        String errorMessage = task.getException().getLocalizedMessage();
+                                        errorMessage = errorMessage.substring(errorMessage.indexOf(":") + 1);
+                                        TextInputLayout emailInput =
+                                                (TextInputLayout) findViewById(R.id.email_layout);
+                                        emailInput.setError(errorMessage);
+                                    }
+                                }
+                            });
+                }else {
+
+                    mActivityHelper.dismissDialog();
+                    TextInputLayout nameLayout =
+                            (TextInputLayout) findViewById(R.id.name_layout);
+                    nameLayout.setError("This nickname is taken");
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     @Override
@@ -212,18 +248,19 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
 
         user.setEmail(mAuth.getCurrentUser().getEmail());
         user.setUid(mAuth.getCurrentUser().getUid());
-        user.setDisplayName(mAuth.getCurrentUser().getDisplayName());
+        user.setNickname(mAuth.getCurrentUser().getDisplayName());
         user.setPhotoUrl(res.getString(R.string.default_photo_url));
 
         GhostOrigami origami = new GhostOrigami();
         origami.setText(res.getString(R.string.origami_text));
         origami.setOrigamiName(res.getString(R.string.origami_name));
 
-        List<Friend> initFriendList = new ArrayList<>();
+        Map<String,Friend> initFriendList = new HashMap<>();
         Friend ghostFriend = new Friend();
         ghostFriend.setDisplayName("Ghost");
         ghostFriend.setEmail("ghost@origami.com");
-        initFriendList.add(ghostFriend);
+        ghostFriend.setNickname("OrigamiGhost");
+        initFriendList.put("ghosthash001",ghostFriend);
 
         user.setFriendList(initFriendList);
 

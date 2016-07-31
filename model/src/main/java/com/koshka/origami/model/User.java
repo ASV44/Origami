@@ -1,6 +1,8 @@
 package com.koshka.origami.model;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by imuntean on 7/20/16.
@@ -9,12 +11,12 @@ public class User {
 
     private String uid;
     private String email;
-    private String username;
+    private String nickname;
     private String displayName;
     private String photoUrl;
     private String country;
     private String languagePreference;
-    private List<Friend> friendList;
+    private Map<String,Friend> friendList;
     private Coordinate currentLocation;
 
     public User() {
@@ -38,16 +40,16 @@ public class User {
     public User(String uid, String email, String username, String country, String displayName) {
         this.uid = uid;
         this.email = email;
-        this.username = username;
+        this.nickname = username;
         this.country = country;
         this.displayName = displayName;
     }
 
-    public List<Friend> getFriendList() {
+    public Map<String, Friend> getFriendList() {
         return friendList;
     }
 
-    public void setFriendList(List<Friend> friendList) {
+    public void setFriendList(Map<String, Friend> friendList) {
         this.friendList = friendList;
     }
 
@@ -59,12 +61,12 @@ public class User {
         this.country = country;
     }
 
-    public String getUsername() {
-        return username;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setNickname(String username) {
+        this.nickname = username;
     }
 
     public String getUid() {
@@ -115,4 +117,5 @@ public class User {
     public void setLanguagePreference(String languagePreference) {
         this.languagePreference = languagePreference;
     }
+
 }

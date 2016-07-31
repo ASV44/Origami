@@ -3,12 +3,10 @@ package com.koshka.origami.activity.main;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -18,61 +16,35 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.firebase.ui.database.DatabaseRefUtil;
-import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.login.LoginActivity;
+import com.koshka.origami.fragment.main.ChatFragment;
 import com.koshka.origami.fragment.main.FriendsFragment;
+import com.koshka.origami.fragment.main.MainFragmentPagerAdapter;
 import com.koshka.origami.fragment.main.OrigamiFragment;
-import com.koshka.origami.placepicker.GooglePlacePickerActivity;
+import com.koshka.origami.ui.ParallaxPagerTransformer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Created by imuntean on 7/20/16.
  */
-public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
+public class MainActivity extends AppCompatActivity {
 
     private final static String TAG = "MainActivity";
 
-    private FragmentPagerAdapter mPagerAdapter;
     private int backButtonCount;
-
-    @BindView(R.id.mainViewPager)
-    ViewPager mViewPager;
 
     @BindView(android.R.id.content)
     View mRootView;
 
-    @BindView(R.id.multiple_actions2)
-    FloatingActionsMenu floatingMenu;
+    @BindView(R.id.main_pager)
+    ViewPager mPager;
 
-    @BindView(R.id.create_origami_button)
-    FloatingActionButton createOrigamiButton;
-
-    @BindView(R.id.add_friend_button)
-    FloatingActionButton addFriendButton;
-
-    @BindView(R.id.invite_friend_button)
-    FloatingActionButton inviteFriendButton;
-
-    @BindView(R.id.tabs)
-    TabLayout tabLayout;
-
-
-    private DatabaseReference connectedRef;
-    private ValueEventListener isConnectedListener;
-
-    private boolean init = false;
+    private FragmentPagerAdapter mAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -88,13 +60,12 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        mViewPager.setAdapter(getmPagerAdapter());
-        mViewPager.setCurrentItem(0);
-        mViewPager.addOnPageChangeListener(this);
-
-        decideMenuButtonElements(mViewPager.getCurrentItem());
-
-        tabLayout.setupWithViewPager(mViewPager);
+        ParallaxPagerTransformer pt = new ParallaxPagerTransformer((R.id.friends_recycler_view));
+        pt.setBorder(3);
+        pt.setSpeed(0.7f);
+        mPager.setPageTransformer(false, pt);
+        mPager.setAdapter(new MainFragmentPagerAdapter(getSupportFragmentManager()));
+        mPager.setCurrentItem(1);
 
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -103,63 +74,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             actionBar.setDisplayShowHomeEnabled(false); // remove the icon
         }
 
-        connectedRef = DatabaseRefUtil.getmConnectedRef();
-        isConnectedListener = new ValueEventListener() {
 
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                boolean connected = dataSnapshot.getValue(Boolean.class);
-                if (connected) {
-                    actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
-                    getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
-                } else {
-                    actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.material_red_a200)));
-                    getWindow().setStatusBarColor(getResources().getColor(R.color.material_red_a2001));
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                System.err.println("Listener was cancelled");
-            }
-        };
-
-        connectedRef.addValueEventListener(isConnectedListener);
-
-
-    }
-
-    // Create the adapter that will return a fragment for each section
-    private FragmentPagerAdapter getmPagerAdapter() {
-
-        mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
-            private final Fragment[] mFragments = new Fragment[]{
-                    new OrigamiFragment(),
-                    new FriendsFragment(),
-
-
-            };
-            private final String[] mFragmentNames = new String[]{
-                    "Origami",
-                    "Friends",
-            };
-
-            @Override
-            public Fragment getItem(int position) {
-                return mFragments[position];
-            }
-
-            @Override
-            public int getCount() {
-                return mFragments.length;
-            }
-
-            @Override
-            public CharSequence getPageTitle(int position) {
-                return mFragmentNames[position];
-            }
-        };
-        return mPagerAdapter;
     }
 
     public static Intent createIntent(Context context) {
@@ -193,43 +108,13 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     }
 
 
-    @Override
-    public void onBackPressed() {
-        if (backButtonCount >= 1) {
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_HOME);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        } else {
-            Resources res = getResources();
-            Snackbar.make(mRootView, res.getString(R.string.press_back), Snackbar.LENGTH_SHORT).show();
-            backButtonCount++;
-        }
-    }
-
-
     @MainThread
     private void showShortSnackbar(@StringRes int errorMessageRes) {
         Snackbar.make(mRootView, errorMessageRes, Snackbar.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-    }
-
-    @Override
-    public void onPageSelected(int position) {
-      decideMenuButtonElements(position);
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int state) {
-
-    }
-
-    private void decideMenuButtonElements(int position){
-        if (position == 0){
+  /*  private void decideMenuButtonElements(int position) {
+        if (position == 0) {
             addFriendButton.setVisibility(View.GONE);
             inviteFriendButton.setVisibility(View.GONE);
             createOrigamiButton.setVisibility(View.VISIBLE);
@@ -241,9 +126,198 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             floatingMenu.collapse();
         }
     }
-
-    @OnClick(R.id.create_origami_button)
-    public void createOrigami(View view){
+*/
+/*    @OnClick(R.id.create_origami_button)
+    public void createOrigami(View view) {
         startActivity(new Intent(this, GooglePlacePickerActivity.class));
     }
+
+    @OnClick(R.id.add_friend_button)
+    public void addFriend(View view) {
+
+        final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        final DatabaseReference mMe = DatabaseRefUtil.getUserRefByUid(mAuth.getCurrentUser().getUid());
+        final DatabaseReference mMyFriends = mMe.child("friendList");
+        // Creating alert Dialog with one Button
+        final AlertDialog.Builder alertUserInfoDialog = new AlertDialog.Builder(MainActivity.this);
+
+        // Creating alert Dialog with one Button
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+
+        alertDialog.setTitle("Add friend");
+        alertDialog.setIcon(R.drawable.origami);
+        alertDialog.setMessage("Enter friend's email:");
+        final EditText input = new EditText(MainActivity.this);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        input.setLayoutParams(lp);
+        alertDialog.setView(input);
+
+        alertDialog.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                String email = input.getText().toString();
+                if (email != null && !email.isEmpty()) {
+                    final Query query = DatabaseRefUtil.getFindUserByEmailQuery(input.getText().toString());
+                    query.addListenerForSingleValueEvent(new ValueEventListener() {
+
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                query.addChildEventListener(new ChildEventListener() {
+                                    @Override
+                                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                        final User user = dataSnapshot.getValue(User.class);
+                                        if (!user.getEmail().equals(mAuth.getCurrentUser().getEmail())){
+
+                                        alertUserInfoDialog.setTitle("Is that him?");
+                                        alertUserInfoDialog.setMessage(user.getDisplayName() + ", " + user.getEmail()+ "," + user.getUid());
+
+                                        alertUserInfoDialog.setPositiveButton("Yes, that's him", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                Friend friend = new Friend();
+                                                friend.setDisplayName(user.getDisplayName());
+                                                friend.setEmail(user.getEmail());
+                                                friend.setUid(user.getUid());
+                                                mMyFriends.push().setValue(friend);
+                                            }
+                                        });
+                                        alertUserInfoDialog.create();
+                                        alertUserInfoDialog.show();
+                                    }else {
+
+                                            alertUserInfoDialog.setMessage("That seems to be you. :)");
+                                            alertUserInfoDialog.create();
+                                            alertUserInfoDialog.show();
+                                    }
+
+                                    }
+
+                                    @Override
+                                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                                    }
+
+                                    @Override
+                                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                                    }
+
+                                    @Override
+                                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+                            } else {
+                                alertUserInfoDialog.setTitle("No such user in Origami");
+                                alertUserInfoDialog.setMessage("Do you want to invite " + input.getText().toString() + "?");
+                                alertUserInfoDialog.setPositiveButton("Invite", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                                    }
+                                });
+                                alertUserInfoDialog.create();
+                                alertUserInfoDialog.show();
+
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            }
+        });
+        alertDialog.create();
+        alertDialog.show();
+    }*/
+
+/*
+            @OnClick(R.id.invite_friend_button)
+            public void inviteFriend(View view) {
+
+                FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                final DatabaseReference mMe = DatabaseRefUtil.getUserRefByUid(mAuth.getCurrentUser().getUid());
+                final DatabaseReference mMyFriends = mMe.child("friendList");
+                // Creating alert Dialog with one Button
+                final AlertDialog.Builder alertUserInfoDialog = new AlertDialog.Builder(MainActivity.this);
+
+                // Creating alert Dialog with one Button
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+
+                alertDialog.setTitle("Invite friend to Origami");
+                alertDialog.setMessage("Enter friend's email:");
+                final EditText input = new EditText(MainActivity.this);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT);
+                input.setLayoutParams(lp);
+                alertDialog.setView(input);
+
+                alertDialog.setPositiveButton("Invite", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (input != null) {
+                            Query query = DatabaseRefUtil.getFindUserByEmailQuery(input.getText().toString());
+                            query.addChildEventListener(new ChildEventListener() {
+                                @Override
+                                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                    final User user = dataSnapshot.getValue(User.class);
+
+                                    alertUserInfoDialog.setTitle("Is that him?");
+                                    alertUserInfoDialog.setMessage(user.getDisplayName());
+
+                                    alertUserInfoDialog.setPositiveButton("Yes, that's him", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            mMyFriends.push().setValue(user.getUid());
+                                        }
+                                    });
+
+                                }
+
+                                @Override
+                                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                                }
+
+                                @Override
+                                public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                                }
+
+                                @Override
+                                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+                            alertUserInfoDialog.create();
+                            alertUserInfoDialog.show();
+
+                        } else {
+                            showShortSnackbar(R.string.no_place);
+                        }
+
+                    }
+                });
+                alertDialog.create();
+                alertDialog.show();
+
+            }*/
+
+
 }
+
