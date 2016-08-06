@@ -14,12 +14,20 @@ public class DatabaseRefUtil {
     private static final DatabaseReference mUsersRef = FirebaseDatabase.getInstance().getReference().child("users");
     private static final DatabaseReference mConnectedRef= FirebaseDatabase.getInstance().getReference(".info/connected");
     private static final Query findUserByEmailQuery = null;
-    private static final DatabaseReference mMyFriendsRef = null;
+    private static final DatabaseReference mFriendsRef = FirebaseDatabase.getInstance().getReference().child("friends");
+    private static final DatabaseReference mOrigamiRef = FirebaseDatabase.getInstance().getReference().child("origami");
+
     private static final DatabaseReference mMyFriendRequestsRef = null;
     private static final DatabaseReference mNickname = null;
 
     public static DatabaseReference getUserRefByUid(String uid){
         return mUsersRef.child(uid);
+    }
+    public static DatabaseReference getUserFriendsRefByUid(String uid){
+        return mFriendsRef.child(uid);
+    }
+    public static DatabaseReference getUserOrigamiRefByUid(String uid){
+        return mOrigamiRef.child(uid);
     }
 
     public static DatabaseReference getUsersRef(){

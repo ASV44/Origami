@@ -10,6 +10,7 @@ import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -32,7 +33,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.login.LoginActivity;
+import com.koshka.origami.fragment.main.MainFragmentPagerAdapter;
+import com.koshka.origami.fragment.profile.UserProfileFragmentPagerAdapter;
 import com.koshka.origami.model.User;
+import com.koshka.origami.ui.ParallaxPagerTransformer;
+import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,121 +46,39 @@ import butterknife.OnClick;
 /**
  * Created by imuntean on 7/19/16.
  */
-public class UserProfileActivity extends AppCompatActivity implements ValueEventListener {
+public class UserProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "UserProfileActivity";
 
     @BindView(android.R.id.content)
     View mRootView;
 
-    @BindView(R.id.user_profile_picture)
-    ImageView mUserProfilePicture;
+    @BindView(R.id.viewpagertab)
+    SmartTabLayout viewpagertab;
 
-    @BindView(R.id.user_email)
-    TextView mUserEmail;
+    @BindView(R.id.profile_pager)
+    ViewPager mPager;
+    @BindView(R.id.profile_pager2)
+    ViewPager mPager2;
 
-    @BindView(R.id.user_display_name)
-    TextView mUserDisplayName;
-
-    private DatabaseReference mMeRef;
-    private FirebaseAuth mAuth;
-
-    private DatabaseReference connectedRef;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mAuth = FirebaseAuth.getInstance();
-        mMeRef = DatabaseRefUtil.getUserRefByUid(mAuth.getCurrentUser().getUid());
-
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser == null) {
-            startActivity(LoginActivity.createIntent(this));
-            finish();
-            return;
-        }
-
         setContentView(R.layout.user_profile_layout);
         ButterKnife.bind(this);
-        mMeRef.addValueEventListener(this);
-        populateProfile();
-    }
 
-    @OnClick(R.id.sign_out)
-    public void signOut() {
-        AuthUI.getInstance()
-                .signOut(this)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            startActivity(LoginActivity.createIntent(UserProfileActivity.this));
-                            finish();
-                        } else {
-                            showSnackbar(R.string.sign_out_failed);
-                        }
-                    }
-                });
-    }
+        ParallaxPagerTransformer pt = new ParallaxPagerTransformer((R.id.image));
+        ParallaxPagerTransformer pt2 = new ParallaxPagerTransformer((R.id.user_profile_picture));
+        pt.setBorder(0);
+        pt.setSpeed(0.7f);
 
-    @OnClick(R.id.delete_account)
-    public void deleteAccountClicked() {
+        mPager.setPageTransformer(false, pt);
+        mPager.setAdapter(new UserProfileFragmentPagerAdapter(getSupportFragmentManager()));
+        mPager.setCurrentItem(0);
 
-        Resources res = getResources();
-
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setMessage(res.getString(R.string.delete_warning))
-                .setPositiveButton(res.getString(R.string.positive_delete), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        deleteAccountFromDb();
-                        deleteAccount();
-                    }
-                })
-                .setNegativeButton("No", null)
-                .create();
-
-        dialog.show();
-    }
-
-    private void deleteAccountFromDb(){
-
-        String user = mMeRef.getKey();
-        if (user != null){
-                mMeRef.removeValue();
-
-        }
-        mMeRef.removeEventListener(this);
-    }
-
-
-    private void deleteAccount() {
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        mAuth.getCurrentUser()
-                .delete()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            startActivity(LoginActivity.createIntent(UserProfileActivity.this));
-                            finish();
-                        } else {
-                            showSnackbar(R.string.delete_account_failed);
-                        }
-                    }
-                });
-    }
-
-    @MainThread
-    private void populateProfile() {
-
-    }
-
-    @MainThread
-    private void showSnackbar(@StringRes int errorMessageRes) {
-        Snackbar.make(mRootView, errorMessageRes, Snackbar.LENGTH_LONG)
-                .show();
+        viewpagertab.setViewPager(mPager);
     }
 
     public static Intent createIntent(Context context) {
@@ -164,27 +87,4 @@ public class UserProfileActivity extends AppCompatActivity implements ValueEvent
         return in;
     }
 
-    @Override
-    public void onDataChange(DataSnapshot dataSnapshot) {
-
-        if (dataSnapshot.getValue() != null){
-            User user = dataSnapshot.getValue(User.class);
-            mUserEmail.setText(user.getEmail());
-            mUserDisplayName.setText(user.getNickname());
-            if (user.getPhotoUrl() != null) {
-                Glide.with(getApplicationContext())
-                        .load(user.getPhotoUrl())
-                        .fitCenter()
-                        .into(mUserProfilePicture);
-            }
-        } else {
-            showSnackbar(R.string.something_went_wrong);
-        }
-
-    }
-
-    @Override
-    public void onCancelled(DatabaseError databaseError) {
-
-    }
 }

@@ -41,6 +41,7 @@ import com.firebase.ui.auth.ui.FlowParameters;
 import com.firebase.ui.auth.ui.TaskFailureLogger;
 import com.firebase.ui.auth.ui.account_link.SaveCredentialsActivity;
 import com.firebase.ui.auth.ui.email.field_validators.EmailFieldValidator;
+import com.firebase.ui.auth.ui.email.field_validators.NicknameValidator;
 import com.firebase.ui.auth.ui.email.field_validators.PasswordFieldValidator;
 import com.firebase.ui.auth.ui.email.field_validators.RequiredFieldValidator;
 import com.firebase.ui.auth.util.FirebaseAuthWrapperFactory;
@@ -73,10 +74,12 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
     private EditText mNameEditText;
     private EmailFieldValidator mEmailFieldValidator;
     private PasswordFieldValidator mPasswordFieldValidator;
-    private RequiredFieldValidator mNameValidator;
+    private NicknameValidator mNameValidator;
     private ImageView mTogglePasswordImage;
     private FirebaseAuth mAuth;
+    private DatabaseReference mMyFriendsRef;
     private DatabaseReference mMeRef;
+    private DatabaseReference mOrigamiRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,20 +111,23 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
         mPasswordFieldValidator = new PasswordFieldValidator((TextInputLayout)
                 findViewById(R.id.password_layout),
                 getResources().getInteger(R.integer.min_password_length));
-        mNameValidator = new RequiredFieldValidator((TextInputLayout)
+        mNameValidator = new NicknameValidator((TextInputLayout)
                 findViewById(R.id.name_layout));
         mEmailFieldValidator = new EmailFieldValidator((TextInputLayout) findViewById(R.id
                 .email_layout));
 
-        //Check if that extra was email or nickname
-        boolean emailValid = Patterns.EMAIL_ADDRESS.matcher(email).matches();
-        if (email != null && emailValid) {
-            mEmailEditText.setText(email);
-            mEmailEditText.setEnabled(false);
-        } else if (email != null){
-            mNameEditText.setText(email);
-            mNameEditText.setEnabled(false);
+        boolean emailValid;
+        if (email != null){
+            emailValid = Patterns.EMAIL_ADDRESS.matcher(email).matches();
+            if (emailValid) {
+                mEmailEditText.setText(email);
+                /*mEmailEditText.setEnabled(false);*/
+            } else {
+                mNameEditText.setText(email);
+              // mNameEditText.setEnabled(false);
+            }
         }
+
         setUpTermsOfService();
         Button createButton = (Button) findViewById(R.id.button_create);
         createButton.setOnClickListener(this);
@@ -174,6 +180,8 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
         final String lowerCaseUserName = nickname.toLowerCase();
 
         Query mUsernameQuery = mUsernameRef.orderByChild("nickname").equalTo(lowerCaseUserName);
+        final Resources res = getResources();
+        final Uri photoUri = Uri.parse(res.getString(R.string.default_photo_url));
         mUsernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -188,7 +196,8 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
                                         Task<Void> updateTask = firebaseUser.updateProfile(
                                                 new UserProfileChangeRequest
                                                         .Builder()
-                                                        .setDisplayName(lowerCaseUserName).build());
+                                                        .setDisplayName(lowerCaseUserName)
+                                                        .setPhotoUri(photoUri).build());
                                         updateTask
                                                 .addOnFailureListener(new TaskFailureLogger(
                                                         TAG, "Error setting display name"))
@@ -241,28 +250,19 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
     //Using setValue because it's only once
     private void initUserInDatabase(){
         mAuth = FirebaseAuth.getInstance();
-        mMeRef = DatabaseRefUtil.getUserRefByUid(mAuth.getCurrentUser().getUid());
+        String uid = mAuth.getCurrentUser().getUid();
+        String email = mAuth.getCurrentUser().getEmail();
+        String nickname = mAuth.getCurrentUser().getDisplayName();
 
-        Resources res = getResources();
-        User user = new User();
+        //TAKE FIREBASE REFS
 
-        user.setEmail(mAuth.getCurrentUser().getEmail());
-        user.setUid(mAuth.getCurrentUser().getUid());
-        user.setNickname(mAuth.getCurrentUser().getDisplayName());
-        user.setPhotoUrl(res.getString(R.string.default_photo_url));
+        mMeRef = DatabaseRefUtil.getUserRefByUid(uid);
+       /* mOrigamiRef = DatabaseRefUtil.getUserOrigamiRefByUid(uid);*/
+        /*mMyFriendsRef= DatabaseRefUtil.getUserFriendsRefByUid(uid);*/
+        //-------------------------------------------
+        //SETUP THE USER /users/uid
 
-        GhostOrigami origami = new GhostOrigami();
-        origami.setText(res.getString(R.string.origami_text));
-        origami.setOrigamiName(res.getString(R.string.origami_name));
-
-        Map<String,Friend> initFriendList = new HashMap<>();
-        Friend ghostFriend = new Friend();
-        ghostFriend.setDisplayName("Ghost");
-        ghostFriend.setEmail("ghost@origami.com");
-        ghostFriend.setNickname("OrigamiGhost");
-        initFriendList.put("ghosthash001",ghostFriend);
-
-        user.setFriendList(initFriendList);
+        User user = new User(email, nickname);
 
         mMeRef.setValue(user, new DatabaseReference.CompletionListener() {
             @Override
@@ -273,22 +273,59 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
             }
         });
 
+        //-------------------------------------------
+        //WE DON"T NEED THIS
+      /*  //SETUP FIRST ORIGAMI /origami/uid
+        GhostOrigami origami = new GhostOrigami();
+
+        origami.setText(res.getString(R.string.origami_text));
+        origami.setOrigamiName(res.getString(R.string.origami_name));
+        mOrigamiRef.push().setValue(origami, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference reference) {
+                if (databaseError != null) {
+                    Log.e(TAG, "Failed to store origami to db", databaseError.toException());
+                }
+            }
+        });
+        //-------------------------------------------
+        //SETUP FIRST FRIEND /friends/uid
+        Friend ghostFriend = new Friend();
+
+        ghostFriend.setDisplayName("Ghost");
+        ghostFriend.setEmail("ghost@origami.com");
+        ghostFriend.setNickname("OrigamiGhost");
+
+        mMyFriendsRef.push().setValue(ghostFriend, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference reference) {
+                if (databaseError != null) {
+                    Log.e(TAG, "Failed to store friend to db", databaseError.toException());
+                }
+            }
+        });*/
+        //-------------------------------------------
+
     }
 
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.button_create) {
-            String email = mEmailEditText.getText().toString();
-            String password = mPasswordEditText.getText().toString();
-            String name = mNameEditText.getText().toString();
+            String email2 = mEmailEditText.getText().toString();
+            String password2 = mPasswordEditText.getText().toString();
+            String name2 = mNameEditText.getText().toString();
+
+            String email = email2.trim();
+            String password = password2.trim();
+            String name = name2.trim();
 
             boolean emailValid = mEmailFieldValidator.validate(email);
-            boolean passwordValid = mPasswordFieldValidator.validate(password);
             boolean nameValid = mNameValidator.validate(name);
+            boolean passwordValid = mPasswordFieldValidator.validate(password);
+
             if (emailValid && passwordValid && nameValid) {
                 mActivityHelper.showLoadingDialog(R.string.progress_dialog_signing_up);
-                registerUser(mEmailEditText.getText().toString(), mNameEditText.getText()
-                        .toString(), mPasswordEditText.getText().toString());
+                registerUser(email, name, password);
             }
         }
     }

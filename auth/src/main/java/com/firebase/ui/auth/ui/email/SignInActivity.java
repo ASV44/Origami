@@ -35,7 +35,6 @@ import com.firebase.ui.auth.ui.ExtraConstants;
 import com.firebase.ui.auth.ui.FlowParameters;
 import com.firebase.ui.auth.ui.TaskFailureLogger;
 import com.firebase.ui.auth.ui.account_link.SaveCredentialsActivity;
-import com.firebase.ui.auth.ui.email.field_validators.EmailFieldValidator;
 import com.firebase.ui.auth.ui.email.field_validators.RequiredFieldValidator;
 import com.firebase.ui.auth.util.FirebaseAuthWrapperFactory;
 import com.firebase.ui.database.DatabaseRefUtil;
@@ -54,6 +53,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.koshka.origami.model.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SignInActivity extends AppCompatBase implements View.OnClickListener {
@@ -67,6 +67,11 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
     private Query usernameQuery;
     private DatabaseReference mUserRef;
     private AcquireEmailHelper mAcquireEmailHelper;
+    private List<String> providers = new ArrayList<>();
+
+    public static final int RC_REGISTER_ACCOUNT = 14;
+    public static final int RC_WELCOME_BACK_IDP = 15;
+    public static final int RC_SIGN_IN = 16;
 
 
     @Override
@@ -76,7 +81,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
         setContentView(R.layout.sign_in_layout);
 
         mAcquireEmailHelper = new AcquireEmailHelper(mActivityHelper);
-        String email = getIntent().getStringExtra(ExtraConstants.EXTRA_EMAIL);
+        final String email = getIntent().getStringExtra(ExtraConstants.EXTRA_EMAIL);
 
         mEmailEditText = (EditText) findViewById(R.id.email_nickname);
 
@@ -100,18 +105,124 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
 
         mLoginNameValidator = new RequiredFieldValidator((TextInputLayout) findViewById(R.id.email_nickname_layout));
         Button signInButton = (Button) findViewById(R.id.button_done);
-        TextView recoveryButton =  (TextView) findViewById(R.id.trouble_signing_in);
+        Button registerButton = (Button) findViewById(R.id.button_register);
+        TextView recoveryButton = (TextView) findViewById(R.id.trouble_signing_in);
 
         if (email != null) {
             mEmailEditText.setText(email);
         }
         signInButton.setOnClickListener(this);
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final FirebaseAuth firebaseAuth = mActivityHelper.getFirebaseAuth();
+                final String inputEmail2 = mEmailEditText.getText().toString();
+                final String inputEmail = inputEmail2.trim();
+                boolean isEmail = Patterns.EMAIL_ADDRESS.matcher(inputEmail).matches();
+                if (!inputEmail.isEmpty()) {
+                    if (isEmail) {
+
+                        firebaseAuth.fetchProvidersForEmail(inputEmail)
+                                .addOnFailureListener(
+                                        new TaskFailureLogger(TAG, "Error fetching providers for email"))
+                                .addOnCompleteListener(
+                                        new OnCompleteListener<ProviderQueryResult>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<ProviderQueryResult> task) {
+                                                if (task.isSuccessful()) {
+                                                    List<String> selectedProviders = new ArrayList<>();
+                                                    selectedProviders = task.getResult().getProviders();
+                                                    if (selectedProviders == null || selectedProviders.isEmpty()) {
+                                                        mAcquireEmailHelper.checkAccountExists(inputEmail);
+                                                    } else {
+                                                        TextInputLayout loginTextLayout = (TextInputLayout) findViewById(R.id.email_nickname_layout);
+                                                        loginTextLayout.setError("Email already registered");
+                                                        mActivityHelper.dismissDialog();
+                                                    }
+                                                } else {
+                                                    mActivityHelper.dismissDialog();
+                                                }
+                                            }
+
+                                        });
+                    } else {
+
+                        mRef = DatabaseRefUtil.getmUsersRef();
+                        mUserRef = DatabaseRefUtil.getmUsersRef();
+                        usernameQuery = mRef.orderByChild("nickname").equalTo(inputEmail);
+
+                        usernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    mActivityHelper.showLoadingDialog(R.string.progress_dialog_loading);
+                                    TextInputLayout loginTextLayout = (TextInputLayout) findViewById(R.id.email_nickname_layout);
+                                    loginTextLayout.setError("Nickname already registered");
+                                    mActivityHelper.dismissDialog();
+                                } else {
+
+                                    mActivityHelper.showLoadingDialog(R.string.progress_dialog_loading);
+
+                                        ArrayList<String> selectedProviders = new ArrayList<>();
+                                        startEmailHandler(inputEmail, selectedProviders);
+                                    }
+                                }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+
+                } else if(!isEmail) {
+                    ArrayList<String> selectedProviders = new ArrayList<>();
+                    startEmailHandler(email, selectedProviders);
+
+
+                } else {
+                    mAcquireEmailHelper.checkAccountExists(inputEmail);
+                }
+
+            }
+        });
         recoveryButton.setOnClickListener(this);
 
     }
 
+    private void startEmailHandler(String email, List<String> providers) {
+        mActivityHelper.dismissDialog();
+        if (providers == null || providers.isEmpty()) {
+            // account doesn't exist yet
+            Intent registerIntent = RegisterEmailActivity.createIntent(
+                    mActivityHelper.getApplicationContext(),
+                    mActivityHelper.getFlowParams(),
+                    email);
+            mActivityHelper.startActivityForResult(registerIntent, RC_REGISTER_ACCOUNT);
+            return;
+        } else {
+            // account does exist
+            for (String provider : providers) {
+                if (provider.equalsIgnoreCase(EmailAuthProvider.PROVIDER_ID)) {
+                    Intent signInIntent = SignInActivity.createIntent(
+                            mActivityHelper.getApplicationContext(),
+                            mActivityHelper.getFlowParams(),
+                            email);
+                    mActivityHelper.startActivityForResult(signInIntent, RC_SIGN_IN);
+                    return;
+                }
+            }
+
+            Intent signInIntent = new Intent(
+                    mActivityHelper.getApplicationContext(), SignInActivity.class);
+            signInIntent.putExtra(ExtraConstants.EXTRA_EMAIL, email);
+            mActivityHelper.startActivityForResult(signInIntent, RC_SIGN_IN);
+            return;
+        }
+    }
+
     @Override
-    public void onBackPressed () {
+    public void onBackPressed() {
         super.onBackPressed();
     }
 
@@ -158,7 +269,17 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
             boolean passwordValid = mPasswordValidator.validate(mPasswordEditText.getText());
             boolean loginNameisValid = mLoginNameValidator.validate(mEmailEditText.getText());
 
-            final String loginInput = mEmailEditText.getText().toString();
+            final String loginInput2 = mEmailEditText.getText().toString();
+            final String loginInput = loginInput2.trim();
+
+            if (loginInput.contains(" ")){
+
+                TextInputLayout loginTextLayout = (TextInputLayout) findViewById(R.id.email_nickname_layout);
+                loginTextLayout.setError("WTF?");
+                mActivityHelper.dismissDialog();
+                return;
+
+            }
             if (!passwordValid || !loginNameisValid) {
                 return;
             } else if (isEmail && passwordValid) {
@@ -175,7 +296,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
                                         public void onComplete(@NonNull Task<ProviderQueryResult> task) {
                                             if (task.isSuccessful()) {
                                                 List<String> providers = task.getResult().getProviders();
-                                                if (providers == null || providers.isEmpty()){
+                                                if (providers == null || providers.isEmpty()) {
                                                     mAcquireEmailHelper.checkAccountExists(loginInput);
                                                 } else {
                                                     for (String provider : providers) {
@@ -192,69 +313,69 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
                                     });
 
                 }
-                } else if (!isEmail) {
+            } else if (!isEmail) {
 
-                    mActivityHelper.showLoadingDialog(R.string.progress_dialog_signing_in);
-                    mRef = DatabaseRefUtil.getmUsersRef();
-                    mUserRef = DatabaseRefUtil.getmUsersRef();
-                    usernameQuery = mRef.orderByChild("nickname").equalTo(loginInput.toLowerCase());
-                    usernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.exists()) {
-                                mUserRef.addChildEventListener(new ChildEventListener() {
-                                    @Override
-                                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                                        User user = dataSnapshot.getValue(User.class);
-                                        String nickname = user.getNickname().toLowerCase();
-                                        String introducedNickname = loginInput.toLowerCase();
-                                        if (user.getNickname() != null && nickname.equals(introducedNickname)) {
-                                            signIn(user.getEmail(), mPasswordEditText.getText().toString());
-                                            return;
-                                        }
+                mActivityHelper.showLoadingDialog(R.string.progress_dialog_signing_in);
+                mRef = DatabaseRefUtil.getmUsersRef();
+                mUserRef = DatabaseRefUtil.getmUsersRef();
+                usernameQuery = mRef.orderByChild("nickname").equalTo(loginInput.toLowerCase());
+                usernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            mUserRef.addChildEventListener(new ChildEventListener() {
+                                @Override
+                                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                    User user = dataSnapshot.getValue(User.class);
+                                    String nickname = user.getNickname().toLowerCase();
+                                    String introducedNickname = loginInput.toLowerCase();
+                                    if (user.getNickname() != null && nickname.equals(introducedNickname)) {
+                                        signIn(user.getEmail(), mPasswordEditText.getText().toString());
+                                        return;
                                     }
+                                }
 
-                                    @Override
-                                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                                @Override
+                                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-                                    }
+                                }
 
-                                    @Override
-                                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+                                @Override
+                                public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-                                    }
+                                }
 
-                                    @Override
-                                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                                @Override
+                                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-                                    }
+                                }
 
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
 
-                                    }
-                                });
-                            } else {
-                                mAcquireEmailHelper.checkAccountExists(loginInput);
-                                return;
-                            }
+                                }
+                            });
+                        } else {
+                            mAcquireEmailHelper.checkAccountExists(loginInput);
+                            return;
                         }
+                    }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-                        }
-                    });
+                    }
+                });
 
-                }
-            } else if (view.getId() == R.id.trouble_signing_in) {
-                startActivity(RecoverPasswordActivity.createIntent(
-                        this,
-                        mActivityHelper.getFlowParams(),
-                        mEmailEditText.getText().toString()));
-                return;
             }
+        } else if (view.getId() == R.id.trouble_signing_in) {
+            startActivity(RecoverPasswordActivity.createIntent(
+                    this,
+                    mActivityHelper.getFlowParams(),
+                    mEmailEditText.getText().toString()));
+            return;
         }
+    }
 
 
     @Override

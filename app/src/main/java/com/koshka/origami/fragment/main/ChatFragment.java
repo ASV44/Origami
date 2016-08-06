@@ -14,6 +14,7 @@ import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCal
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.koshka.origami.R;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -21,13 +22,15 @@ import butterknife.ButterKnife;
  */
 public class ChatFragment extends BaseFragment implements ObservableScrollViewCallbacks {
 
+    @BindView(R.id.list)
+    ObservableListView listView;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
         ButterKnife.bind(this, view);
 
-        ObservableListView listView = (ObservableListView) view.findViewById(R.id.list);
         listView.setScrollViewCallbacks(this);
         setDummyData(listView);
         return view;
@@ -58,6 +61,7 @@ public class ChatFragment extends BaseFragment implements ObservableScrollViewCa
         if (scrollState == ScrollState.UP) {
             if (ab.isShowing()) {
                 ab.hide();
+
             }
         } else if (scrollState == ScrollState.DOWN) {
             if (!ab.isShowing()) {

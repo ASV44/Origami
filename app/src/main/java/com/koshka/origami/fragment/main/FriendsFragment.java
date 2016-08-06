@@ -81,26 +81,27 @@ public class FriendsFragment extends Fragment {
         // Creating alert Dialog with one Button
         final AlertDialog.Builder alertUserInfoDialog = new AlertDialog.Builder(getActivity());
 
-        // Creating alert Dialog with one Button
-        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+        final Query findFriendQuery;
 
-        String userInput = input.getText().toString();
+        String userInput2 = input.getText().toString();
+        String userInput = userInput2.replaceAll(" ", "%20");
 
         if (userInput != null && !userInput.isEmpty()) {
             boolean isEmail = Patterns.EMAIL_ADDRESS.matcher(userInput).matches();
             if (isEmail) {
-                String email = userInput;
-                if (email != null && !email.isEmpty()) {
-                    final Query query = DatabaseRefUtil.getFindUserByEmailQuery(email);
-                    query.addListenerForSingleValueEvent(new ValueEventListener() {
+                findFriendQuery = DatabaseRefUtil.getFindUserByEmailQuery(userInput);
+            }  else {
+                findFriendQuery = DatabaseRefUtil.getFindUserByNicknameQuery(userInput);
+            }
+                    findFriendQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
-                                query.addChildEventListener(new ChildEventListener() {
+                                findFriendQuery.addChildEventListener(new ChildEventListener() {
                                     @Override
                                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                                         final User user = dataSnapshot.getValue(User.class);
-                                        if (!user.getEmail().equals(mAuth.getCurrentUser().getEmail())) {
+                                        if (!user.getEmail().equals(mAuth.getCurrentUser().getEmail()) && !user.getDisplayName().equals(mAuth.getCurrentUser().getDisplayName())) {
 
                                             alertUserInfoDialog.setTitle("Is that him?");
                                             if (user.getDisplayName() == null) {
@@ -171,94 +172,7 @@ public class FriendsFragment extends Fragment {
                         }
                     });
                 }
-                alertDialog.create();
-                alertDialog.show();
-            } else {
-                String nickname = userInput;
-                final Query query = DatabaseRefUtil.getFindUserByNicknameQuery(nickname);
-                query.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            query.addChildEventListener(new ChildEventListener() {
-                                @Override
-                                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                                    final User user = dataSnapshot.getValue(User.class);
-                                    if (!user.getNickname().equals(mAuth.getCurrentUser().getDisplayName())) {
-                                        alertUserInfoDialog.setTitle("Is that him?");
-                                        if (user.getDisplayName() == null) {
-                                            alertUserInfoDialog.setMessage(user.getNickname() + ", " + user.getEmail() + "," + user.getUid());
-                                        } else {
-                                            alertUserInfoDialog.setMessage(user.getDisplayName() + ", " + user.getEmail() + "," + user.getUid());
-                                        }
-                                        alertUserInfoDialog.setPositiveButton("Yes, that's him", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                Friend friend = new Friend();
-                                                friend.setDisplayName(user.getDisplayName());
-                                                friend.setEmail(user.getEmail());
-                                                friend.setUid(user.getUid());
-                                                friend.setNickname(user.getNickname());
-                                                mMyFriends.push().setValue(friend);
-                                            }
-                                        });
-                                        alertUserInfoDialog.create();
-                                        alertUserInfoDialog.show();
-                                    } else {
-
-                                        alertUserInfoDialog.setMessage("That seems to be you. :)");
-                                        alertUserInfoDialog.create();
-                                        alertUserInfoDialog.show();
-                                    }
-
-                                }
-
-                                @Override
-                                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                                }
-
-                                @Override
-                                public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                                }
-
-                                @Override
-                                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-                        } else {
-                            alertUserInfoDialog.setTitle("No such user in Origami");
-                            alertUserInfoDialog.setMessage("Do you want to invite " + input.getText().toString() + "?");
-                            alertUserInfoDialog.setPositiveButton("Invite", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-
-                                }
-                            });
-                            alertUserInfoDialog.create();
-                            alertUserInfoDialog.show();
-
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
             }
-            alertDialog.create();
-            alertDialog.show();
-
-            }
-        }
 
     private void attachRecyclerViewAdapter() {
         Query lastFifty = DatabaseRefUtil.getmMyFriendsRef(mAuth.getCurrentUser().getUid()).limitToLast(50);
@@ -288,7 +202,7 @@ public class FriendsFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        attachRecyclerViewAdapter();
+      /*  attachRecyclerViewAdapter();*/
 
     }
 

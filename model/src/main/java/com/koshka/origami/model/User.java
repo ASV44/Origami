@@ -14,11 +14,6 @@ public class User {
     private String nickname;
     private String displayName;
     private String photoUrl;
-    private String country;
-    private String languagePreference;
-    private Map<String,Friend> friendList;
-    private Coordinate currentLocation;
-
     public User() {
     }
 
@@ -26,10 +21,11 @@ public class User {
         this.email = email;
     }
 
-    public User(String email, String uid) {
+    public User(String email, String nickname) {
         this.email = email;
-        this.uid = uid;
+        this.nickname = nickname;
     }
+
 
     public User(String displayName, String uid, String email) {
         this.displayName = displayName;
@@ -37,28 +33,13 @@ public class User {
         this.email = email;
     }
 
-    public User(String uid, String email, String username, String country, String displayName) {
+
+    public User(String uid, String email, String nickname, String displayName, String photoUrl) {
         this.uid = uid;
         this.email = email;
-        this.nickname = username;
-        this.country = country;
+        this.nickname = nickname;
         this.displayName = displayName;
-    }
-
-    public Map<String, Friend> getFriendList() {
-        return friendList;
-    }
-
-    public void setFriendList(Map<String, Friend> friendList) {
-        this.friendList = friendList;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
+        this.photoUrl = photoUrl;
     }
 
     public String getNickname() {
@@ -93,14 +74,6 @@ public class User {
         this.displayName = displayName;
     }
 
-    public Coordinate getCurrentLocation() {
-        return currentLocation;
-    }
-
-    public void setCurrentLocation(Coordinate currentLocation) {
-        this.currentLocation = currentLocation;
-    }
-
 
     public String getPhotoUrl() {
         return photoUrl;
@@ -110,12 +83,6 @@ public class User {
         this.photoUrl = photoUrl;
     }
 
-    public String getLanguagePreference() {
-        return languagePreference;
-    }
 
-    public void setLanguagePreference(String languagePreference) {
-        this.languagePreference = languagePreference;
-    }
 
 }

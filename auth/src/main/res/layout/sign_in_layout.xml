@@ -64,6 +64,10 @@
             />
         <Button
             style="@style/FirebaseUI.Button"
+            android:text="Register"
+            android:id="@+id/button_register"/>
+        <Button
+            style="@style/FirebaseUI.Button"
             android:text="@string/button_text_next"
             android:id="@+id/button_done"/>
     </LinearLayout>

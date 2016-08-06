@@ -42,8 +42,7 @@ public class NetworkUtil {
         } else if (conn == NetworkUtil.TYPE_MOBILE) {
             status = "Mobile data enabled";
         } else if (conn == NetworkUtil.TYPE_NOT_CONNECTED) {
-            status = "Not connected to Internet" + context.getTheme().toString();
-            context.setTheme(R.style.AppTheme);
+            status = "Not connected to Internet";
         }
         return status;
     }

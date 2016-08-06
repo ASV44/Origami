@@ -66,59 +66,64 @@ public class AcquireEmailHelper {
     public void checkAccountExists(final String email) {
         boolean emailValid = Patterns.EMAIL_ADDRESS.matcher(email).matches();
         final FirebaseAuth firebaseAuth = mActivityHelper.getFirebaseAuth();
-        if (emailValid) {
+        if (email != null && !email.isEmpty()) {
+            if (emailValid) {
 
-            mActivityHelper.showLoadingDialog(R.string.progress_dialog_loading);
-            if (email != null && !email.isEmpty()) {
-                firebaseAuth
-                        .fetchProvidersForEmail(email)
-                        .addOnFailureListener(
-                                new TaskFailureLogger(TAG, "Error fetching providers for email"))
-                        .addOnCompleteListener(
-                                new OnCompleteListener<ProviderQueryResult>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<ProviderQueryResult> task) {
-                                        if (task.isSuccessful()) {
-                                            startEmailHandler(email, task.getResult().getProviders());
-                                        } else {
-                                            mActivityHelper.dismissDialog();
+                mActivityHelper.showLoadingDialog(R.string.progress_dialog_loading);
+                if (email != null && !email.isEmpty()) {
+                    firebaseAuth
+                            .fetchProvidersForEmail(email)
+                            .addOnFailureListener(
+                                    new TaskFailureLogger(TAG, "Error fetching providers for email"))
+                            .addOnCompleteListener(
+                                    new OnCompleteListener<ProviderQueryResult>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<ProviderQueryResult> task) {
+                                            if (task.isSuccessful()) {
+                                                startEmailHandler(email, task.getResult().getProviders());
+                                            } else {
+                                                mActivityHelper.dismissDialog();
+                                            }
                                         }
-                                    }
-                                });
-            }
-        } else {
+                                    });
+                }
+            } else if (!emailValid) {
 
-            mRef = DatabaseRefUtil.getmUsersRef();
-            mUserRef = DatabaseRefUtil.getmUsersRef();
-            usernameQuery = mRef.orderByChild("nickname").equalTo(email);
+                mRef = DatabaseRefUtil.getmUsersRef();
+                mUserRef = DatabaseRefUtil.getmUsersRef();
+                usernameQuery = mRef.orderByChild("nickname").equalTo(email);
 
-            usernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        mActivityHelper.showLoadingDialog(R.string.progress_dialog_loading);
-                        ArrayList<String> selectedProviders = new ArrayList<>();
-                        selectedProviders.add(EmailAuthProvider.PROVIDER_ID);
-                        startEmailHandler(email, selectedProviders);
-                    } else {
+                usernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            mActivityHelper.showLoadingDialog(R.string.progress_dialog_loading);
+                            ArrayList<String> selectedProviders = new ArrayList<>();
+                            selectedProviders.add(EmailAuthProvider.PROVIDER_ID);
+                            startEmailHandler(email, selectedProviders);
+                        } else {
 
-                        mActivityHelper.showLoadingDialog(R.string.progress_dialog_loading);
-                        if (email != null && !email.isEmpty()) {
+                            mActivityHelper.showLoadingDialog(R.string.progress_dialog_loading);
+                            if (email != null && !email.isEmpty()) {
 
-                                                        ArrayList<String> selectedProviders = new ArrayList<>();
-                                                        startEmailHandler(email, selectedProviders);
+                                ArrayList<String> selectedProviders = new ArrayList<>();
+                                startEmailHandler(email, selectedProviders);
 
+                            }
                         }
                     }
-                }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-                }
-            });
+                    }
+                });
+            }
+
+        } else {
+            ArrayList<String> selectedProviders = new ArrayList<>();
+            startEmailHandler(email, selectedProviders);
         }
-
     }
 
 
