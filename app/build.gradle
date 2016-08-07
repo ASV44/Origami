@@ -42,7 +42,6 @@ dependencies {
     compile project(path: ':auth')
     compile project(path: ':database')
     compile project(path: ':model')
-    compile(name: 'material-search', ext: 'aar')
 
     //FIREBASE
     compile "com.google.firebase:firebase-database:${project.ext.firebase_version}"
@@ -57,19 +56,10 @@ dependencies {
     apt 'com.jakewharton:butterknife-compiler:8.0.1'
 
     //UI from github
-    compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.jakewharton:butterknife:8.0.1'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'me.relex:circleindicator:1.2.1@aar'
-    compile 'br.com.mauker.materialsearchview:materialsearchview:1.1.2'
-    compile 'com.github.devlight.navigationtabbar:navigationtabbar:1.2.3'
-    compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.github.ksoichiro:android-observablescrollview:1.6.0'
-    compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
-    compile 'com.daimajia.easing:library:1.0.0@aar'
-    compile 'com.daimajia.androidanimations:library:1.1.2@aar'
-    compile 'com.daimajia.androidviewhover:library:1.0.4@aar'
-    compile 'com.makeramen:roundedimageview:1.3.0'
     compile 'com.ogaclejapan.smarttablayout:library:1.6.1@aar'
     compile 'com.github.traex.expandablelayout:library:1.2.2'
 

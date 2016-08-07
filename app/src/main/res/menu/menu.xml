@@ -4,13 +4,13 @@
     tools:context=".activity.main.MainActivity">
 
     <item
-        android:id="@+id/action_profile"
-        android:title="@string/action_profile"
-        app:showAsAction="never" />
-    <item
         android:id="@+id/map_view"
+        android:icon="@drawable/ic_explore_white_36dp"
         android:title="map"
-        app:showAsAction="always">
-
-    </item>
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_profile"
+        android:icon="@drawable/ic_account_box_white_36dp"
+        android:title="@string/action_profile"
+        app:showAsAction="always" />
 </menu>

@@ -41,9 +41,8 @@ import com.firebase.ui.auth.ui.FlowParameters;
 import com.firebase.ui.auth.ui.TaskFailureLogger;
 import com.firebase.ui.auth.ui.account_link.SaveCredentialsActivity;
 import com.firebase.ui.auth.ui.email.field_validators.EmailFieldValidator;
-import com.firebase.ui.auth.ui.email.field_validators.NicknameValidator;
+import com.firebase.ui.auth.ui.email.field_validators.UsernameValidator;
 import com.firebase.ui.auth.ui.email.field_validators.PasswordFieldValidator;
-import com.firebase.ui.auth.ui.email.field_validators.RequiredFieldValidator;
 import com.firebase.ui.auth.util.FirebaseAuthWrapperFactory;
 import com.firebase.ui.database.DatabaseRefUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -57,16 +56,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.koshka.origami.model.Friend;
-import com.koshka.origami.model.GhostOrigami;
 import com.koshka.origami.model.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class RegisterEmailActivity extends AppCompatBase implements View.OnClickListener {
+
     private static final int RC_SAVE_CREDENTIAL = 3;
     private static final String TAG = "RegisterEmailActivity";
     private EditText mEmailEditText;
@@ -74,12 +67,10 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
     private EditText mNameEditText;
     private EmailFieldValidator mEmailFieldValidator;
     private PasswordFieldValidator mPasswordFieldValidator;
-    private NicknameValidator mNameValidator;
+    private UsernameValidator mNameValidator;
     private ImageView mTogglePasswordImage;
     private FirebaseAuth mAuth;
-    private DatabaseReference mMyFriendsRef;
     private DatabaseReference mMeRef;
-    private DatabaseReference mOrigamiRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +102,7 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
         mPasswordFieldValidator = new PasswordFieldValidator((TextInputLayout)
                 findViewById(R.id.password_layout),
                 getResources().getInteger(R.integer.min_password_length));
-        mNameValidator = new NicknameValidator((TextInputLayout)
+        mNameValidator = new UsernameValidator((TextInputLayout)
                 findViewById(R.id.name_layout));
         mEmailFieldValidator = new EmailFieldValidator((TextInputLayout) findViewById(R.id
                 .email_layout));
@@ -172,14 +163,14 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
         }
     }
 
-    private void registerUser(final String email, final String nickname, final String password) {
+    private void registerUser(final String email, final String username, final String password) {
         final FirebaseAuth firebaseAuth = mActivityHelper.getFirebaseAuth();
 
         DatabaseReference mUsernameRef = DatabaseRefUtil.getmUsersRef();
 
-        final String lowerCaseUserName = nickname.toLowerCase();
+        final String lowerCaseUserName = username.toLowerCase();
 
-        Query mUsernameQuery = mUsernameRef.orderByChild("nickname").equalTo(lowerCaseUserName);
+        Query mUsernameQuery = mUsernameRef.orderByChild("username").equalTo(lowerCaseUserName);
         final Resources res = getResources();
         final Uri photoUri = Uri.parse(res.getString(R.string.default_photo_url));
         mUsernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -225,7 +216,7 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
                     mActivityHelper.dismissDialog();
                     TextInputLayout nameLayout =
                             (TextInputLayout) findViewById(R.id.name_layout);
-                    nameLayout.setError("This nickname is taken");
+                    nameLayout.setError("This username is taken");
                 }
 
             }
@@ -252,7 +243,7 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
         mAuth = FirebaseAuth.getInstance();
         String uid = mAuth.getCurrentUser().getUid();
         String email = mAuth.getCurrentUser().getEmail();
-        String nickname = mAuth.getCurrentUser().getDisplayName();
+        String username = mAuth.getCurrentUser().getDisplayName();
 
         //TAKE FIREBASE REFS
 
@@ -262,7 +253,7 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
         //-------------------------------------------
         //SETUP THE USER /users/uid
 
-        User user = new User(email, nickname);
+        User user = new User(email, username);
 
         mMeRef.setValue(user, new DatabaseReference.CompletionListener() {
             @Override
@@ -317,15 +308,15 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
 
             String email = email2.trim();
             String password = password2.trim();
-            String name = name2.trim();
+            String username = name2.trim();
 
             boolean emailValid = mEmailFieldValidator.validate(email);
-            boolean nameValid = mNameValidator.validate(name);
+            boolean usernameValid = mNameValidator.validate(username);
             boolean passwordValid = mPasswordFieldValidator.validate(password);
 
-            if (emailValid && passwordValid && nameValid) {
+            if (emailValid && passwordValid && usernameValid) {
                 mActivityHelper.showLoadingDialog(R.string.progress_dialog_signing_up);
-                registerUser(email, name, password);
+                registerUser(email, username, password);
             }
         }
     }

@@ -34,16 +34,16 @@ public class FriendHolder extends RecyclerView.ViewHolder {
         this.view = itemView;
     }
 
-    public void setFriendNickname(String nickname) {
+/*    public void setFriendNickname(String nickname) {
         friendNickname = (TextView) view.findViewById(R.id.friend_nickname);
         friendNickname.setText(nickname);
     }
-/*
+*//*
     public void setFriendName(String displayName) {
         friendName = (TextView) view.findViewById(R.id.friend_name);
         friendName.setText(displayName);
 
-    }*/
+    }*//*
     public void setFriendEmail(String email){
         friendEmail = (TextView) view.findViewById(R.id.friend_email);
         friendEmail.setText(email);
@@ -55,5 +55,5 @@ public class FriendHolder extends RecyclerView.ViewHolder {
                 .load(pictureUrl)
                 .fitCenter()
                 .into(friendPicture);
-    }
+    }*/
 }

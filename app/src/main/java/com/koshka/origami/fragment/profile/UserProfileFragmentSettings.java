@@ -38,10 +38,6 @@ public class UserProfileFragmentSettings extends Fragment {
     private DatabaseReference mMeRef;
     private FirebaseAuth mAuth;
 
-
-    private final String[] array = {"Hello", "World", "Android", "is", "Awesome", "World", "Android", "is", "Awesome", "World", "Android", "is", "Awesome", "World", "Android", "is", "Awesome"};
-
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -62,6 +58,25 @@ public class UserProfileFragmentSettings extends Fragment {
 
     @OnClick(R.id.sign_out)
     public void signOut() {
+
+        Resources res = getResources();
+
+        AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                .setMessage(res.getString(R.string.log_out_warning))
+                .setPositiveButton(res.getString(R.string.positive_log_out), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                       signOutFromFirebase();
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .create();
+
+        dialog.show();
+
+    }
+
+    private void signOutFromFirebase(){
         AuthUI.getInstance()
                 .signOut(getActivity())
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -92,7 +107,7 @@ public class UserProfileFragmentSettings extends Fragment {
                         deleteAccount();
                     }
                 })
-                .setNegativeButton("No", null)
+                .setNegativeButton("Cancel", null)
                 .create();
 
         dialog.show();

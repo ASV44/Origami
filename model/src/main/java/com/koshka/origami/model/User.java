@@ -11,7 +11,7 @@ public class User {
 
     private String uid;
     private String email;
-    private String nickname;
+    private String username;
     private String displayName;
     private String photoUrl;
     public User() {
@@ -21,9 +21,9 @@ public class User {
         this.email = email;
     }
 
-    public User(String email, String nickname) {
+    public User(String email, String username) {
         this.email = email;
-        this.nickname = nickname;
+        this.username = username;
     }
 
 
@@ -34,20 +34,20 @@ public class User {
     }
 
 
-    public User(String uid, String email, String nickname, String displayName, String photoUrl) {
+    public User(String uid, String email, String username, String displayName, String photoUrl) {
         this.uid = uid;
         this.email = email;
-        this.nickname = nickname;
+        this.username = username;
         this.displayName = displayName;
         this.photoUrl = photoUrl;
     }
 
-    public String getNickname() {
-        return nickname;
+    public String getUsername() {
+        return username;
     }
 
-    public void setNickname(String username) {
-        this.nickname = username;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getUid() {

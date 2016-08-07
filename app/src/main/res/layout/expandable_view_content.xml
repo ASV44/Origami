@@ -8,15 +8,15 @@
         android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="48dp"
+        android:background="@color/transparent1"
         android:gravity="center"
         android:hint="Enter a new password"
-        android:textColor="@android:color/white"
-        android:background="@color/transparent1"/>
+        android:textColor="@android:color/white" />
 
     <Button
-        android:layout_below="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="CHANGE"/>
+        android:layout_below="@+id/text"
+        android:text="CHANGE" />
 
 </RelativeLayout>

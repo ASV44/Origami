@@ -16,10 +16,6 @@ public class DatabaseRefUtil {
     private static final Query findUserByEmailQuery = null;
     private static final DatabaseReference mFriendsRef = FirebaseDatabase.getInstance().getReference().child("friends");
     private static final DatabaseReference mOrigamiRef = FirebaseDatabase.getInstance().getReference().child("origami");
-
-    private static final DatabaseReference mMyFriendRequestsRef = null;
-    private static final DatabaseReference mNickname = null;
-
     public static DatabaseReference getUserRefByUid(String uid){
         return mUsersRef.child(uid);
     }
@@ -56,8 +52,8 @@ public class DatabaseRefUtil {
 
     }
 
-    public static Query getFindUserByNicknameQuery(String nickname) {
-        return FirebaseDatabase.getInstance().getReference().child("users").orderByChild("nickname").equalTo(nickname);
+    public static Query getFindUserByUsernameQuery(String username) {
+        return FirebaseDatabase.getInstance().getReference().child("users").orderByChild("username").equalTo(username);
 
     }
 
@@ -69,11 +65,4 @@ public class DatabaseRefUtil {
         return mUsersRef.child(myUid).child("friendList");
     }
 
-    public static DatabaseReference getmMyFriendRequestsRef() {
-        return mMyFriendRequestsRef;
-    }
-
-    public static DatabaseReference getmNickname() {
-        return mUsersRef.child("nickname");
-    }
 }

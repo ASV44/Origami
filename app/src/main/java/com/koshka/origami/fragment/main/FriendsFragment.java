@@ -72,7 +72,7 @@ public class FriendsFragment extends Fragment {
 
     }
 
-    @OnClick(R.id.search_friend_button)
+   /* @OnClick(R.id.search_friend_button)
     public void searchFriend(View view) {
 
         final FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -91,7 +91,7 @@ public class FriendsFragment extends Fragment {
             if (isEmail) {
                 findFriendQuery = DatabaseRefUtil.getFindUserByEmailQuery(userInput);
             }  else {
-                findFriendQuery = DatabaseRefUtil.getFindUserByNicknameQuery(userInput);
+                findFriendQuery = DatabaseRefUtil.getFindUserByUsernameQuery(userInput);
             }
                     findFriendQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -105,7 +105,7 @@ public class FriendsFragment extends Fragment {
 
                                             alertUserInfoDialog.setTitle("Is that him?");
                                             if (user.getDisplayName() == null) {
-                                                alertUserInfoDialog.setMessage(user.getNickname() + ", " + user.getEmail() + "," + user.getUid());
+                                                alertUserInfoDialog.setMessage(user.getUsername() + ", " + user.getEmail() + "," + user.getUid());
                                             } else {
                                                 alertUserInfoDialog.setMessage(user.getDisplayName() + ", " + user.getEmail() + "," + user.getUid());
                                             }
@@ -116,7 +116,7 @@ public class FriendsFragment extends Fragment {
                                                     friend.setDisplayName(user.getDisplayName());
                                                     friend.setEmail(user.getEmail());
                                                     friend.setUid(user.getUid());
-                                                    friend.setNickname(user.getNickname());
+                                                    friend.setNickname(user.getUsername());
                                                     mMyFriends.push().setValue(friend);
                                                 }
                                             });
@@ -172,8 +172,8 @@ public class FriendsFragment extends Fragment {
                         }
                     });
                 }
-            }
-
+            }*/
+/*
     private void attachRecyclerViewAdapter() {
         Query lastFifty = DatabaseRefUtil.getmMyFriendsRef(mAuth.getCurrentUser().getUid()).limitToLast(50);
         mRecyclerViewAdapter = new FirebaseRecyclerAdapter<Friend, FriendHolder>(
@@ -196,7 +196,7 @@ public class FriendsFragment extends Fragment {
         });
 
         friendsRecyclerView.setAdapter(mRecyclerViewAdapter);
-    }
+    }*/
 
     @Override
     public void onStart() {

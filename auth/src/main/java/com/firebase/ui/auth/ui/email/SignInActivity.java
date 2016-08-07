@@ -83,7 +83,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
         mAcquireEmailHelper = new AcquireEmailHelper(mActivityHelper);
         final String email = getIntent().getStringExtra(ExtraConstants.EXTRA_EMAIL);
 
-        mEmailEditText = (EditText) findViewById(R.id.email_nickname);
+        mEmailEditText = (EditText) findViewById(R.id.email_username);
 
         TypedValue visibleIcon = new TypedValue();
         TypedValue slightlyVisibleIcon = new TypedValue();
@@ -149,7 +149,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
 
                         mRef = DatabaseRefUtil.getmUsersRef();
                         mUserRef = DatabaseRefUtil.getmUsersRef();
-                        usernameQuery = mRef.orderByChild("nickname").equalTo(inputEmail);
+                        usernameQuery = mRef.orderByChild("username").equalTo(inputEmail);
 
                         usernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -157,7 +157,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
                                 if (dataSnapshot.exists()) {
                                     mActivityHelper.showLoadingDialog(R.string.progress_dialog_loading);
                                     TextInputLayout loginTextLayout = (TextInputLayout) findViewById(R.id.email_nickname_layout);
-                                    loginTextLayout.setError("Nickname already registered");
+                                    loginTextLayout.setError("Username already registered");
                                     mActivityHelper.dismissDialog();
                                 } else {
 
@@ -318,7 +318,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
                 mActivityHelper.showLoadingDialog(R.string.progress_dialog_signing_in);
                 mRef = DatabaseRefUtil.getmUsersRef();
                 mUserRef = DatabaseRefUtil.getmUsersRef();
-                usernameQuery = mRef.orderByChild("nickname").equalTo(loginInput.toLowerCase());
+                usernameQuery = mRef.orderByChild("username").equalTo(loginInput.toLowerCase());
                 usernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -327,9 +327,9 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
                                 @Override
                                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                                     User user = dataSnapshot.getValue(User.class);
-                                    String nickname = user.getNickname().toLowerCase();
+                                    String nickname = user.getUsername().toLowerCase();
                                     String introducedNickname = loginInput.toLowerCase();
-                                    if (user.getNickname() != null && nickname.equals(introducedNickname)) {
+                                    if (user.getUsername() != null && nickname.equals(introducedNickname)) {
                                         signIn(user.getEmail(), mPasswordEditText.getText().toString());
                                         return;
                                     }

@@ -15,11 +15,12 @@
         app:errorTextAppearance="@style/FirebaseUI.Text.ErrorText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
+9
         <EditText
             style="@style/FirebaseUI.EditText"
-            android:id="@+id/email_nickname"
+            android:id="@+id/email_username"
             android:hint="@string/email_nick_hint"
+            android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-.@"
             />
     </android.support.design.widget.TextInputLayout>
 

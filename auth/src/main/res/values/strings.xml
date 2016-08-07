@@ -1,7 +1,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">ui_flow</string>
     <string name="email_hint">Email</string>
-    <string name="email_nick_hint">Email/Nickname</string>
+    <string name="email_nick_hint">Email/Username</string>
     <string name="sign_in_no_password_title">Put an email to use for sign in</string>
     <string name="button_ok_text">OK</string>
     <string name="password_hint">Password</string>
@@ -9,7 +9,7 @@
     <string name="button_singin_text">Sign In</string>
     <string name="button_password_recovery_text">Trouble remembering your password</string>
     <string name="name_hint">First &amp; last name</string>
-    <string name="nickname_hint">Nickname</string>
+    <string name="nickname_hint">Username</string>
     <string name="password_recovery_title">Forgot password</string>
     <string name="password_recovery_body">Get instructions sent to this email that explain how to
         reset your password.</string>
@@ -67,6 +67,12 @@
     <string name="origami_name">Ghost Origami</string>
     <string name="default_photo_url">http://209.132.179.3/uploads/big/2df7cab0a2305743db864ef472b6c8b9.png</string>
 
-    <string name="invalid_nickname">Nickname can contain letters, numbers and period</string>
+    <string name="invalid_username">Invalid username</string>
+    <string name="username_must_start_with_character">Username mus start and end with a character</string>
+    <string name="username_special_characters_not_allowed">Username can only contain period underscore and hyphen</string>
+    <string name="username_too_long">Username is too long</string>
+    <string name="username_too_short">Username is too short</string>
+    <string name="username_no_character_start">The username must start with a character</string>
+    <string name="username_no_character_end">The username must end with a character or number</string>
     <string name="empty_nickname">You can\'t leave nickname empty</string>
 </resources>

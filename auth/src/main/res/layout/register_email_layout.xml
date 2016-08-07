@@ -29,6 +29,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="textEmailAddress"
                 android:hint="@string/email_hint"
+                android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-.@"
                 />
         </android.support.design.widget.TextInputLayout>
 
@@ -49,6 +50,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName"
                 android:hint="@string/nickname_hint"
+                android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-."
                 />
         </android.support.design.widget.TextInputLayout>
 

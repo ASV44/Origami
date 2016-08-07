@@ -109,7 +109,7 @@ public class NotificationHandler {
 
         // building the notification
         final NotificationCompat.Builder nBuilder = new NotificationCompat.Builder(context)
-                .setSmallIcon(R.drawable.refresh)
+                .setSmallIcon(R.drawable.ic_refresh_black_36dp)
                 .setContentTitle("Progres notification")
                 .setContentText("Now waiting")
                 .setTicker("Progress notification created")
@@ -183,9 +183,7 @@ public class NotificationHandler {
                     .setSmallIcon(R.drawable.origami) // notification icon
                     .setContentTitle("Button notification") // notification title
                     .setContentText("Expand to show the buttons...") // content text
-                    .setTicker("Showing button notification") // status bar message
-                    .addAction(R.drawable.heart, "Accept", pIntent) // accept notification button
-                    .addAction(R.drawable.heart, "Cancel", pIntent); // cancel notification button
+                    .setTicker("Showing button notification"); // status bar message
 
             mNotificationManager.notify(1001, nBuilder.build());
 
