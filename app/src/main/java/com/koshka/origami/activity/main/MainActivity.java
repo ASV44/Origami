@@ -2,30 +2,26 @@ package com.koshka.origami.activity.main;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.login.LoginActivity;
-import com.koshka.origami.fragment.main.ChatFragment;
-import com.koshka.origami.fragment.main.FriendsFragment;
 import com.koshka.origami.fragment.main.MainFragmentPagerAdapter;
-import com.koshka.origami.fragment.main.OrigamiFragment;
-import com.koshka.origami.ui.ParallaxPagerTransformer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,8 +41,6 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.main_pager)
     ViewPager mPager;
 
-    private FragmentPagerAdapter mAdapter;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,21 +55,35 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(false); // disable the button
+            actionBar.setDisplayShowCustomEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(false); // remove the left caret
             actionBar.setDisplayShowHomeEnabled(false); // remove the icon
-        }
+            actionBar.setDisplayShowTitleEnabled(false);
+            LayoutInflater inflator = (LayoutInflater) this
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View v = inflator.inflate(R.layout.action_bar_title, null);
 
+            TextView titleTV = (TextView) v.findViewById(R.id.title_main);
+            Typeface font = Typeface.createFromAsset(getAssets(),
+                    "fonts/actonia.ttf");
+            titleTV.setTypeface(font);
+            titleTV.setTextColor(getResources().getColor(R.color.transparent4));
+            actionBar.setCustomView(v);
+
+        }
+/*
         ParallaxPagerTransformer pt = new ParallaxPagerTransformer((R.id.friends_recycler_view));
         pt.setBorder(3);
         pt.setSpeed(0.7f);
-        mPager.setPageTransformer(false, pt);
+        mPager.setPageTransformer(false, pt);*/
         mPager.setAdapter(new MainFragmentPagerAdapter(getSupportFragmentManager()));
         mPager.setCurrentItem(1);
-
-
 
     }
 
@@ -95,18 +103,20 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_profile:
-                startActivity(new Intent(MainActivity.this, UserProfileActivity.class));
-                return true;
+                Intent intent = new Intent();
+                intent.setClass(MainActivity.this, UserProfileActivity.class);
+                startActivity(intent);
+                break;
             case R.id.map_view:
                 startActivity(new Intent(MainActivity.this, OrigamiMapActivity.class));
-                return true;
-
+                break;
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
 
         }
+        return true;
     }
 
 

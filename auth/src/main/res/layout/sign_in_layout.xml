@@ -1,11 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/view2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:elevation="0dp"
+        android:background="@color/transparent6">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_sign_in"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            app:layout_scrollFlags="scroll|enterAlways"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+    </android.support.design.widget.AppBarLayout>
+
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/FirebaseUI.WrapperStyle">
-    <!--
-        Since the TextInputLayouts change size based on whether or not an error
-        is showing we use a relative layout to position them absolutely
-    -->
+    style="@style/FirebaseUI.WrapperStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/view2"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentStart="true"
+    android:id="@+id/relativeLayout">
+
     <android.support.design.widget.TextInputLayout
         android:id="@+id/email_nickname_layout"
         android:paddingTop="24dp"
@@ -15,7 +40,6 @@
         app:errorTextAppearance="@style/FirebaseUI.Text.ErrorText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-9
         <EditText
             style="@style/FirebaseUI.EditText"
             android:id="@+id/email_username"
@@ -49,27 +73,59 @@
         android:paddingTop="154dp">
     </ImageView>
 
-    <LinearLayout
+</RelativeLayout>
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentStart="true"
+    android:id="@+id/linearLayout">
+
+    <TextView
+        android:id="@+id/trouble_signing_in"
+        android:text="@string/trouble_signing_in"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:paddingTop="248dp"
-        >
-        <TextView
-            android:id="@+id/trouble_signing_in"
-            android:text="@string/trouble_signing_in"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingTop="8dp"
-            style="@style/FirebaseUI.Text.Link"
-            />
-        <Button
-            style="@style/FirebaseUI.Button"
-            android:text="Register"
-            android:id="@+id/button_register"/>
-        <Button
-            style="@style/FirebaseUI.Button"
-            android:text="@string/button_text_next"
-            android:id="@+id/button_done"/>
+        android:layout_weight="1"
+        android:padding="8dp"
+        android:layout_margin="8dp"
+        style="@style/FirebaseUI.Text.Link"
+        android:textSize="13dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+</LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toRightOf="@+id/linearLayout"
+        android:layout_toEndOf="@+id/linearLayout">
+
+    <Button
+        style="@style/FirebaseUI.Button"
+        android:id="@+id/button_register"
+        android:text="@string/button_text_register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:layout_weight="8"
+        android:layout_margin="1dp"/>
+
+    <Button
+        style="@style/FirebaseUI.Button"
+        android:id="@+id/button_done"
+        android:text="@string/button_text_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:layout_weight="8.70"
+        android:layout_margin="1dp"/>
     </LinearLayout>
+
 </RelativeLayout>

@@ -37,7 +37,7 @@
         <activity
             android:configChanges="locale"
             android:name=".activity.main.MainActivity"
-            android:theme="@style/PurpleTheme">
+            android:theme="@style/PurpleThemeNoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -59,9 +59,6 @@
 
         <activity android:name=".activity.main.OrigamiMapActivity"
             android:theme="@style/PurpleThemeNoActionBar"/>
-
-    <activity android:name=".placepicker.GooglePlacePickerActivity"
-        android:theme="@style/PurpleTheme"/>
 
     </application>
 

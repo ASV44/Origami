@@ -7,11 +7,15 @@
 
     <color name="headingColor">#212121</color>
     <color name="bodyTextColor">#c0000000</color>
-    <color name="errorColor">#DD2C00</color>
-    <color name="linkColor">#4285F4</color>
+    <color name="errorColor">#53ffffff</color>
+    <color name="linkColor">#ffffff</color>
     <color name="buttonColor">@color/authui_colorPrimary</color>
     <color name="buttonColorPressed">@color/authui_colorActivated</color>
     <color name="buttonTextColor">#FFFFFF</color>
-    <color name="inputLabelColor">#757575</color>
+    <color name="inputLabelColor">#e4e4e4</color>
     <color name="shadowColor">#eeeeee</color>
+
+    <color name="transparent4">#6b000000</color>
+    <color name="transparent6">#13000000</color>
+    <color name="transparent5">#96000000</color>
 </resources>

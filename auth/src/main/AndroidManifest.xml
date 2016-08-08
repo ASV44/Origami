@@ -6,21 +6,24 @@
                   android:name="com.firebase.ui.auth.ui.email.ConfirmRecoverPasswordActivity"
             android:screenOrientation="portrait">
         </activity>
-        <activity android:theme="@style/FirebaseUI.Translucent" android:name="com.firebase.ui.auth.ui.email.EmailHintContainerActivity" >
+        <activity android:theme="@style/FirebaseUI" android:name="com.firebase.ui.auth.ui.email.EmailHintContainerActivity" >
         </activity>
-        <activity android:theme="@style/FirebaseUI.Translucent" android:name="com.firebase.ui.auth.ui.email.RecoverPasswordActivity"
+        <activity android:theme="@style/FirebaseUI" android:name="com.firebase.ui.auth.ui.email.RecoverPasswordActivity"
             android:screenOrientation="portrait">
         </activity>
-        <activity android:theme="@style/FirebaseUI.Translucent" android:name="com.firebase.ui.auth.ui.email.RegisterEmailActivity"
-            android:screenOrientation="portrait">
+        <activity android:theme="@style/FirebaseUI" android:name="com.firebase.ui.auth.ui.email.RegisterEmailActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible|adjustResize">
         </activity>
         <activity android:theme="@style/FirebaseUI" android:name="com.firebase.ui.auth.ui.email.SignInNoPasswordActivity"
             android:screenOrientation="portrait">
         </activity>
-        <activity android:theme="@style/FirebaseUI.Translucent" android:name="com.firebase.ui.auth.ui.email.SignInActivity"
+        <activity android:theme="@style/FirebaseUI"
+            android:windowSoftInputMode="stateVisible|adjustResize"
+            android:name="com.firebase.ui.auth.ui.email.SignInActivity"
             android:screenOrientation="portrait">
         </activity>
-        <activity android:theme="@style/FirebaseUI.Translucent"
+        <activity android:theme="@style/FirebaseUI"
                   android:name="com.firebase.ui.auth.ui.account_link.SaveCredentialsActivity">
         </activity>
         <activity android:theme="@style/FirebaseUI" android:name="com.firebase.ui.auth.ui.account_link.WelcomeBackIDPPrompt" >
@@ -29,10 +32,10 @@
         </activity>
         <activity android:theme="@style/FirebaseUI" android:name=".ui.idp.AuthMethodPickerActivity" >
         </activity>
-        <activity android:theme="@style/FirebaseUI.Translucent"
+        <activity android:theme="@style/FirebaseUI"
                   android:name="com.firebase.ui.auth.ui.idp.IDPSignInContainerActivity" >
         </activity>
-        <activity android:theme="@style/FirebaseUI.Translucent"
+        <activity android:theme="@style/FirebaseUI"
                    android:name=".ui.ChooseAccountActivity" >
         </activity>
         <activity android:theme="@style/FirebaseUI.Translucent"

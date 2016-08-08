@@ -66,7 +66,6 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.language_text_button)
     ImageButton languageTextButton;
 
-    private FragmentPagerAdapter mPagerAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

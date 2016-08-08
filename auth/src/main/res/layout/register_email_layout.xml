@@ -1,13 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/view2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:elevation="0dp"
+        android:background="@color/transparent6">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_sign_up"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            app:layout_scrollFlags="scroll|enterAlways"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+    </android.support.design.widget.AppBarLayout>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
-    android:layout_width="match_parent">
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_below="@+id/view2"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentStart="true"
+    android:id="@+id/scrollView">
+
 
     <RelativeLayout
                   style="@style/FirebaseUI.WrapperStyle"
                   android:layout_width="match_parent"
-                  android:layout_height="wrap_content">
+                  android:layout_height="wrap_content"
+        android:layout_below="@+id/view2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
         <!--
             Since the TextInputLayouts change size based on whether or not an error
             is showing we use a relative layout to position them absolutely
@@ -89,13 +118,22 @@
             style="@style/FirebaseUI.Text.BodyText"
             />
 
-
-        <Button
-            style="@style/FirebaseUI.Button.NextButton"
-            android:layout_below="@id/create_account_text"
-            android:id="@+id/button_create"
-            android:layout_alignParentRight="true"
-            android:text="@string/button_text_save"
-            />
     </RelativeLayout>
 </ScrollView>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+        <Button
+            android:id="@+id/button_create"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:text="@string/button_text_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent6"
+            android:textColor="@android:color/white"/>
+    </RelativeLayout>
+
+</RelativeLayout>

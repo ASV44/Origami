@@ -29,13 +29,6 @@
         android:text="@string/delete_account_label"
         android:theme="@style/WarnButton" />
 
-    <ImageView
-        android:id="@+id/image"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:adjustViewBounds="true"
-        android:background="@drawable/background" />
-
 
     <com.andexert.expandablelayout.library.ExpandableLayout xmlns:expandable="http://schemas.android.com/apk/res-auto"
         android:id="@+id/expandableLayout"

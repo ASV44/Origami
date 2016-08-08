@@ -34,6 +34,7 @@ dependencies {
     compile "com.google.firebase:firebase-database:${project.ext.firebase_version}"
     compile "com.google.android.gms:play-services-auth:${project.ext.firebase_version}"
     compile 'com.jakewharton:butterknife:8.0.1'
+    compile 'com.wang.avi:library:2.1.1'
 
 }
 

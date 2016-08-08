@@ -38,7 +38,7 @@ import butterknife.OnClick;
  */
 public class FriendsFragment extends Fragment {
 
-    @BindView(R.id.search_friend_button)
+    /*@BindView(R.id.search_friend_button)
     Button searchFriendButton;
 
     @BindView(R.id.user_email_nickname)
@@ -46,7 +46,7 @@ public class FriendsFragment extends Fragment {
 
     @BindView(R.id.friends_recycler_view)
     RecyclerView friendsRecyclerView;
-
+*/
     private LinearLayoutManager mManager;
     private FirebaseRecyclerAdapter<Friend, FriendHolder> mRecyclerViewAdapter;
 
@@ -67,10 +67,11 @@ public class FriendsFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         mManager = new LinearLayoutManager(getActivity());
         mManager.setReverseLayout(false);
-        friendsRecyclerView.setHasFixedSize(false);
-        friendsRecyclerView.setLayoutManager(mManager);
+/*        friendsRecyclerView.setHasFixedSize(false);
+        friendsRecyclerView.setLayoutManager(mManager);*/
 
     }
+}
 
    /* @OnClick(R.id.search_friend_button)
     public void searchFriend(View view) {
@@ -198,11 +199,11 @@ public class FriendsFragment extends Fragment {
         friendsRecyclerView.setAdapter(mRecyclerViewAdapter);
     }*/
 
-    @Override
+/*    @Override
     public void onStart() {
         super.onStart();
 
-      /*  attachRecyclerViewAdapter();*/
+      *//*  attachRecyclerViewAdapter();*//*
 
     }
 
@@ -213,7 +214,7 @@ public class FriendsFragment extends Fragment {
             mRecyclerViewAdapter.cleanup();
         }
     }
-}
+}*/
 
 
 

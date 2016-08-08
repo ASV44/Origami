@@ -11,12 +11,41 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="PurpleTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="PurpleTheme" parent="FirebaseUI">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowBackground">@color/white</item>
+        <item name="android:windowBackground">@drawable/background_color</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
         <item name="colorButtonNormal">@color/colorPrimaryDark</item>
+        <item name="windowActionBarOverlay">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:windowActionBarOverlay">true</item>
+
+    </style>
+
+    <style name="ThemeActionBar"
+        parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@null</item>
+        <!-- Support library compatibility -->
+        <item name="background">@null</item>
+        <item name="android:textColorPrimary">@color/transparent6</item>
+        <item name="android:titleTextColor">@color/transparent6</item>
+        <item name="android:textColor">@color/transparent6</item>
+        <item name="android:colorPrimaryDark">@color/transparent6</item>
+        <item name="android:colorAccent">@color/transparent6</item>
+        <item name="android:colorPrimary">@color/transparent6</item>
+        <item name="android:titleTextStyle">@style/MyTheme.ActionBar.TitleTextStyle</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="MyTheme.ActionBar.TitleTextStyle" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/transparent6</item>
     </style>
 
 
@@ -24,10 +53,16 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowBackground">@color/white</item>
+        <item name="android:windowBackground">@drawable/background_color</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="colorButtonNormal">@color/colorPrimaryDark</item>
+        <item name="windowActionBarOverlay">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:windowActionBarOverlay">true</item>
     </style>
 
 

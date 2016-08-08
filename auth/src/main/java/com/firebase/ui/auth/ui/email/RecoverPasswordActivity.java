@@ -14,12 +14,14 @@
 
 package com.firebase.ui.auth.ui.email;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -87,6 +89,7 @@ public class RecoverPasswordActivity extends AppCompatBase implements View.OnCli
 
     @Override
     public void onClick(View view) {
+        hideKeyboard();
         if (view.getId() == R.id.button_done) {
             if (!mEmailFieldValidator.validate(mEmailEditText.getText())) {
                 return;
@@ -99,5 +102,16 @@ public class RecoverPasswordActivity extends AppCompatBase implements View.OnCli
     public static Intent createIntent(Context context, FlowParameters flowParams, String email) {
         return ActivityHelper.createBaseIntent(context, RecoverPasswordActivity.class, flowParams)
                 .putExtra(ExtraConstants.EXTRA_EMAIL, email);
+    }
+
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = this.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(this);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

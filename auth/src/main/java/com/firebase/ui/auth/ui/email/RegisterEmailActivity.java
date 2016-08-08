@@ -14,6 +14,7 @@
 
 package com.firebase.ui.auth.ui.email;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -22,12 +23,17 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.util.Patterns;
 import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -57,6 +63,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.koshka.origami.model.User;
+import com.wang.avi.AVLoadingIndicatorView;
 
 public class RegisterEmailActivity extends AppCompatBase implements View.OnClickListener {
 
@@ -71,6 +78,7 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
     private ImageView mTogglePasswordImage;
     private FirebaseAuth mAuth;
     private DatabaseReference mMeRef;
+    private AVLoadingIndicatorView indicatorView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +126,31 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
               // mNameEditText.setEnabled(false);
             }
         }
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_sign_up);
+        setSupportActionBar(toolbar);
+
+        final ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeButtonEnabled(false); // disable the button
+            actionBar.setDisplayShowCustomEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(false); // remove the left caret
+            actionBar.setDisplayShowHomeEnabled(false); // remove the icon
+            actionBar.setDisplayShowTitleEnabled(true);
+
+            LayoutInflater inflater = (LayoutInflater) this
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            Toolbar.LayoutParams layout = new Toolbar.LayoutParams(Toolbar.LayoutParams.WRAP_CONTENT, Toolbar.LayoutParams.WRAP_CONTENT);
+            layout.height = 180;
+            layout.width = 180;
+            layout.gravity = Gravity.CENTER;
+            View view = inflater.inflate(R.layout.av_progress_indicator,null);
+            toolbar.addView(view, layout);
+
+        }
+
+        indicatorView = (AVLoadingIndicatorView) findViewById(R.id.av_progress_indicator);
+        indicatorView.hide();
 
         setUpTermsOfService();
         Button createButton = (Button) findViewById(R.id.button_create);
@@ -195,14 +228,14 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
                                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<Void> task) {
-                                                        mActivityHelper.dismissDialog();
+                                                        indicatorView.hide();
                                                         if (task.isSuccessful()) {
                                                             startSaveCredentials(firebaseUser, password);
                                                         }
                                                     }
                                                 });
                                     } else {
-                                        mActivityHelper.dismissDialog();
+                                        indicatorView.hide();
                                         String errorMessage = task.getException().getLocalizedMessage();
                                         errorMessage = errorMessage.substring(errorMessage.indexOf(":") + 1);
                                         TextInputLayout emailInput =
@@ -213,7 +246,7 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
                             });
                 }else {
 
-                    mActivityHelper.dismissDialog();
+                    indicatorView.hide();
                     TextInputLayout nameLayout =
                             (TextInputLayout) findViewById(R.id.name_layout);
                     nameLayout.setError("This username is taken");
@@ -301,6 +334,7 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
 
     @Override
     public void onClick(View view) {
+        hideKeyboard(this);
         if (view.getId() == R.id.button_create) {
             String email2 = mEmailEditText.getText().toString();
             String password2 = mPasswordEditText.getText().toString();
@@ -315,7 +349,7 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
             boolean passwordValid = mPasswordFieldValidator.validate(password);
 
             if (emailValid && passwordValid && usernameValid) {
-                mActivityHelper.showLoadingDialog(R.string.progress_dialog_signing_up);
+                indicatorView.show();
                 registerUser(email, username, password);
             }
         }
@@ -327,5 +361,16 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
             String email) {
         return ActivityHelper.createBaseIntent(context, RegisterEmailActivity.class, flowParams)
                 .putExtra(ExtraConstants.EXTRA_EMAIL, email);
+    }
+
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

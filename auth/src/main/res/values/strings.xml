@@ -1,5 +1,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name">ui_flow</string>
+    <string name="app_name">Origami</string>
     <string name="email_hint">Email</string>
     <string name="email_nick_hint">Email/Username</string>
     <string name="sign_in_no_password_title">Put an email to use for sign in</string>
@@ -75,4 +75,5 @@
     <string name="username_no_character_start">The username must start with a character</string>
     <string name="username_no_character_end">The username must end with a character or number</string>
     <string name="empty_nickname">You can\'t leave nickname empty</string>
+    <string name="button_text_register">Register</string>
 </resources>

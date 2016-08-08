@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#039BE5</color>
     <color name="colorPrimaryDark">#0288D1</color>
-    <color name="colorAccent">#FFA000</color>
+    <color name="colorAccent">#51ffffff</color>
 
     <color name="material_deep_purple_50">#EDE7F6</color>
     <color name="material_deep_purple_500">#673AB7</color>
@@ -29,6 +29,7 @@
     <color name="apptheme_color">#33b5e5</color>
     <color name="inset">#9000</color>
     <color name="transparent4">#6b000000</color>
+    <color name="transparent6">#13000000</color>
     <color name="transparent5">#96000000</color>
     <color name="semi_transparent_black">#7f000000</color>
 

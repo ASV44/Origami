@@ -14,14 +14,24 @@
 
 package com.firebase.ui.auth.ui.email;
 
+import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.util.Patterns;
 import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.RotateAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -52,6 +62,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.koshka.origami.model.User;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,9 +79,8 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
     private DatabaseReference mUserRef;
     private AcquireEmailHelper mAcquireEmailHelper;
     private List<String> providers = new ArrayList<>();
-
+    private AVLoadingIndicatorView indicatorView;
     public static final int RC_REGISTER_ACCOUNT = 14;
-    public static final int RC_WELCOME_BACK_IDP = 15;
     public static final int RC_SIGN_IN = 16;
 
 
@@ -108,6 +118,31 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
         Button registerButton = (Button) findViewById(R.id.button_register);
         TextView recoveryButton = (TextView) findViewById(R.id.trouble_signing_in);
 
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_sign_in);
+        setSupportActionBar(toolbar);
+
+        final ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeButtonEnabled(false); // disable the button
+            actionBar.setDisplayShowCustomEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(false); // remove the left caret
+            actionBar.setDisplayShowHomeEnabled(false); // remove the icon
+            actionBar.setDisplayShowTitleEnabled(true);
+
+            LayoutInflater inflater = (LayoutInflater) this
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            Toolbar.LayoutParams layout = new Toolbar.LayoutParams(Toolbar.LayoutParams.WRAP_CONTENT, Toolbar.LayoutParams.WRAP_CONTENT);
+            layout.height = 180;
+            layout.width = 180;
+            layout.gravity = Gravity.CENTER;
+            View view = inflater.inflate(R.layout.av_progress_indicator,null);
+            toolbar.addView(view, layout);
+        }
+
+        indicatorView = (AVLoadingIndicatorView) findViewById(R.id.av_progress_indicator);
+        indicatorView.hide();
+
         if (email != null) {
             mEmailEditText.setText(email);
         }
@@ -115,6 +150,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                hideKeyboard();
                 final FirebaseAuth firebaseAuth = mActivityHelper.getFirebaseAuth();
                 final String inputEmail2 = mEmailEditText.getText().toString();
                 final String inputEmail = inputEmail2.trim();
@@ -137,10 +173,10 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
                                                     } else {
                                                         TextInputLayout loginTextLayout = (TextInputLayout) findViewById(R.id.email_nickname_layout);
                                                         loginTextLayout.setError("Email already registered");
-                                                        mActivityHelper.dismissDialog();
+                                                        indicatorView.hide();
                                                     }
                                                 } else {
-                                                    mActivityHelper.dismissDialog();
+                                                    indicatorView.hide();
                                                 }
                                             }
 
@@ -155,13 +191,13 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.exists()) {
-                                    mActivityHelper.showLoadingDialog(R.string.progress_dialog_loading);
+                                    indicatorView.show();
                                     TextInputLayout loginTextLayout = (TextInputLayout) findViewById(R.id.email_nickname_layout);
                                     loginTextLayout.setError("Username already registered");
-                                    mActivityHelper.dismissDialog();
+                                    indicatorView.hide();
                                 } else {
 
-                                    mActivityHelper.showLoadingDialog(R.string.progress_dialog_loading);
+                                    indicatorView.show();
 
                                         ArrayList<String> selectedProviders = new ArrayList<>();
                                         startEmailHandler(inputEmail, selectedProviders);
@@ -191,7 +227,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
     }
 
     private void startEmailHandler(String email, List<String> providers) {
-        mActivityHelper.dismissDialog();
+        indicatorView.hide();
         if (providers == null || providers.isEmpty()) {
             // account doesn't exist yet
             Intent registerIntent = RegisterEmailActivity.createIntent(
@@ -234,7 +270,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        mActivityHelper.dismissDialog();
+                        indicatorView.hide();
                         if (task.isSuccessful()) {
                             FirebaseUser firebaseUser = task.getResult().getUser();
                             if (FirebaseAuthWrapperFactory.getFirebaseAuthWrapper(
@@ -264,6 +300,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
 
     @Override
     public void onClick(View view) {
+        hideKeyboard();
         if (view.getId() == R.id.button_done) {
             boolean isEmail = Patterns.EMAIL_ADDRESS.matcher(mEmailEditText.getText()).matches();
             boolean passwordValid = mPasswordValidator.validate(mPasswordEditText.getText());
@@ -284,7 +321,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
                 return;
             } else if (isEmail && passwordValid) {
                 final FirebaseAuth firebaseAuth = mActivityHelper.getFirebaseAuth();
-                mActivityHelper.showLoadingDialog(R.string.progress_dialog_loading);
+                indicatorView.show();
                 if (loginInput != null && !loginInput.isEmpty()) {
                     firebaseAuth
                             .fetchProvidersForEmail(loginInput)
@@ -307,7 +344,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
                                                     }
                                                 }
                                             } else {
-                                                mActivityHelper.dismissDialog();
+                                                indicatorView.hide();
                                             }
                                         }
                                     });
@@ -315,7 +352,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
                 }
             } else if (!isEmail) {
 
-                mActivityHelper.showLoadingDialog(R.string.progress_dialog_signing_in);
+                indicatorView.show();
                 mRef = DatabaseRefUtil.getmUsersRef();
                 mUserRef = DatabaseRefUtil.getmUsersRef();
                 usernameQuery = mRef.orderByChild("username").equalTo(loginInput.toLowerCase());
@@ -391,5 +428,15 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
             String email) {
         return ActivityHelper.createBaseIntent(context, SignInActivity.class, flowParams)
                 .putExtra(ExtraConstants.EXTRA_EMAIL, email);
+    }
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = this.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(this);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

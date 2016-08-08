@@ -16,7 +16,12 @@ package com.firebase.ui.auth.ui.email;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
@@ -26,7 +31,7 @@ import com.firebase.ui.auth.ui.AppCompatBase;
 import com.firebase.ui.auth.ui.ExtraConstants;
 import com.firebase.ui.auth.ui.FlowParameters;
 
-public class ConfirmRecoverPasswordActivity extends android.support.v7.app.AppCompatActivity
+public class ConfirmRecoverPasswordActivity extends AppCompatActivity
         implements View.OnClickListener {
     private ActivityHelper mActivityHelper;
 
@@ -51,6 +56,7 @@ public class ConfirmRecoverPasswordActivity extends android.support.v7.app.AppCo
             ((TextView) findViewById(R.id.body_text)).setText(R.string.recovery_fail_body);
         }
         findViewById(R.id.button_done).setOnClickListener(this);
+
     }
 
     @Override
