@@ -4,31 +4,31 @@
     android:layout_height="match_parent">
 
 
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/view2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:elevation="0dp"
+        android:background="@color/transparent6">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/actionBarSize"
+            app:layout_scrollFlags="scroll|enterAlways"
+            android:titleTextColor="@color/white"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+    </android.support.design.widget.AppBarLayout>
+
+
     <android.support.v4.view.ViewPager
         android:id="@+id/profile_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1.09" />
 
-
-    <android.support.v4.view.ViewPager
-        android:id="@+id/profile_pager2"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1.09" />
-
-
-    <me.relex.circleindicator.CircleIndicator
-        android:id="@+id/indicator"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:theme="@style/AppTheme"
-        app:ci_drawable="@drawable/black_radius"
-        app:ci_height="8dp"
-        app:ci_width="8dp" />
 
     <com.ogaclejapan.smarttablayout.SmartTabLayout
         android:id="@+id/viewpagertab"

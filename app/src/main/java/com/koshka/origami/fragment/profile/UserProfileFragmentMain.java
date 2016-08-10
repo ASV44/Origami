@@ -2,6 +2,7 @@ package com.koshka.origami.fragment.profile;
 
 import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
@@ -35,11 +36,11 @@ import butterknife.OnClick;
  */
 public class UserProfileFragmentMain extends Fragment {
 
-    @BindView(R.id.user_profile_picture)
+/*    @BindView(R.id.user_profile_picture)
     ImageView mUserProfilePicture;
 
     @BindView(R.id.user_email)
-    TextView mUserEmail;
+    TextView mUserEmail;*/
 
     @BindView(R.id.user_display_name)
     TextView mUserDisplayName;
@@ -66,6 +67,11 @@ public class UserProfileFragmentMain extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+
+        final Typeface font = Typeface.createFromAsset(getActivity().getApplicationContext().getAssets(), "fonts/actonia.ttf");
+
+        mUserDisplayName.setTypeface(font);
         populateProfile();
     }
 
@@ -75,15 +81,15 @@ public class UserProfileFragmentMain extends Fragment {
     private void populateProfile() {
         String email = mAuth.getCurrentUser().getEmail();
         String nickname = mAuth.getCurrentUser().getDisplayName();
-        mUserEmail.setText(email);
+       /* mUserEmail.setText(email);*/
         mUserDisplayName.setText(nickname);
-
+/*
         if (mAuth.getCurrentUser().getPhotoUrl() != null) {
             Glide.with(getActivity().getApplicationContext())
                     .load(mAuth.getCurrentUser().getPhotoUrl())
                     .fitCenter()
                     .into(mUserProfilePicture);
-        }
+        }*/
 
     }
 

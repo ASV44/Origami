@@ -81,4 +81,21 @@
     <string name="action_profile">Profile</string>
     <string name="action_settings">Settings</string>
 
+    <!-- SETTINGS -->
+    <string name="change_password">Change password</string>
+    <string name="change_email">Change email</string>
+    <string name="about">About</string>
+    <string name="licences">Licences</string>
+    <string name="tos">Terms of Services</string>
+    <string name="application">Application</string>
+    <string name="account">Account</string>
+    <string name="notifications">Notifications</string>
+    <string name="blocked_users">Blocked_users</string>
+    <string name="invite_via_facebook">Invite friends via Facebook</string>
+    <string name="invite_via_email">Invite friend via Email</string>
+    <string name="invite_via_twitter">Invite friend via Twitter</string>
+    <string name="faq">FAQ</string>
+    <string name="about_us">About us</string>
+
+
 </resources>

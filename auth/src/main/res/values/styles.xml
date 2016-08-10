@@ -47,6 +47,13 @@
         <item name="android:fontFamily">sans-serif</item>
     </style>
 
+    <style name="FirebaseUI.Text.Settings" parent="FirebaseUI.Text">
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:layout_marginBottom">5dp</item>
+        <item name="android:textSize">12dp</item>
+        <item name="android:layout_marginStart">8dp</item>
+    </style>
+
     <style name="FirebaseUI.Text.T01">
         <item name="android:textSize">112sp</item>
     </style>

@@ -14,6 +14,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.transition.Fade;
 import android.transition.Slide;
@@ -64,8 +65,6 @@ public class UserProfileActivity extends AppCompatActivity {
 
     @BindView(R.id.profile_pager)
     ViewPager mPager;
-    @BindView(R.id.profile_pager2)
-    ViewPager mPager2;
 
 
     @Override
@@ -76,7 +75,6 @@ public class UserProfileActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         ParallaxPagerTransformer pt = new ParallaxPagerTransformer((R.id.image));
-        ParallaxPagerTransformer pt2 = new ParallaxPagerTransformer((R.id.user_profile_picture));
         pt.setBorder(0);
         pt.setSpeed(0.7f);
 
@@ -86,11 +84,18 @@ public class UserProfileActivity extends AppCompatActivity {
 
         viewpagertab.setViewPager(mPager);
 
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(false); // disable the button
+            actionBar.setDisplayShowCustomEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(false); // remove the left caret
             actionBar.setDisplayShowHomeEnabled(false); // remove the icon
+            actionBar.setDisplayShowTitleEnabled(false);
         }
     }
 

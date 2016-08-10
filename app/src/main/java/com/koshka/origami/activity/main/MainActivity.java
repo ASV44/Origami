@@ -73,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
             Typeface font = Typeface.createFromAsset(getAssets(),
                     "fonts/actonia.ttf");
             titleTV.setTypeface(font);
-            titleTV.setTextColor(getResources().getColor(R.color.transparent4));
             actionBar.setCustomView(v);
 
         }

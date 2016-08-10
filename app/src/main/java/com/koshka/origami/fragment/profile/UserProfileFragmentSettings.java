@@ -2,6 +2,7 @@ package com.koshka.origami.fragment.profile;
 
 import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
 import com.andexert.expandablelayout.library.ExpandableLayout;
 import com.andexert.expandablelayout.library.ExpandableLayoutListView;
@@ -21,6 +23,7 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.DatabaseRefUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.vision.text.Text;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.koshka.origami.R;
@@ -38,6 +41,10 @@ public class UserProfileFragmentSettings extends Fragment {
     private DatabaseReference mMeRef;
     private FirebaseAuth mAuth;
 
+    @BindView(R.id.origami_text_logo)
+    TextView origamiTextLogo;
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -53,6 +60,10 @@ public class UserProfileFragmentSettings extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        Typeface font = Typeface.createFromAsset(getActivity().getAssets(),
+                "fonts/origamibats.ttf");
+        origamiTextLogo.setTypeface(font);
     }
 
 

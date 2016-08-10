@@ -1,40 +1,269 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:expandable="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/sign_out"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/delete_account"
-        android:layout_marginEnd="49dp"
-        android:layout_marginRight="49dp"
-        android:text="@string/sign_out" />
-
-    <Button
-        android:id="@+id/delete_account"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_gravity="center"
-        android:layout_marginBottom="43dp"
-        android:layout_marginLeft="43dp"
-        android:layout_marginStart="43dp"
-        android:text="@string/delete_account_label"
-        android:theme="@style/WarnButton" />
-
-
-    <com.andexert.expandablelayout.library.ExpandableLayout xmlns:expandable="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/expandableLayout"
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        expandable:contentLayout="@layout/expandable_view_content"
-        expandable:headerLayout="@layout/expandable_view_header" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="42dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="50dp">
+
+
+        <RelativeLayout
+            style="@style/FirebaseUI.WrapperStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="400dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/view2"
+            android:layout_marginTop="10dp">
+
+
+            <LinearLayout
+                android:id="@+id/linearLayout3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/settings_layout_bg"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:text="Account"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/transparent4" />
+
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:text="Public account" />
+
+                <Switch
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:text="some switch" />
+
+                <TextView
+                    style="@style/FirebaseUI.Text.Settings"
+                    android:id="@+id/change_password_textview"
+                    android:text="@string/change_password" />
+
+
+                <TextView
+                    android:id="@+id/change_email_textview"
+                    style="@style/FirebaseUI.Text.Settings"
+                    android:text="@string/change_email" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/application_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/linearLayout3"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/settings_layout_bg"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:text="Application"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/transparent4" />
+
+                <TextView
+                    style="@style/FirebaseUI.Text.Settings"
+                    android:text="Notifications" />
+
+                <TextView
+                    style="@style/FirebaseUI.Text.Settings"
+                    android:text="Blocked users" />
+
+
+                <TextView
+                    style="@style/FirebaseUI.Text.Settings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Connect with facebook" />
+
+
+                <TextView
+                    style="@style/FirebaseUI.Text.Settings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Design" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/origami_logo_layout"
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:background="@android:color/transparent"
+                android:orientation="vertical"
+                android:layout_below="@id/application_layout"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="20dp">
+                <TextView
+                    android:id="@+id/origami_text_logo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="D"
+                    android:textSize="100dp"
+                    android:layout_gravity="center" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/about_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/origami_logo_layout"
+                android:background="@drawable/settings_layout_bg"
+                android:orientation="vertical"
+                android:layout_marginBottom="25dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:text="About"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/transparent4" />
+
+
+                <TextView
+                    style="@style/FirebaseUI.Text.Settings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="About us" />
+
+
+                <TextView
+                    style="@style/FirebaseUI.Text.Settings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FAQ" />
+
+                <TextView
+                    style="@style/FirebaseUI.Text.Settings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Licences" />
+
+
+                <TextView
+                    style="@style/FirebaseUI.Text.Settings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Terms of services" />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="128dp">
+
+                    <Button
+                        android:id="@+id/delete_account"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginBottom="64dp"
+                        android:layout_marginLeft="48dp"
+                        android:layout_marginStart="48dp"
+                        android:layout_weight="2"
+                        android:text="@string/delete_account_label" />
+
+                    <Button
+                        android:id="@+id/sign_out"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignTop="@+id/delete_account"
+                        android:layout_marginLeft="56dp"
+                        android:layout_marginStart="56dp"
+                        android:layout_toEndOf="@+id/delete_account"
+                        android:layout_toRightOf="@+id/delete_account"
+                        android:layout_weight="16"
+                        android:text="@string/sign_out" />
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+
+    </ScrollView>
+
 
 </RelativeLayout>

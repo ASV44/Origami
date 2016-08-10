@@ -18,4 +18,6 @@
     <color name="transparent4">#6b000000</color>
     <color name="transparent6">#13000000</color>
     <color name="transparent5">#96000000</color>
+
+    <color name="white">#ffffff</color>
 </resources>
