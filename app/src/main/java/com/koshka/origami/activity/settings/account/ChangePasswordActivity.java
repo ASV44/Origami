@@ -22,12 +22,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.login.LoginActivity;
-import com.koshka.origami.activity.settings.account.validator.CurrentPasswordFieldValidator;
-import com.koshka.origami.activity.settings.account.validator.NewPasswordFieldValidator;
+import com.koshka.origami.activity.settings.account.field_validator.CurrentPasswordFieldValidator;
+import com.koshka.origami.activity.settings.account.field_validator.NewPasswordFieldValidator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * Created by imuntean on 8/9/16.
@@ -151,6 +152,17 @@ public class ChangePasswordActivity extends AppCompatActivity {
         NewPasswordFieldValidator validator1 = new NewPasswordFieldValidator(confirmNewPasswordLayout, 6);
         boolean newPasswordConfirmationIsOk = validator1.validate(newPasswordConfirmation);
 
+        final SweetAlertDialog successDialog =new SweetAlertDialog(this)
+                .setTitleText("Success!")
+                .setContentText("Your password was changed")
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sDialog) {
+                        sDialog.dismissWithAnimation();
+                        goHome();
+                    }
+                });
+
         if (newPasswordIsOk && newPasswordConfirmationIsOk) {
 
             if (newPassword.equals(newPasswordConfirmation)) {
@@ -158,6 +170,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Log.d(TAG, "Password changed");
+                       successDialog.show();
                     }
                 });
             } else {
@@ -167,14 +180,17 @@ public class ChangePasswordActivity extends AppCompatActivity {
         }
 
     }
+    private void goHome(){
+        Intent intent = NavUtils.getParentActivityIntent(this);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        NavUtils.navigateUpTo(this, intent);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
 
-            Intent intent = NavUtils.getParentActivityIntent(this);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            NavUtils.navigateUpTo(this, intent);
+            goHome();
             return true;
         } else {
             return super.onOptionsItemSelected(item);

@@ -1,4 +1,4 @@
-package com.koshka.origami.activity.settings.account.validator;
+package com.koshka.origami.activity.settings.account.field_validator;
 
 import android.support.design.widget.TextInputLayout;
 

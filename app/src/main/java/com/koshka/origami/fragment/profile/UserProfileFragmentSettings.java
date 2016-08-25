@@ -13,6 +13,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,7 @@ import com.koshka.origami.activity.settings.application.NotificationsActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * Created by imuntean on 8/6/16.
@@ -82,6 +84,27 @@ public class UserProfileFragmentSettings extends Fragment {
 
         Resources res = getResources();
 
+        new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
+                .setTitleText("Hmm...")
+                .setContentText(res.getString(R.string.log_out_warning))
+                .setCancelText(res.getString(R.string.cancel))
+                .setConfirmText(res.getString(R.string.positive_log_out))
+                .showCancelButton(true)
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sDialog) {
+                        sDialog.cancel();
+                    }
+                })
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        signOutFromFirebase();
+                    }
+                })
+                .show();
+
+/*
         AlertDialog dialog = new AlertDialog.Builder(getActivity())
                 .setMessage(res.getString(R.string.log_out_warning))
                 .setPositiveButton(res.getString(R.string.positive_log_out), new DialogInterface.OnClickListener() {
@@ -94,6 +117,7 @@ public class UserProfileFragmentSettings extends Fragment {
                 .create();
 
         dialog.show();
+*/
 
     }
 
@@ -190,7 +214,68 @@ public class UserProfileFragmentSettings extends Fragment {
 
         Resources res = getResources();
 
-        AlertDialog dialog = new AlertDialog.Builder(getActivity())
+
+        new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
+                .setTitleText("Are you sure?")
+                .setContentText("Won't be able to recover this account!")
+                .setConfirmText("Yes,delete it!")
+                .setCancelText("Cancel")
+                .showCancelButton(true)
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.cancel();
+                    }
+                })
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(final SweetAlertDialog sDialog) {
+                        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                        deleteAccountFromDb();
+                        mAuth.getCurrentUser()
+                                .delete()
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            sDialog
+                                                    .setTitleText("Deleted!")
+                                                    .setContentText("Hope to have you with us soon!")
+                                                    .setConfirmText("OK")
+                                                    .showCancelButton(false)
+                                                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                                        @Override
+                                                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                                            startActivity(LoginActivity.createIntent(getActivity()));
+                                                            getActivity().finish();
+                                                        }
+                                                    }).setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                                @Override
+                                                public void onCancel(DialogInterface dialogInterface) {
+                                                    startActivity(LoginActivity.createIntent(getActivity()));
+                                                    getActivity().finish();
+                                                }
+                                            });
+                                            sDialog.changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+
+
+                                        } else {
+                                            sDialog
+                                                    .setTitleText("Error!")
+                                                    .setContentText("Something went wrong...")
+                                                    .setConfirmText("OK")
+                                                    .setConfirmClickListener(null)
+                                                    .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+
+                                        }
+                                    }
+                                });
+
+                    }
+                })
+                .show();
+
+   /*     AlertDialog dialog = new AlertDialog.Builder(getActivity())
                 .setMessage(res.getString(R.string.delete_warning))
                 .setPositiveButton(res.getString(R.string.positive_delete), new DialogInterface.OnClickListener() {
                     @Override
@@ -202,7 +287,7 @@ public class UserProfileFragmentSettings extends Fragment {
                 .setNegativeButton(res.getString(R.string.cancel), null)
                 .create();
 
-        dialog.show();
+        dialog.show();*/
     }
 
 
