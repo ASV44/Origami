@@ -1,16 +1,18 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fitsSystemWindows="true">
 
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/scrollView"
+
+    <com.github.ksoichiro.android.observablescrollview.ObservableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/settings_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginBottom="42dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="50dp">
+        android:layout_alignParentTop="true">
 
 
         <RelativeLayout
@@ -56,26 +58,19 @@
                     android:background="@color/transparent4" />
 
 
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:text="Public account" />
-
-                <Switch
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:text="some switch" />
-
                 <TextView
                     style="@style/FirebaseUI.Text.Settings"
                     android:id="@+id/change_password_textview"
-                    android:text="@string/change_password" />
+                    android:text="@string/change_password"/>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/transparent2" />
 
 
                 <TextView
@@ -121,22 +116,54 @@
                     android:background="@color/transparent4" />
 
                 <TextView
+                    android:id="@+id/notifications_settings_text_button"
                     style="@style/FirebaseUI.Text.Settings"
                     android:text="Notifications" />
 
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/transparent2" />
+
                 <TextView
+                    android:id="@+id/blocked_users_text_button"
                     style="@style/FirebaseUI.Text.Settings"
                     android:text="Blocked users" />
 
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/transparent2" />
+
 
                 <TextView
+                    android:id="@+id/connect_with_facebook_text_button"
                     style="@style/FirebaseUI.Text.Settings"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Connect with facebook" />
+                    android:text="Connect with facebook"
+                    android:paddingRight="24dp"/>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/transparent2" />
 
 
                 <TextView
+                    android:id="@+id/design_settings_text_button"
                     style="@style/FirebaseUI.Text.Settings"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -146,34 +173,14 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/origami_logo_layout"
-                android:layout_width="match_parent"
-                android:layout_height="130dp"
-                android:background="@android:color/transparent"
-                android:orientation="vertical"
-                android:layout_below="@id/application_layout"
-                android:layout_alignParentLeft="true"
-                android:layout_marginBottom="20dp">
-                <TextView
-                    android:id="@+id/origami_text_logo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="D"
-                    android:textSize="100dp"
-                    android:layout_gravity="center" />
-
-            </LinearLayout>
-
-
-            <LinearLayout
                 android:id="@+id/about_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:layout_below="@+id/origami_logo_layout"
+                android:layout_below="@+id/application_layout"
                 android:background="@drawable/settings_layout_bg"
                 android:orientation="vertical"
-                android:layout_marginBottom="25dp">
+                android:layout_marginBottom="20dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -200,70 +207,128 @@
 
 
                 <TextView
+                    android:id="@+id/about_us_text_button"
                     style="@style/FirebaseUI.Text.Settings"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:text="About us" />
 
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/transparent2" />
+
 
                 <TextView
+                    android:id="@+id/faq_text_button"
                     style="@style/FirebaseUI.Text.Settings"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:text="FAQ" />
 
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/transparent2" />
+
                 <TextView
+                    android:id="@+id/licences_text_button"
                     style="@style/FirebaseUI.Text.Settings"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:text="Licences" />
 
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/transparent2" />
+
 
                 <TextView
+                    android:id="@+id/tos_text_button"
                     style="@style/FirebaseUI.Text.Settings"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:text="Terms of services" />
 
 
-                <LinearLayout
+
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/origami_logo_layout"
+                android:layout_width="match_parent"
+                android:layout_height="170dp"
+                android:background="@android:color/transparent"
+                android:orientation="vertical"
+                android:layout_below="@id/about_layout"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="20dp">
+                <TextView
+                    android:id="@+id/origami_text_logo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="D"
+                    android:textSize="100dp"
+                    android:layout_gravity="center" />
+                <TextView
+                    style="@style/FirebaseUI.Text"
+                    android:text="Origami v1.0"
+                    android:layout_gravity="center"
+                    android:gravity="center"/>
+                <TextView
+                    style="@style/FirebaseUI.Text"
+                    android:text="Powered by Koshka Solutions."
+                    android:gravity="center"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/log_out_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/origami_logo_layout"
+                android:background="@drawable/settings_layout_bg"
+                android:orientation="vertical"
+                android:layout_marginBottom="25dp">
+
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="128dp">
+                    android:layout_height="wrap_content">
 
                     <Button
                         android:id="@+id/delete_account"
-                        android:layout_width="wrap_content"
+                        android:layout_width="105dp"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
+                        android:text="@string/delete_account_label"
+                        android:background="@drawable/settings_layout_bg"
+                        android:layout_alignParentTop="true"
                         android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_marginBottom="64dp"
-                        android:layout_marginLeft="48dp"
-                        android:layout_marginStart="48dp"
-                        android:layout_weight="2"
-                        android:text="@string/delete_account_label" />
+                        android:layout_alignParentStart="true" />
 
                     <Button
                         android:id="@+id/sign_out"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignTop="@+id/delete_account"
-                        android:layout_marginLeft="56dp"
-                        android:layout_marginStart="56dp"
-                        android:layout_toEndOf="@+id/delete_account"
-                        android:layout_toRightOf="@+id/delete_account"
                         android:layout_weight="16"
-                        android:text="@string/sign_out" />
+                        android:text="@string/sign_out"
+                        android:background="@drawable/settings_layout_bg"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true" />
+                </RelativeLayout>
                 </LinearLayout>
-
-
-            </LinearLayout>
 
 
         </RelativeLayout>
 
 
-    </ScrollView>
+    </com.github.ksoichiro.android.observablescrollview.ObservableScrollView>
+
 
 
 </RelativeLayout>

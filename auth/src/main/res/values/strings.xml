@@ -1,10 +1,12 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Origami</string>
     <string name="email_hint">Email</string>
+    <string name="change_email_hint">Change email</string>
     <string name="email_nick_hint">Email/Username</string>
     <string name="sign_in_no_password_title">Put an email to use for sign in</string>
     <string name="button_ok_text">OK</string>
     <string name="password_hint">Password</string>
+    <string name="current_password_hint">Current Password</string>
     <string name="country_hint">Country</string>
     <string name="button_singin_text">Sign In</string>
     <string name="button_password_recovery_text">Trouble remembering your password</string>
@@ -20,6 +22,7 @@
     <string name="invalid_email_address">That email address isn\'t correct</string>
     <string name="missing_email_address">Enter your email address to continue</string>
     <string name="button_text_next">Login</string>
+    <string name="button_next">Next</string>
     <string name="button_text_send">Send</string>
     <string name="button_text_save">Save</string>
     <string name="button_text_sign_in">Sign in</string>
@@ -76,4 +79,7 @@
     <string name="username_no_character_end">The username must end with a character or number</string>
     <string name="empty_nickname">You can\'t leave nickname empty</string>
     <string name="button_text_register">Register</string>
+
+    <string name="new_password_hint">New password</string>
+    <string name="new_password_confirm_hint">Confirm password</string>
 </resources>

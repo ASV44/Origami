@@ -50,6 +50,8 @@ public class LoginActivity extends AppCompatActivity {
     private int backButtonCount;
     private Locale myLocale;
 
+    @BindView(android.R.id.content)
+    View mRootView;
 
     @BindView(R.id.login_pager)
     ViewPager mPager;
@@ -57,15 +59,11 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.sign_in)
     Button mSignIn;
 
-    @BindView(android.R.id.content)
-    View mRootView;
-
     @BindView(R.id.title_text)
     TextView titleTextView;
 
     @BindView(R.id.language_text_button)
     ImageButton languageTextButton;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

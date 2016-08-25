@@ -62,6 +62,8 @@ dependencies {
     compile 'com.github.ksoichiro:android-observablescrollview:1.6.0'
     compile 'com.ogaclejapan.smarttablayout:library:1.6.1@aar'
     compile 'com.github.traex.expandablelayout:library:1.2.2'
+    compile 'com.nineoldandroids:library:2.4.0'
+    compile 'me.grantland:autofittextview:0.2.+'
 
 }
 apply plugin: 'com.google.gms.google-services'

@@ -1,6 +1,7 @@
 package com.koshka.origami.fragment.profile;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -11,23 +12,32 @@ import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.andexert.expandablelayout.library.ExpandableLayout;
-import com.andexert.expandablelayout.library.ExpandableLayoutListView;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.DatabaseRefUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.vision.text.Text;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.login.LoginActivity;
+import com.koshka.origami.activity.settings.about.AboutUsActivity;
+import com.koshka.origami.activity.settings.about.FAQActivity;
+import com.koshka.origami.activity.settings.about.LicencesActivity;
+import com.koshka.origami.activity.settings.about.ToSActivity;
+import com.koshka.origami.activity.settings.account.ChangeEmailActivity;
+import com.koshka.origami.activity.settings.account.ChangePasswordActivity;
+import com.koshka.origami.activity.settings.application.DesignSettingsActivity;
+import com.koshka.origami.activity.settings.application.NotificationsActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -43,7 +53,6 @@ public class UserProfileFragmentSettings extends Fragment {
 
     @BindView(R.id.origami_text_logo)
     TextView origamiTextLogo;
-
 
     @Nullable
     @Override
@@ -64,6 +73,7 @@ public class UserProfileFragmentSettings extends Fragment {
         Typeface font = Typeface.createFromAsset(getActivity().getAssets(),
                 "fonts/origamibats.ttf");
         origamiTextLogo.setTypeface(font);
+
     }
 
 
@@ -77,17 +87,17 @@ public class UserProfileFragmentSettings extends Fragment {
                 .setPositiveButton(res.getString(R.string.positive_log_out), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                       signOutFromFirebase();
+                        signOutFromFirebase();
                     }
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(res.getString(R.string.cancel), null)
                 .create();
 
         dialog.show();
 
     }
 
-    private void signOutFromFirebase(){
+    private void signOutFromFirebase() {
         AuthUI.getInstance()
                 .signOut(getActivity())
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -101,6 +111,77 @@ public class UserProfileFragmentSettings extends Fragment {
                         }
                     }
                 });
+    }
+
+
+    @OnClick({R.id.change_email_textview, R.id.change_password_textview})
+    public void changeEmail(TextView view) {
+      switch (view.getId()){
+          case R.id.change_email_textview:{
+              startMyActivity(ChangeEmailActivity.class);
+              break;
+          }
+          case R.id.change_password_textview:{
+              startMyActivity(ChangePasswordActivity.class);
+              break;
+          }
+          default:
+              break;
+      }
+
+    }
+
+    @OnClick({R.id.notifications_settings_text_button, R.id.blocked_users_text_button, R.id.connect_with_facebook_text_button, R.id.design_settings_text_button})
+    public void changeAppSettings(TextView view) {
+        switch (view.getId()){
+            case R.id.notifications_settings_text_button:{
+                startMyActivity(NotificationsActivity.class);
+                break;
+            }
+            case R.id.blocked_users_text_button:{
+                break;
+            }
+            case R.id.connect_with_facebook_text_button:{
+                break;
+            }
+            case R.id.design_settings_text_button:{
+                startMyActivity(DesignSettingsActivity.class);
+                break;
+            }
+            default:
+                break;
+        }
+
+    }
+
+    @OnClick({R.id.about_us_text_button, R.id.tos_text_button, R.id.faq_text_button, R.id.licences_text_button})
+    public void startAboutActivity(TextView view) {
+
+        switch (view.getId()) {
+            case R.id.about_us_text_button: {
+                startMyActivity(AboutUsActivity.class);
+                break;
+            }
+            case R.id.tos_text_button: {
+                startMyActivity(ToSActivity.class);
+                break;
+            }
+            case R.id.faq_text_button: {
+                startMyActivity(FAQActivity.class);
+                break;
+            }
+            case R.id.licences_text_button: {
+                startMyActivity(LicencesActivity.class);
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+    private void startMyActivity(Class clazz){
+        Intent intent = new Intent(getActivity(), clazz);
+        startActivity(intent);
     }
 
 
@@ -118,7 +199,7 @@ public class UserProfileFragmentSettings extends Fragment {
                         deleteAccount();
                     }
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(res.getString(R.string.cancel), null)
                 .create();
 
         dialog.show();
@@ -136,6 +217,17 @@ public class UserProfileFragmentSettings extends Fragment {
 
 
     private void deleteAccount() {
+
+        //TODO: Very important step
+     /*   FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        AuthCredential credential = EmailAuthProvider.getCredential(email, password);
+        currentUser.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Log.d(TAG, "User re-authenticated.");
+
+            }
+        });*/
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mAuth.getCurrentUser()
                 .delete()
@@ -158,5 +250,6 @@ public class UserProfileFragmentSettings extends Fragment {
         Snackbar.make(getView(), errorMessageRes, Snackbar.LENGTH_LONG)
                 .show();
     }
+
 
 }

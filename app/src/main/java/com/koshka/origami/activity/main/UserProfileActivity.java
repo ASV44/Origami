@@ -29,6 +29,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.DatabaseRefUtil;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -84,21 +85,15 @@ public class UserProfileActivity extends AppCompatActivity {
 
         viewpagertab.setViewPager(mPager);
 
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setHomeButtonEnabled(false); // disable the button
+            actionBar.setHomeButtonEnabled(true); // disable the button
             actionBar.setDisplayShowCustomEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(false); // remove the left caret
             actionBar.setDisplayShowHomeEnabled(false); // remove the icon
             actionBar.setDisplayShowTitleEnabled(false);
         }
     }
-
     public static Intent createIntent(Context context) {
         Intent in = new Intent();
         in.setClass(context, UserProfileActivity.class);

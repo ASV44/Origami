@@ -49,9 +49,10 @@
 
     <style name="FirebaseUI.Text.Settings" parent="FirebaseUI.Text">
         <item name="android:textColor">@android:color/black</item>
-        <item name="android:layout_marginBottom">5dp</item>
-        <item name="android:textSize">12dp</item>
-        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginBottom">12dp</item>
+        <item name="android:textSize">14dp</item>
+        <item name="android:layout_marginStart">10dp</item>
+        <item name="android:padding">10dp</item>
     </style>
 
     <style name="FirebaseUI.Text.T01">
@@ -167,6 +168,21 @@
 
     <style name="FirebaseUI.EditText.PasswordField">
         <item name="android:hint">@string/password_hint</item>
+        <item name="android:inputType">textPassword</item>
+    </style>
+
+    <style name="FirebaseUI.EditText.CurrentPassword">
+        <item name="android:hint">@string/current_password_hint</item>
+        <item name="android:inputType">textPassword</item>
+    </style>
+
+    <style name="FirebaseUI.EditText.NewPassword">
+        <item name="android:hint">@string/new_password_hint</item>
+        <item name="android:inputType">textPassword</item>
+    </style>
+
+    <style name="FirebaseUI.EditText.NewPasswordConfirm">
+        <item name="android:hint">@string/new_password_confirm_hint</item>
         <item name="android:inputType">textPassword</item>
     </style>
 

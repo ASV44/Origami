@@ -30,6 +30,7 @@ import com.koshka.origami.activity.login.LoginActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import me.grantland.widget.AutofitTextView;
 
 /**
  * Created by imuntean on 8/6/16.
@@ -43,7 +44,7 @@ public class UserProfileFragmentMain extends Fragment {
     TextView mUserEmail;*/
 
     @BindView(R.id.user_display_name)
-    TextView mUserDisplayName;
+    AutofitTextView mUserDisplayName;
 
 
     private DatabaseReference mMeRef;
@@ -69,7 +70,7 @@ public class UserProfileFragmentMain extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-        final Typeface font = Typeface.createFromAsset(getActivity().getApplicationContext().getAssets(), "fonts/actonia.ttf");
+        final Typeface font = Typeface.createFromAsset(getActivity().getApplicationContext().getAssets(), "fonts/Hang.ttf");
 
         mUserDisplayName.setTypeface(font);
         populateProfile();

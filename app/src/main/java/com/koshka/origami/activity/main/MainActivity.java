@@ -1,12 +1,17 @@
 package com.koshka.origami.activity.main;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +27,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.login.LoginActivity;
 import com.koshka.origami.fragment.main.MainFragmentPagerAdapter;
+import com.koshka.origami.utils.PermissionUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,17 +35,20 @@ import butterknife.ButterKnife;
 /**
  * Created by imuntean on 7/20/16.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private final static String TAG = "MainActivity";
-
-    private int backButtonCount;
 
     @BindView(android.R.id.content)
     View mRootView;
 
     @BindView(R.id.main_pager)
     ViewPager mPager;
+
+    private int backButtonCount;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private boolean locationPermissionGranted = false;
+    private boolean mPermissionDenied = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,13 +92,8 @@ public class MainActivity extends AppCompatActivity {
         mPager.setPageTransformer(false, pt);*/
         mPager.setAdapter(new MainFragmentPagerAdapter(getSupportFragmentManager()));
         mPager.setCurrentItem(1);
+        enableMyLocation();
 
-    }
-
-    public static Intent createIntent(Context context) {
-        Intent in = new Intent();
-        in.setClass(context, MainActivity.class);
-        return in;
     }
 
     @Override
@@ -118,26 +122,65 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Enables the My Location layer if the fine location permission has been granted.
+     */
+    private void enableMyLocation() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission to access the location is missing.
+            PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
+                    Manifest.permission.ACCESS_FINE_LOCATION, true);
+        } else  {
+            // Access to the location has been granted to the app.
+            locationPermissionGranted = true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode != LOCATION_PERMISSION_REQUEST_CODE) {
+            return;
+        }
+
+        if (PermissionUtils.isPermissionGranted(permissions, grantResults,
+                Manifest.permission.ACCESS_FINE_LOCATION)) {
+            // Enable the my location layer if the permission has been granted.
+            enableMyLocation();
+        } else {
+            // Display the missing permission error dialog when the fragments resume.
+            mPermissionDenied = true;
+        }
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        if (backButtonCount >= 1) {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } else {
+            showShortSnackbar(R.string.press_back);
+            backButtonCount++;
+        }
+    }
+
+    public static Intent createIntent(Context context) {
+        Intent in = new Intent();
+        in.setClass(context, MainActivity.class);
+        return in;
+    }
 
     @MainThread
     private void showShortSnackbar(@StringRes int errorMessageRes) {
         Snackbar.make(mRootView, errorMessageRes, Snackbar.LENGTH_SHORT).show();
     }
 
-  /*  private void decideMenuButtonElements(int position) {
-        if (position == 0) {
-            addFriendButton.setVisibility(View.GONE);
-            inviteFriendButton.setVisibility(View.GONE);
-            createOrigamiButton.setVisibility(View.VISIBLE);
-            floatingMenu.collapse();
-        } else {
-            createOrigamiButton.setVisibility(View.GONE);
-            addFriendButton.setVisibility(View.VISIBLE);
-            inviteFriendButton.setVisibility(View.VISIBLE);
-            floatingMenu.collapse();
-        }
-    }
-*/
+
+
 /*    @OnClick(R.id.create_origami_button)
     public void createOrigami(View view) {
         startActivity(new Intent(this, GooglePlacePickerActivity.class));

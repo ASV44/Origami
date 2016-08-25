@@ -3,40 +3,42 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.koshka.origami">
 
+    <!-- PERMISSIONS -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-<application
+    <application
+        android:name=".app.OrigamiApp"
         android:allowBackup="true"
         android:icon="@drawable/origami"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:name=".app.OrigamiApp"
         tools:replace="android:icon">
 
-    <receiver
-        android:name=".activity.listeners.ConnectivityChangeReceiver"
-        android:label="ConnectivityChangeReveiver" >
-        <intent-filter>
-            <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
-            <action android:name="android.net.wifi.EXTRA_OTHER_NETWORK_INFO"/>
-        </intent-filter>
-    </receiver>
+        <receiver
+            android:name=".activity.listeners.ConnectivityChangeReceiver"
+            android:label="ConnectivityChangeReveiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+                <action android:name="android.net.wifi.EXTRA_OTHER_NETWORK_INFO" />
+            </intent-filter>
+        </receiver>
 
-    <uses-feature
-        android:glEsVersion="0x00020000"
-        android:required="true" />
+        <uses-feature
+            android:glEsVersion="0x00020000"
+            android:required="true" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
+        <!-- MAIN ACTIVITY -->
         <activity
-            android:configChanges="locale"
             android:name=".activity.main.MainActivity"
+            android:configChanges="locale"
             android:theme="@style/PurpleThemeNoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -45,20 +47,53 @@
             </intent-filter>
         </activity>
 
+        <!-- LOGIN ACTIVITY -->
         <activity
             android:name=".activity.login.LoginActivity"
             android:configChanges="locale"
-            android:theme="@style/PurpleThemeNoActionBar"
             android:parentActivityName=".activity.login.LoginActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/PurpleThemeNoActionBar" />
 
+        <!-- USER PROFILE ACTIVITY -->
         <activity
             android:name=".activity.main.UserProfileActivity"
-            android:theme="@style/PurpleThemeNoActionBar"
-            android:parentActivityName=".activity.main.MainActivity"/>
+            android:parentActivityName=".activity.main.MainActivity"
+            android:theme="@style/PurpleThemeNoActionBar" />
 
-        <activity android:name=".activity.main.OrigamiMapActivity"
-            android:theme="@style/PurpleThemeNoActionBar"/>
+        <!-- ORIGAMI MAP ACTIVITY -->
+        <activity
+            android:name=".activity.main.OrigamiMapActivity"
+            android:theme="@style/PurpleThemeNoActionBar" />
+
+        <!-- Settings activities-->
+        <activity
+            android:name=".activity.settings.about.FAQActivity"
+            android:theme="@style/PurpleThemeNoActionBar" />
+        <activity
+            android:name=".activity.settings.about.LicencesActivity"
+            android:theme="@style/PurpleThemeNoActionBar" />
+        <activity
+            android:name=".activity.settings.about.AboutUsActivity"
+            android:theme="@style/PurpleThemeNoActionBar" />
+        <activity
+            android:name=".activity.settings.about.ToSActivity"
+            android:theme="@style/PurpleThemeNoActionBar" />
+        <activity
+            android:name=".activity.settings.account.ChangeEmailActivity"
+            android:theme="@style/PurpleThemeNoActionBar"
+            android:parentActivityName=".activity.main.UserProfileActivity"/>
+        <activity
+            android:name=".activity.settings.account.ChangePasswordActivity"
+            android:theme="@style/PurpleThemeNoActionBar"
+            android:parentActivityName=".activity.main.UserProfileActivity"/>
+        <activity
+            android:name=".activity.settings.application.DesignSettingsActivity"
+            android:theme="@style/PurpleThemeNoActionBar" />
+        <activity
+            android:name=".activity.settings.application.NotificationsActivity"
+            android:theme="@style/PurpleThemeNoActionBar" />
+
 
     </application>
 
