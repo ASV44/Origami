@@ -66,6 +66,23 @@
             android:name=".activity.main.OrigamiMapActivity"
             android:theme="@style/PurpleThemeNoActionBar" />
 
+        <!-- FRIENDS ACTIVITY -->
+
+        <activity
+            android:name=".activity.friends.AddFriendActivity"
+            android:theme="@style/PurpleThemeNoActionBar"
+            android:parentActivityName=".activity.main.MainActivity"/>
+
+        <activity
+            android:name=".activity.friends.InviteFriendActivity"
+            android:theme="@style/PurpleThemeNoActionBar"
+            android:parentActivityName=".activity.main.MainActivity"/>
+
+        <activity
+            android:name=".activity.friends.FriendProfileActivity"
+            android:theme="@style/PurpleThemeNoActionBar"
+            android:parentActivityName=".activity.main.MainActivity"/>
+
         <!-- Settings activities-->
         <activity
             android:name=".activity.settings.about.FAQActivity"

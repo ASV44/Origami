@@ -1,6 +1,7 @@
 package com.koshka.origami.fragment.main;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,10 +15,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.database.DatabaseRefUtil;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.vision.text.Text;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -26,6 +29,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.koshka.origami.R;
+import com.koshka.origami.activity.friends.AddFriendActivity;
+import com.koshka.origami.activity.friends.FriendProfileActivity;
+import com.koshka.origami.activity.friends.InviteFriendActivity;
+import com.koshka.origami.activity.main.OrigamiMapActivity;
 import com.koshka.origami.model.Friend;
 import com.koshka.origami.model.User;
 
@@ -43,12 +50,12 @@ public class FriendsFragment extends Fragment {
 
     @BindView(R.id.user_email_nickname)
     EditText input;
-
-    @BindView(R.id.friends_recycler_view)
-    RecyclerView friendsRecyclerView;
 */
+   @BindView(R.id.friends_recycler_view)
+    RecyclerView friendsRecyclerView;
+
     private LinearLayoutManager mManager;
-    private FirebaseRecyclerAdapter<Friend, FriendHolder> mRecyclerViewAdapter;
+    private FirebaseRecyclerAdapter<User, FriendHolder> mRecyclerViewAdapter;
 
     private FirebaseAuth mAuth;
 
@@ -67,11 +74,11 @@ public class FriendsFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         mManager = new LinearLayoutManager(getActivity());
         mManager.setReverseLayout(false);
-/*        friendsRecyclerView.setHasFixedSize(false);
-        friendsRecyclerView.setLayoutManager(mManager);*/
+        friendsRecyclerView.setHasFixedSize(false);
+        friendsRecyclerView.setLayoutManager(mManager);
 
     }
-}
+
 
    /* @OnClick(R.id.search_friend_button)
     public void searchFriend(View view) {
@@ -104,7 +111,7 @@ public class FriendsFragment extends Fragment {
                                         final User user = dataSnapshot.getValue(User.class);
                                         if (!user.getEmail().equals(mAuth.getCurrentUser().getEmail()) && !user.getDisplayName().equals(mAuth.getCurrentUser().getDisplayName())) {
 
-                                            alertUserInfoDialog.setTitle("Is that him?");
+                                            alertUserInfoDialog.setTitle("Is that him?"r);
                                             if (user.getDisplayName() == null) {
                                                 alertUserInfoDialog.setMessage(user.getUsername() + ", " + user.getEmail() + "," + user.getUid());
                                             } else {
@@ -174,16 +181,14 @@ public class FriendsFragment extends Fragment {
                     });
                 }
             }*/
-/*
     private void attachRecyclerViewAdapter() {
         Query lastFifty = DatabaseRefUtil.getmMyFriendsRef(mAuth.getCurrentUser().getUid()).limitToLast(50);
-        mRecyclerViewAdapter = new FirebaseRecyclerAdapter<Friend, FriendHolder>(
-                Friend.class, R.layout.friend_layout, FriendHolder.class, lastFifty) {
+        mRecyclerViewAdapter = new FirebaseRecyclerAdapter<User, FriendHolder>(
+                User.class, R.layout.friend_layout, FriendHolder.class, lastFifty) {
 
             @Override
-            public void populateViewHolder(FriendHolder friendView, Friend friend, int position) {
-                friendView.setFriendNickname(friend.getNickname());
-                friendView.setFriendEmail(friend.getEmail());
+            public void populateViewHolder(FriendHolder friendView, User friend, int position) {
+                friendView.setUsername(friend.getUsername());
                 friendView.setFriendPicture(getContext(), "http://209.132.179.3/uploads/big/2df7cab0a2305743db864ef472b6c8b9.png");
 
             }
@@ -197,13 +202,26 @@ public class FriendsFragment extends Fragment {
         });
 
         friendsRecyclerView.setAdapter(mRecyclerViewAdapter);
-    }*/
+        friendsRecyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(getContext(), new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
 
-/*    @Override
+                        TextView usernameView = (TextView) view.findViewById(R.id.friend_nickname);
+                        String username = usernameView.getText().toString();
+
+                        Intent intent = new Intent(getActivity(), FriendProfileActivity.class);
+                        intent.putExtra("username", username);
+                        startActivity(intent);
+                    }
+                })
+        );
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
 
-      *//*  attachRecyclerViewAdapter();*//*
+        attachRecyclerViewAdapter();
 
     }
 
@@ -214,7 +232,20 @@ public class FriendsFragment extends Fragment {
             mRecyclerViewAdapter.cleanup();
         }
     }
-}*/
+
+    @OnClick(R.id.add_friend_button)
+    public void actionAddFriend(View view){
+
+        startActivity(new Intent(getActivity(), AddFriendActivity.class));
+    }
+
+
+    @OnClick(R.id.invite_friend_button)
+    public void actionInviteFriend(View view){
+
+        startActivity(new Intent(getActivity(), InviteFriendActivity.class));
+    }
+}
 
 
 

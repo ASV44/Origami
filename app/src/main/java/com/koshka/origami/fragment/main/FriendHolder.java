@@ -24,7 +24,7 @@ public class FriendHolder extends RecyclerView.ViewHolder {
     private ImageView friendPic;
 
     private TextView friendName;
-    private TextView friendNickname;
+    private TextView usernameTextView;
     private TextView friendEmail;
     private ImageView friendPicture;
     private ImageButton button;
@@ -34,26 +34,17 @@ public class FriendHolder extends RecyclerView.ViewHolder {
         this.view = itemView;
     }
 
-/*    public void setFriendNickname(String nickname) {
-        friendNickname = (TextView) view.findViewById(R.id.friend_nickname);
-        friendNickname.setText(nickname);
+    public void setUsername(String username) {
+        usernameTextView = (TextView) view.findViewById(R.id.friend_nickname);
+        usernameTextView.setText(username);
     }
-*//*
-    public void setFriendName(String displayName) {
-        friendName = (TextView) view.findViewById(R.id.friend_name);
-        friendName.setText(displayName);
 
-    }*//*
-    public void setFriendEmail(String email){
-        friendEmail = (TextView) view.findViewById(R.id.friend_email);
-        friendEmail.setText(email);
-    }
 
     public void setFriendPicture(Context context, String pictureUrl){
-        friendPicture = (ImageView) view.findViewById(R.id.imageView);
+        friendPicture = (ImageView) view.findViewById(R.id.friendPicView);
         Glide.with(context)
                 .load(pictureUrl)
                 .fitCenter()
                 .into(friendPicture);
-    }*/
+    }
 }

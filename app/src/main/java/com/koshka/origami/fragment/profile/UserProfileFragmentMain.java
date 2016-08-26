@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -46,9 +47,16 @@ public class UserProfileFragmentMain extends Fragment {
     @BindView(R.id.user_display_name)
     AutofitTextView mUserDisplayName;
 
+    @BindView(R.id.map_layout)
+    RelativeLayout mapLayout;
+
+    @BindView(R.id.map_layout_child)
+    RelativeLayout mapLayoutChild;
 
     private DatabaseReference mMeRef;
     private FirebaseAuth mAuth;
+
+    private boolean mapIsMaximized = false;
 
 
 
@@ -69,18 +77,27 @@ public class UserProfileFragmentMain extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
-        final Typeface font = Typeface.createFromAsset(getActivity().getApplicationContext().getAssets(), "fonts/Hang.ttf");
-
-        mUserDisplayName.setTypeface(font);
         populateProfile();
     }
 
+    @OnClick(R.id.maximize_image_view_button)
+    public void maximizeMap(View view){
+
+        if (mapIsMaximized){
+            getActivity().recreate();
+            mapIsMaximized = false;
+        }else {
+            mapLayout.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            mapLayoutChild.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            mapIsMaximized = true;
+        }
+
+
+    }
 
 
     @MainThread
     private void populateProfile() {
-        String email = mAuth.getCurrentUser().getEmail();
         String nickname = mAuth.getCurrentUser().getDisplayName();
        /* mUserEmail.setText(email);*/
         mUserDisplayName.setText(nickname);

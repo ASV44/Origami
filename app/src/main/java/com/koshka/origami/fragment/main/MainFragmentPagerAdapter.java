@@ -27,7 +27,7 @@ public class MainFragmentPagerAdapter extends FragmentPagerAdapter {
     private final String[] mFragmentNames = new String[]{
             "1",
             "2",
-            "3",
+            "Friends",
     };
 
     @Override

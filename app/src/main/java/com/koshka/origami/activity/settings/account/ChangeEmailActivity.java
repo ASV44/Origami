@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -26,10 +27,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.login.LoginActivity;
+import com.koshka.origami.activity.settings.account.field_validator.CurrentPasswordFieldValidator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * Created by imuntean on 8/11/16.
@@ -41,21 +44,37 @@ public class ChangeEmailActivity extends AppCompatActivity {
     @BindView(R.id.toolbar_email_change)
     Toolbar toolbar;
 
-    @BindView(R.id.change_email)
-    EditText changeEmailEditText;
+    @BindView(R.id.current_password_for_email_layout)
+    TextInputLayout currentPasswordLayout;
 
-    @BindView(R.id.email_change_layout)
+
+    @BindView(R.id.email_change_text_layout)
     TextInputLayout emailChangeLayout;
 
-    @BindView(R.id.current_email)
+
+    @BindView(R.id.change_email_edit_text)
+    EditText changeEmailEditText;
+
+
+    @BindView(R.id.current_email_text_view)
     TextView currentEmailTextView;
 
+    @BindView(R.id.current_password_edit_text)
+    EditText currentPasswordEdit;
+
+    @BindView(R.id.button_change_email_next)
+    Button nextButton;
+
+    @BindView(R.id.button_change_email)
+    Button changeEmailButton;
+
+    private FirebaseUser currentUser;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
             startActivity(LoginActivity.createIntent(this));
             finish();
@@ -76,33 +95,73 @@ public class ChangeEmailActivity extends AppCompatActivity {
             actionBar.setDisplayShowHomeEnabled(false);
             actionBar.setDisplayShowTitleEnabled(false);
         }
+
+        clearPasswords();
+    }
+
+    private void clearPasswords() {
+
+        if (currentPasswordEdit != null) {
+            currentPasswordEdit.setText("");
+        }
+    }
+
+    @OnClick(R.id.button_change_email_next)
+    public void next(View view){
+
+        CurrentPasswordFieldValidator validator = new CurrentPasswordFieldValidator(currentPasswordLayout, 6);
+        String currentPassword = currentPasswordEdit.getText().toString();
+        boolean isCurrentPasswordValid = validator.validate(currentPassword);
+
+        if (isCurrentPasswordValid) {
+            AuthCredential credential = EmailAuthProvider.getCredential(currentUser.getEmail(), currentPassword);
+
+            currentUser.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        currentPasswordLayout.setVisibility(View.GONE);
+                        nextButton.setVisibility(View.GONE);
+                        emailChangeLayout.setVisibility(View.VISIBLE);
+                        changeEmailButton.setVisibility(View.VISIBLE);
+
+
+                    } else {
+                        currentPasswordLayout.setError("Password is incorrect");
+                    }
+                }
+            });
+        }
     }
 
     @OnClick(R.id.button_change_email)
     public void changeEmail(View view) {
 
 
-        final String email = changeEmailEditText.getText().toString();
+        final SweetAlertDialog successDialog =new SweetAlertDialog(this)
+                .setTitleText("Success!")
+                .setContentText("Your password was changed")
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sDialog) {
+                        sDialog.dismissWithAnimation();
+                    }
+                });
+
+        successDialog.changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+
+
+        final String changedEmail = changeEmailEditText.getText().toString();
         EmailFieldValidator validator = new EmailFieldValidator(emailChangeLayout);
 
 
-        boolean emailIsValid = validator.validate(email);
+        boolean emailIsValid = validator.validate(changedEmail);
 
         if (emailIsValid) {
 
             Resources res = getResources();
-
-            final EditText passwordEditText = new EditText(this);
-            final AlertDialog dialog = new AlertDialog.Builder(this)
-                    .setMessage(res.getString(R.string.change_email_warning))
-                    .setView(passwordEditText)
-                    .setPositiveButton(res.getString(R.string.positive_change), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-
                             String email = currentUser.getEmail();
-                            String password = passwordEditText.getText().toString();
+                            String password = currentPasswordEdit.getText().toString();
                             AuthCredential credential = EmailAuthProvider.getCredential(email, password);
                             currentUser.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
@@ -117,7 +176,9 @@ public class ChangeEmailActivity extends AppCompatActivity {
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     if(task.isSuccessful()){
                                                         Log.d(TAG, "Email was updated.");
+                                                        successDialog.show();
                                                         currentEmailTextView.setText(currentUser.getEmail());
+                                                        goHome();
                                                     }
                                                     else {
                                                         Log.d(TAG, "Email was not updated.");
@@ -132,12 +193,12 @@ public class ChangeEmailActivity extends AppCompatActivity {
                                 }
                             });
                         }
-                    })
-                    .setNegativeButton(res.getString(R.string.cancel), null)
-                    .create();
+    }
 
-            dialog.show();
-        }
+    private void goHome(){
+        Intent intent = NavUtils.getParentActivityIntent(this);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        NavUtils.navigateUpTo(this, intent);
     }
 
     @Override

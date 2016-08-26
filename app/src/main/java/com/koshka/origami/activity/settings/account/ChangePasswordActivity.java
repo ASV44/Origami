@@ -163,6 +163,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
                     }
                 });
 
+        successDialog.changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+
         if (newPasswordIsOk && newPasswordConfirmationIsOk) {
 
             if (newPassword.equals(newPasswordConfirmation)) {

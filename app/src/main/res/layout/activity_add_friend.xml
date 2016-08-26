@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/view2"
@@ -12,11 +13,12 @@
         app:elevation="0dp">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar_email_change"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="@dimen/actionBarSize"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
+            android:titleTextColor="@color/white"
             app:layout_scrollFlags="scroll|enterAlways" />
 
     </android.support.design.widget.AppBarLayout>
@@ -39,43 +41,29 @@
             android:layout_alignParentStart="true"
             android:layout_below="@+id/view2">
 
+
             <android.support.design.widget.TextInputLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/email_change_text_layout"
+                android:id="@+id/friends_text_input_layout"
                 style="@style/FirebaseUI.Text.TextInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="16dp"
-                android:visibility="gone"
                 app:errorTextAppearance="@style/FirebaseUI.Text.ErrorText"
                 app:hintTextAppearance="@style/FirebaseUI.Text.HintText">
 
                 <EditText
-                    android:id="@+id/change_email_edit_text"
+                    android:id="@+id/friends_email_nick_edit_text"
                     style="@style/FirebaseUI.EditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-.@"
-                    android:hint="@string/change_email_hint"
+                    android:hint="Friend\'s username/email"
                     android:inputType="textEmailAddress" />
             </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/current_password_for_email_layout"
-                style="@style/FirebaseUI.Text.TextInputLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="16dp"
-                app:errorTextAppearance="@style/FirebaseUI.Text.ErrorText"
-                app:hintTextAppearance="@style/FirebaseUI.Text.HintText">
-
-                <EditText
-                    android:id="@+id/current_password_edit_text"
-                    style="@style/FirebaseUI.EditText.CurrentPassword"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </android.support.design.widget.TextInputLayout>
 
         </RelativeLayout>
+
     </ScrollView>
 
     <RelativeLayout
@@ -84,48 +72,23 @@
         android:layout_alignParentBottom="true">
 
         <Button
-            android:id="@+id/button_change_email_next"
+            android:id="@+id/button_add_friend"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:background="@color/transparent6"
-            android:text="@string/button_next"
+            android:text="Add friend"
             android:textColor="@android:color/white" />
 
-        <Button
-            android:id="@+id/button_change_email"
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:background="@color/transparent6"
-            android:text="CHANGE"
-            android:textColor="@android:color/white"
-            android:visibility="gone" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerHorizontal="true"
-            android:gravity="center_horizontal"
-            android:layout_marginTop="50dp"
-            android:layout_marginBottom="20dp">
-
-            <TextView
-                android:id="@+id/current_email_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-
-                android:text="Current email:"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-
-        </LinearLayout>
-
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text=""
+            android:id="@+id/userExistsTextView"
+            android:layout_marginTop="168dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
     </RelativeLayout>
-
-
 </RelativeLayout>

@@ -62,7 +62,10 @@ public class DatabaseRefUtil {
     }
 
     public static DatabaseReference getmMyFriendsRef(String myUid) {
-        return mUsersRef.child(myUid).child("friendList");
+        return mFriendsRef.child(myUid);
     }
 
+    public static DatabaseReference getmFriendsRef() {
+        return mFriendsRef;
+    }
 }

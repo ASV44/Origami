@@ -27,7 +27,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.login.LoginActivity;
 import com.koshka.origami.fragment.main.MainFragmentPagerAdapter;
+import com.koshka.origami.fragment.profile.UserProfileFragmentPagerAdapter;
+import com.koshka.origami.ui.ParallaxPagerTransformer;
 import com.koshka.origami.utils.PermissionUtils;
+import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,6 +47,10 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     @BindView(R.id.main_pager)
     ViewPager mPager;
+
+    @BindView(R.id.viewpagertab)
+    SmartTabLayout viewpagertab;
+
 
     private int backButtonCount;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
@@ -67,6 +74,13 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
+        ParallaxPagerTransformer pt = new ParallaxPagerTransformer((R.id.instant_message));
+        pt.setBorder(3);
+        pt.setSpeed(0.7f);
+        mPager.setPageTransformer(false, pt);
+
+
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(false); // disable the button
@@ -85,13 +99,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             actionBar.setCustomView(v);
 
         }
-/*
-        ParallaxPagerTransformer pt = new ParallaxPagerTransformer((R.id.friends_recycler_view));
-        pt.setBorder(3);
-        pt.setSpeed(0.7f);
-        mPager.setPageTransformer(false, pt);*/
+
+
         mPager.setAdapter(new MainFragmentPagerAdapter(getSupportFragmentManager()));
         mPager.setCurrentItem(1);
+        viewpagertab.setViewPager(mPager);
         enableMyLocation();
 
     }

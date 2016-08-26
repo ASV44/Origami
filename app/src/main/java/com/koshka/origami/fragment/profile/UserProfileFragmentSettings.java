@@ -56,6 +56,7 @@ public class UserProfileFragmentSettings extends Fragment {
     @BindView(R.id.origami_text_logo)
     TextView origamiTextLogo;
 
+    SweetAlertDialog dialog;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
