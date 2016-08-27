@@ -18,15 +18,15 @@ public class MainFragmentPagerAdapter extends FragmentPagerAdapter {
     }
 
     private final Fragment[] mFragments = new Fragment[]{
-            new ChatFragment(),
+            new OrigamiMapFragment(),
             new OrigamiFragment(),
             new FriendsFragment(),
 
 
     };
     private final String[] mFragmentNames = new String[]{
-            "1",
-            "2",
+            "Map",
+            "Origami",
             "Friends",
     };
 

@@ -61,10 +61,21 @@
             android:parentActivityName=".activity.main.MainActivity"
             android:theme="@style/PurpleThemeNoActionBar" />
 
-        <!-- ORIGAMI MAP ACTIVITY -->
+        <!-- ORIGAMI ACTIVITY -->
         <activity
             android:name=".activity.main.OrigamiMapActivity"
             android:theme="@style/PurpleThemeNoActionBar" />
+
+        <activity
+            android:name=".activity.origami.CreatePublicOrigamiActivity"
+            android:theme="@style/PurpleThemeNoActionBar"
+            android:parentActivityName=".activity.main.MainActivity"/>
+
+        <activity
+            android:name=".activity.origami.OpenedOrigamiActivity"
+            android:theme="@style/PurpleThemeNoActionBar"
+            android:parentActivityName=".activity.main.MainActivity"/>
+
 
         <!-- FRIENDS ACTIVITY -->
 

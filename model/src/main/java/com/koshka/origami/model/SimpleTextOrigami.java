@@ -6,6 +6,7 @@ package com.koshka.origami.model;
 public class SimpleTextOrigami {
     private String text;
     private String placeId;
+    private String createdBy;
 
     public SimpleTextOrigami() {
     }
@@ -24,5 +25,13 @@ public class SimpleTextOrigami {
 
     public void setPlaceId(String placeId) {
         this.placeId = placeId;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 }

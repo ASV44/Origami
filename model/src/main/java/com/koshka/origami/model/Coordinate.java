@@ -1,12 +1,16 @@
 package com.koshka.origami.model;
 
+import java.util.Date;
+
 /**
  * Created by imuntean on 7/20/16.
  */
 public class Coordinate {
 
+    private String time;
     private double latitude;
     private double longitude;
+    private double alt;
 
     public Coordinate() {
     }
@@ -30,5 +34,21 @@ public class Coordinate {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    public double getAlt() {
+        return alt;
+    }
+
+    public void setAlt(double alt) {
+        this.alt = alt;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 }

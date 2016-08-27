@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
+import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
@@ -16,21 +18,35 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.login.LoginActivity;
 import com.koshka.origami.fragment.main.MainFragmentPagerAdapter;
 import com.koshka.origami.fragment.profile.UserProfileFragmentPagerAdapter;
+import com.koshka.origami.model.Coordinate;
 import com.koshka.origami.ui.ParallaxPagerTransformer;
 import com.koshka.origami.utils.PermissionUtils;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
+
+import java.text.DateFormat;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,7 +54,7 @@ import butterknife.ButterKnife;
 /**
  * Created by imuntean on 7/20/16.
  */
-public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
+public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
     private final static String TAG = "MainActivity";
 
@@ -56,6 +72,52 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private boolean locationPermissionGranted = false;
     private boolean mPermissionDenied = false;
+
+    /**
+     * Provides the entry point to Google Play services.
+     */
+    protected GoogleApiClient mGoogleApiClient;
+
+    /**
+     * Stores parameters for requests to the FusedLocationProviderApi.
+     */
+    protected LocationRequest mLocationRequest;
+    /**
+     * Represents a geographical location.
+     */
+    protected Location mCurrentLocation;
+
+
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
+
+    /**
+     * The fastest rate for active location updates. Exact. Updates will never be more frequent
+     * than this value.
+     */
+    public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
+            UPDATE_INTERVAL_IN_MILLISECONDS / 2;
+
+    // Keys for storing activity state in the Bundle.
+    protected final static String REQUESTING_LOCATION_UPDATES_KEY = "requesting-location-updates-key";
+    protected final static String LOCATION_KEY = "location-key";
+    protected final static String LAST_UPDATED_TIME_STRING_KEY = "last-updated-time-string-key";
+
+    // Labels.
+    protected String mLatitudeLabel;
+    protected String mLongitudeLabel;
+    protected String mLastUpdateTimeLabel;
+
+    /**
+     * Time when the location was updated represented as a String.
+     */
+    protected String mLastUpdateTime;
+
+    /**
+     * Tracks the status of the location updates request. Value changes when the user presses the
+     * Start Updates and Stop Updates buttons.
+     */
+    protected Boolean mRequestingLocationUpdates = true;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -101,11 +163,52 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         }
 
 
+        buildGoogleApiClient();
+
+        // Update values using data stored in the Bundle.
+        updateValuesFromBundle(savedInstanceState);
+
         mPager.setAdapter(new MainFragmentPagerAdapter(getSupportFragmentManager()));
         mPager.setCurrentItem(1);
         viewpagertab.setViewPager(mPager);
         enableMyLocation();
 
+        if (!mRequestingLocationUpdates) {
+            mRequestingLocationUpdates = true;
+            startLocationUpdates();
+        }
+
+    }
+
+
+    /**
+     * Updates fields based on data stored in the bundle.
+     *
+     * @param savedInstanceState The activity state saved in the Bundle.
+     */
+    private void updateValuesFromBundle(Bundle savedInstanceState) {
+        Log.i(TAG, "Updating values from bundle");
+        if (savedInstanceState != null) {
+            // Update the value of mRequestingLocationUpdates from the Bundle, and make sure that
+            // the Start Updates and Stop Updates buttons are correctly enabled or disabled.
+            if (savedInstanceState.keySet().contains(REQUESTING_LOCATION_UPDATES_KEY)) {
+                mRequestingLocationUpdates = savedInstanceState.getBoolean(
+                        REQUESTING_LOCATION_UPDATES_KEY);
+            }
+
+            // Update the value of mCurrentLocation from the Bundle and update the UI to show the
+            // correct latitude and longitude.
+            if (savedInstanceState.keySet().contains(LOCATION_KEY)) {
+                // Since LOCATION_KEY was found in the Bundle, we can be sure that mCurrentLocation
+                // is not null.
+                mCurrentLocation = savedInstanceState.getParcelable(LOCATION_KEY);
+            }
+
+            // Update the value of mLastUpdateTime from the Bundle and update the UI.
+            if (savedInstanceState.keySet().contains(LAST_UPDATED_TIME_STRING_KEY)) {
+                mLastUpdateTime = savedInstanceState.getString(LAST_UPDATED_TIME_STRING_KEY);
+            }
+        }
     }
 
     @Override
@@ -143,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             // Permission to access the location is missing.
             PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
                     Manifest.permission.ACCESS_FINE_LOCATION, true);
-        } else  {
+        } else {
             // Access to the location has been granted to the app.
             locationPermissionGranted = true;
         }
@@ -168,17 +271,185 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
 
     @Override
-    public void onBackPressed() {
-        if (backButtonCount >= 1) {
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_HOME);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        } else {
-            showShortSnackbar(R.string.press_back);
-            backButtonCount++;
+    protected void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Within {@code onPause()}, we pause location updates, but leave the
+        // connection to GoogleApiClient intact.  Here, we resume receiving
+        // location updates if the user has requested them.
+
+        if (mGoogleApiClient.isConnected() && mRequestingLocationUpdates) {
+            startLocationUpdates();
         }
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Stop location updates to save battery, but don't disconnect the GoogleApiClient object.
+        if (mGoogleApiClient.isConnected()) {
+            stopLocationUpdates();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        mGoogleApiClient.disconnect();
+
+        super.onStop();
+    }
+
+
+    /**
+     * Builds a GoogleApiClient. Uses the {@code #addApi} method to request the
+     * LocationServices API.
+     */
+    protected synchronized void buildGoogleApiClient() {
+        Log.i(TAG, "Building GoogleApiClient");
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        createLocationRequest();
+    }
+
+
+    /**
+     * Sets up the location request. Android has two location request settings:
+     * {@code ACCESS_COARSE_LOCATION} and {@code ACCESS_FINE_LOCATION}. These settings control
+     * the accuracy of the current location. This sample uses ACCESS_FINE_LOCATION, as defined in
+     * the AndroidManifest.xml.
+     * <p/>
+     * When the ACCESS_FINE_LOCATION setting is specified, combined with a fast update
+     * interval (5 seconds), the Fused Location Provider API returns location updates that are
+     * accurate to within a few feet.
+     * <p/>
+     * These settings are appropriate for mapping applications that show real-time location
+     * updates.
+     */
+    protected void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+
+        // Sets the desired interval for active location updates. This interval is
+        // inexact. You may not receive updates at all if no location sources are available, or
+        // you may receive them slower than requested. You may also receive updates faster than
+        // requested if other applications are requesting location at a faster interval.
+        mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
+
+        // Sets the fastest rate for active location updates. This interval is exact, and your
+        // application will never receive updates faster than this value.
+        mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
+
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+    /**
+     * Requests location updates from the FusedLocationApi.
+     */
+    protected void startLocationUpdates() {
+        // The final argument to {@code requestLocationUpdates()} is a LocationListener
+        // (http://developer.android.com/reference/com/google/android/gms/location/LocationListener.html).
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        LocationServices.FusedLocationApi.requestLocationUpdates(
+                mGoogleApiClient, mLocationRequest, this);
+    }
+
+
+/*
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLastLocation != null) {
+
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+            DatabaseReference publicOrigamiRef = ref.child("last_known_location").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+            Coordinate lastKnownCoordinate = new Coordinate();
+            lastKnownCoordinate.setLongitude(mLastLocation.getLongitude());
+            lastKnownCoordinate.setLatitude(mLastLocation.getLatitude());
+
+            publicOrigamiRef.setValue(lastKnownCoordinate).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()){
+                        Log.d(TAG, "Coordinate pushed succesfully");
+                    } else {
+                        Log.d(TAG, "Could not push last known location");
+                    }
+                }
+            });
+           *//* mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
+            mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));*//*
+        }
+    }*/
+
+    /**
+     * Runs when a GoogleApiClient object successfully connects.
+     */
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        Log.i(TAG, "Connected to GoogleApiClient");
+
+        // If the initial location was never previously requested, we use
+        // FusedLocationApi.getLastLocation() to get it. If it was previously requested, we store
+        // its value in the Bundle and check for it in onCreate(). We
+        // do not request it again unless the user specifically requests location updates by pressing
+        // the Start Updates button.
+        //
+        // Because we cache the value of the initial location in the Bundle, it means that if the
+        // user launches the activity,
+        // moves to a new location, and then changes the device orientation, the original location
+        // is displayed as the activity is re-created.
+        if (mCurrentLocation == null) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+        }
+
+        // If the user presses the Start Updates button before GoogleApiClient connects, we set
+        // mRequestingLocationUpdates to true (see startUpdatesButtonHandler()). Here, we check
+        // the value of mRequestingLocationUpdates and if it is true, we start location updates.
+        if (mRequestingLocationUpdates) {
+            startLocationUpdates();
+        }
+    }
+
+
 
     public static Intent createIntent(Context context) {
         Intent in = new Intent();
@@ -192,198 +463,89 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     }
 
 
-
-/*    @OnClick(R.id.create_origami_button)
-    public void createOrigami(View view) {
-        startActivity(new Intent(this, GooglePlacePickerActivity.class));
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+        // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
+        // onConnectionFailed.
+        Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
     }
 
-    @OnClick(R.id.add_friend_button)
-    public void addFriend(View view) {
 
-        final FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        final DatabaseReference mMe = DatabaseRefUtil.getUserRefByUid(mAuth.getCurrentUser().getUid());
-        final DatabaseReference mMyFriends = mMe.child("friendList");
-        // Creating alert Dialog with one Button
-        final AlertDialog.Builder alertUserInfoDialog = new AlertDialog.Builder(MainActivity.this);
+    @Override
+    public void onConnectionSuspended(int cause) {
+        // The connection to Google Play services was lost for some reason. We call connect() to
+        // attempt to re-establish the connection.
+        Log.i(TAG, "Connection suspended");
+        mGoogleApiClient.connect();
+    }
 
-        // Creating alert Dialog with one Button
-        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+    @Override
+    public void onBackPressed() {
+        if (backButtonCount >= 1) {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } else {
+            showShortSnackbar(R.string.press_back);
+            backButtonCount++;
+        }
+    }
 
-        alertDialog.setTitle("Add friend");
-        alertDialog.setIcon(R.drawable.origami);
-        alertDialog.setMessage("Enter friend's email:");
-        final EditText input = new EditText(MainActivity.this);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT);
-        input.setLayoutParams(lp);
-        alertDialog.setView(input);
+    /**
+     * Removes location updates from the FusedLocationApi.
+     */
+    protected void stopLocationUpdates() {
+        // It is a good practice to remove location requests when the activity is in a paused or
+        // stopped state. Doing so helps battery performance and is especially
+        // recommended in applications that request frequent location updates.
 
-        alertDialog.setPositiveButton("Add", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                String email = input.getText().toString();
-                if (email != null && !email.isEmpty()) {
-                    final Query query = DatabaseRefUtil.getFindUserByEmailQuery(input.getText().toString());
-                    query.addListenerForSingleValueEvent(new ValueEventListener() {
+        // The final argument to {@code requestLocationUpdates()} is a LocationListener
+        // (http://developer.android.com/reference/com/google/android/gms/location/LocationListener.html).
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+    }
 
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.exists()) {
-                                query.addChildEventListener(new ChildEventListener() {
-                                    @Override
-                                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                                        final User user = dataSnapshot.getValue(User.class);
-                                        if (!user.getEmail().equals(mAuth.getCurrentUser().getEmail())){
+    @Override
+    public void onLocationChanged(Location location) {
 
-                                        alertUserInfoDialog.setTitle("Is that him?");
-                                        alertUserInfoDialog.setMessage(user.getDisplayName() + ", " + user.getEmail()+ "," + user.getUid());
+        mCurrentLocation = location;
+        mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
 
-                                        alertUserInfoDialog.setPositiveButton("Yes, that's him", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                Friend friend = new Friend();
-                                                friend.setDisplayName(user.getDisplayName());
-                                                friend.setEmail(user.getEmail());
-                                                friend.setUid(user.getUid());
-                                                mMyFriends.push().setValue(friend);
-                                            }
-                                        });
-                                        alertUserInfoDialog.create();
-                                        alertUserInfoDialog.show();
-                                    }else {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference publicOrigamiRef = ref.child("user_current_location").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-                                            alertUserInfoDialog.setMessage("That seems to be you. :)");
-                                            alertUserInfoDialog.create();
-                                            alertUserInfoDialog.show();
-                                    }
+        Coordinate currentLocationCoordinate = new Coordinate();
+        currentLocationCoordinate.setLongitude(mCurrentLocation.getLongitude());
+        currentLocationCoordinate.setLatitude(mCurrentLocation.getLatitude());
+        currentLocationCoordinate.setTime(mLastUpdateTime);
+        currentLocationCoordinate.setAlt(mCurrentLocation.getAltitude());
 
-                                    }
-
-                                    @Override
-                                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                                    }
-
-                                    @Override
-                                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                                    }
-
-                                    @Override
-                                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                                    }
-
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-
-                                    }
-                                });
-                            } else {
-                                alertUserInfoDialog.setTitle("No such user in Origami");
-                                alertUserInfoDialog.setMessage("Do you want to invite " + input.getText().toString() + "?");
-                                alertUserInfoDialog.setPositiveButton("Invite", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                                    }
-                                });
-                                alertUserInfoDialog.create();
-                                alertUserInfoDialog.show();
-
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
+        publicOrigamiRef.setValue(currentLocationCoordinate).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Log.d(TAG, "Coordinate pushed succesfully");
+                } else {
+                    Log.d(TAG, "Could not push last known location");
                 }
             }
         });
-        alertDialog.create();
-        alertDialog.show();
-    }*/
-
-/*
-            @OnClick(R.id.invite_friend_button)
-            public void inviteFriend(View view) {
-
-                FirebaseAuth mAuth = FirebaseAuth.getInstance();
-                final DatabaseReference mMe = DatabaseRefUtil.getUserRefByUid(mAuth.getCurrentUser().getUid());
-                final DatabaseReference mMyFriends = mMe.child("friendList");
-                // Creating alert Dialog with one Button
-                final AlertDialog.Builder alertUserInfoDialog = new AlertDialog.Builder(MainActivity.this);
-
-                // Creating alert Dialog with one Button
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
-
-                alertDialog.setTitle("Invite friend to Origami");
-                alertDialog.setMessage("Enter friend's email:");
-                final EditText input = new EditText(MainActivity.this);
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT);
-                input.setLayoutParams(lp);
-                alertDialog.setView(input);
-
-                alertDialog.setPositiveButton("Invite", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (input != null) {
-                            Query query = DatabaseRefUtil.getFindUserByEmailQuery(input.getText().toString());
-                            query.addChildEventListener(new ChildEventListener() {
-                                @Override
-                                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                                    final User user = dataSnapshot.getValue(User.class);
-
-                                    alertUserInfoDialog.setTitle("Is that him?");
-                                    alertUserInfoDialog.setMessage(user.getDisplayName());
-
-                                    alertUserInfoDialog.setPositiveButton("Yes, that's him", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            mMyFriends.push().setValue(user.getUid());
-                                        }
-                                    });
-
-                                }
-
-                                @Override
-                                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                                }
-
-                                @Override
-                                public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                                }
-
-                                @Override
-                                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-                            alertUserInfoDialog.create();
-                            alertUserInfoDialog.show();
-
-                        } else {
-                            showShortSnackbar(R.string.no_place);
-                        }
-
-                    }
-                });
-                alertDialog.create();
-                alertDialog.show();
-
-            }*/
+    }
 
 
+    /**
+     * Stores activity data in the Bundle.
+     */
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putBoolean(REQUESTING_LOCATION_UPDATES_KEY, mRequestingLocationUpdates);
+        savedInstanceState.putParcelable(LOCATION_KEY, mCurrentLocation);
+        savedInstanceState.putString(LAST_UPDATED_TIME_STRING_KEY, mLastUpdateTime);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    public Location getUserLocation(){
+
+        return mCurrentLocation;
+    }
 }
 
