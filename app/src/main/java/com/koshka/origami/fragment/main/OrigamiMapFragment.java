@@ -1,6 +1,8 @@
 package com.koshka.origami.fragment.main;
 
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -26,9 +28,12 @@ import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -80,6 +85,8 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
     private ValueEventListener notFollowListener;
 
 
+    private  Circle circle;
+    private Circle userCircle;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -112,7 +119,11 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
         FragmentManager fm = getChildFragmentManager();
         SupportMapFragment fragment = (SupportMapFragment) fm.findFragmentById(R.id.map_container);
         if (fragment == null) {
-            fragment = SupportMapFragment.newInstance();
+
+            GoogleMapOptions options = new GoogleMapOptions();
+            options.compassEnabled(false);
+            options.mapToolbarEnabled(false);
+            fragment = SupportMapFragment.newInstance(options);
             fm.beginTransaction().replace(R.id.map_container, fragment).commit();
         }
 
@@ -129,8 +140,10 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
 
     @OnClick(R.id.follow_me_button)
     public void followMe(View view){
+
+        final  Resources res = getResources();
         if(!isInFollowMeMode){
-            if (notFollowListener!= null){
+            if (notFollowListener != null){
                 myLocationRef.removeEventListener(notFollowListener);
             }
             isInFollowMeMode = true;
@@ -141,9 +154,19 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
                     if (marker != null){
                         marker.remove();
                     }
+                    if(userCircle != null){
+                        userCircle.remove();
+                    }
                     final Coordinate coordinate = dataSnapshot.getValue(Coordinate.class);
                     LatLng latLng = new LatLng(coordinate.getLatitude(), coordinate.getLongitude());
                     marker = mMap.addMarker( new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.mapmarker)));
+
+                    userCircle= mMap.addCircle(new CircleOptions()
+                            .center(marker.getPosition())
+                            .radius(50)
+                            .strokeColor(res.getColor(R.color.transparent6))
+                            .fillColor(res.getColor(R.color.transparent6)));
+
 
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
 
@@ -190,6 +213,51 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setBuildingsEnabled(true);
+        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                marker = mMap.addMarker( new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.mapmarker)));
+
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+            }
+        });
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                if (circle != null){
+                    circle.remove();
+                }
+                Resources res = getResources();
+                circle = mMap.addCircle(new CircleOptions()
+                        .center(marker.getPosition())
+                        .radius(50)
+                        .strokeColor(res.getColor(R.color.transparent6))
+                        .fillColor(res.getColor(R.color.transparent6)));
+
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 15));
+
+                return false;
+            }
+        });
+
+        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+
+            }
+        });
 
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
 

@@ -137,11 +137,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         setSupportActionBar(toolbar);
 
 
-        ParallaxPagerTransformer pt = new ParallaxPagerTransformer((R.id.instant_message));
+ /*       ParallaxPagerTransformer pt = new ParallaxPagerTransformer((R.id.instant_message));
         pt.setBorder(3);
-        pt.setSpeed(0.7f);
-        mPager.setPageTransformer(false, pt);
-
+        pt.setSpeed(0.7f);*/
+      /*  mPager.setPageTransformer(false, pt);
+*/
 
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
