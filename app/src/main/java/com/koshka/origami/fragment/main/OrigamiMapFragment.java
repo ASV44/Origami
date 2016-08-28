@@ -43,13 +43,17 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.maps.android.clustering.ClusterManager;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.friends.AddFriendActivity;
 import com.koshka.origami.activity.friends.FriendProfileActivity;
 import com.koshka.origami.activity.main.MainActivity;
 import com.koshka.origami.activity.origami.CreatePublicOrigamiActivity;
 import com.koshka.origami.activity.origami.OpenedOrigamiActivity;
+import com.koshka.origami.google_maps.OrigamiMarker;
+import com.koshka.origami.google_maps.OrigamiMarkerRenderer;
 import com.koshka.origami.model.Coordinate;
+import com.koshka.origami.model.Origami;
 import com.koshka.origami.model.SimpleTextOrigami;
 
 import butterknife.BindView;
@@ -60,7 +64,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 /**
  * Created by imuntean on 8/27/16.
  */
-public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, ValueEventListener {
+public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, ValueEventListener, GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener ,GoogleMap.OnCameraMoveListener, GoogleMap.OnMapClickListener, GoogleMap.OnInfoWindowLongClickListener{
 
     @BindView(R.id.multiple_actions_map)
     FloatingActionsMenu plusButton;
@@ -78,6 +82,13 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
 
     private boolean isInFollowMeMode = false;
 
+    //Initialize to a non-valid zoom value
+    private float previousZoomLevel = -1.0f;
+
+    private boolean isZooming = false;
+
+    private ClusterManager<OrigamiMarker> mClusterManager;
+
     private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     private DatabaseReference ref = DatabaseRefUtil.getmRef();
     private DatabaseReference myLocationRef =ref.child("user_current_location").child(currentUser.getUid());
@@ -85,8 +96,10 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
     private ValueEventListener notFollowListener;
 
 
-    private  Circle circle;
+    // Google maps circles
+    private Circle origamiCircle;
     private Circle userCircle;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -163,12 +176,12 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
 
                     userCircle= mMap.addCircle(new CircleOptions()
                             .center(marker.getPosition())
-                            .radius(50)
+                            .radius(1)
                             .strokeColor(res.getColor(R.color.transparent6))
                             .fillColor(res.getColor(R.color.transparent6)));
 
 
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
 
                 }
 
@@ -214,116 +227,13 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setBuildingsEnabled(true);
-        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-            @Override
-            public void onMapLongClick(LatLng latLng) {
-                marker = mMap.addMarker( new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.mapmarker)));
-
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-            }
-        });
-
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                if (circle != null){
-                    circle.remove();
-                }
-                Resources res = getResources();
-                circle = mMap.addCircle(new CircleOptions()
-                        .center(marker.getPosition())
-                        .radius(50)
-                        .strokeColor(res.getColor(R.color.transparent6))
-                        .fillColor(res.getColor(R.color.transparent6)));
-
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 15));
-
-                return false;
-            }
-        });
-
-        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
-            @Override
-            public void onMarkerDragStart(Marker marker) {
-
-            }
-
-            @Override
-            public void onMarkerDrag(Marker marker) {
-
-            }
-
-            @Override
-            public void onMarkerDragEnd(Marker marker) {
-
-            }
-        });
-
-        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-
-            @Override
-            public void onInfoWindowClick(Marker arg0) {
-
-                boolean userIsInOrigamiRange = false;
-
-                MainActivity activity = (MainActivity) getActivity();
-
-                int RANGE = 50; //Range in meters
-                Location currentUserLocation = activity.getUserLocation();
-                LatLng origamiLocation = arg0.getPosition();
-
-                double currentUserLocationLat;
-                double currentUserLocationLong;
-                double currentUserLocationAlt;
-                if (currentUserLocation != null){
-
-                    currentUserLocationLat = currentUserLocation.getLatitude();
-                    currentUserLocationLong = currentUserLocation.getLongitude();
-                    currentUserLocationAlt = currentUserLocation.getAltitude();
-
-                } else {
-                    currentUserLocationLat = 0;
-                    currentUserLocationAlt = 0;
-                    currentUserLocationLong = 0;
-                }
-
-                double currentOrigamiLocationLat = origamiLocation.latitude;
-                double currentOrigamiLocationLong = origamiLocation.longitude;
-
-                double distance = distance(currentUserLocationLat, currentOrigamiLocationLat, currentUserLocationLong, currentOrigamiLocationLong, 0, 0 );
-
-                Toast.makeText(getActivity(), ""+distance, Toast.LENGTH_SHORT);
-
-                userIsInOrigamiRange = distance < RANGE;
-
-                if(userIsInOrigamiRange) {
-
-
-                    Intent intent = new Intent(getContext(), OpenedOrigamiActivity.class);
-
-                    String string = arg0.getTitle();
-                    int spacePos = string.indexOf(" ");
-                    if (spacePos > 0) {
-                        String youString = string.substring(0, spacePos);
-                        intent.putExtra("username", "IT WORKS!!!");
-                    }
-
-                    startActivity(intent);
-                } else {
-
-                    final SweetAlertDialog successDialog =new SweetAlertDialog(getActivity())
-                            .setTitleText("Sorry!")
-                            .setContentText("You are not around this origami")
-                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                @Override
-                                public void onClick(SweetAlertDialog sDialog) {
-                                    sDialog.dismissWithAnimation();
-                                }
-                            });
-                    successDialog.show();
-                }
-            }
-        });
+        mMap.setOnMapLongClickListener(this);
+        mMap.setOnMarkerClickListener(this);
+        mMap.setOnInfoWindowClickListener(this);
+        mMap.setOnCameraMoveListener(this);
+        mMap.setOnMapClickListener(this);
+        mMap.setOnInfoWindowLongClickListener(this);
+        setUpClusterer();
 
     }
 
@@ -347,24 +257,6 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
         return Math.sqrt(distance);
     }
 
-    private double distanceBetweenTwoCoordinates(double lat1, double long1, double lat2, double long2){
-        double φ1 = lat1; //
-        double φ2 = lat2;
-        double Δφ = lat2-lat1;
-        double Δλ = long2-long1;
-        double a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-                Math.cos(φ1) * Math.cos(φ2) *
-                        Math.sin(Δλ/2) * Math.sin(Δλ/2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-
-        double R = 6371e3; // metres
-
-        double d = R * c;
-
-        return d;
-
-    }
-
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
@@ -383,9 +275,7 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
                         public void onResult(PlaceBuffer places) {
                             if (places.getStatus().isSuccess() && places.getCount() > 0) {
                                 final Place myPlace = places.get(0);
-                                MarkerOptions marker = new MarkerOptions().position(myPlace.getLatLng()).title(post.getCreatedBy()+" " + post.getText()).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
-
-                                mMap.addMarker(marker);
+                                addOrigamiMarker(myPlace.getLatLng(), post.getCreatedBy());
                             } else {
                             }
                             places.release();
@@ -418,5 +308,138 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
     }
 
 
+    @Override
+    public void onMapLongClick(LatLng latLng) {
+        marker = mMap.addMarker( new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.mapmarker)));
+        //SHOULD APPEAR SOME FRAGMENT FOR ADDING A NEW ORIGAMI RIGHT THERE
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        if (origamiCircle != null){
+            origamiCircle.remove();
+        }
+        Resources res = getResources();
+        origamiCircle = mMap.addCircle(new CircleOptions()
+                .center(marker.getPosition())
+                .radius(50)
+                .strokeColor(res.getColor(R.color.transparent6))
+                .fillColor(res.getColor(R.color.transparent6)));
+
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 15));
+
+        return false;
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        boolean userIsInOrigamiRange = false;
+
+        MainActivity activity = (MainActivity) getActivity();
+
+        int RANGE = 50; //Range in meters
+        Location currentUserLocation = activity.getUserLocation();
+        LatLng origamiLocation = marker.getPosition();
+
+        double currentUserLocationLat;
+        double currentUserLocationLong;
+        double currentUserLocationAlt;
+        if (currentUserLocation != null){
+
+            currentUserLocationLat = currentUserLocation.getLatitude();
+            currentUserLocationLong = currentUserLocation.getLongitude();
+            currentUserLocationAlt = currentUserLocation.getAltitude();
+
+        } else {
+            currentUserLocationLat = 0;
+            currentUserLocationAlt = 0;
+            currentUserLocationLong = 0;
+        }
+
+        double currentOrigamiLocationLat = origamiLocation.latitude;
+        double currentOrigamiLocationLong = origamiLocation.longitude;
+
+        double distance = distance(currentUserLocationLat, currentOrigamiLocationLat, currentUserLocationLong, currentOrigamiLocationLong, 0, 0 );
+
+        Toast.makeText(getActivity(), ""+distance, Toast.LENGTH_SHORT);
+
+        userIsInOrigamiRange = distance < RANGE;
+
+        if(userIsInOrigamiRange) {
+
+
+            Intent intent = new Intent(getContext(), OpenedOrigamiActivity.class);
+
+            String string = marker.getTitle();
+            int spacePos = string.indexOf(" ");
+            if (spacePos > 0) {
+                String youString = string.substring(0, spacePos);
+                intent.putExtra("username", "IT WORKS!!!");
+            }
+
+            startActivity(intent);
+        } else {
+
+            final SweetAlertDialog successDialog =new SweetAlertDialog(getActivity())
+                    .setTitleText("Sorry!")
+                    .setContentText("You are not around this origami")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.dismissWithAnimation();
+                        }
+                    });
+            successDialog.show();
+        }
+    }
+
+    @Override
+    public void onCameraMove() {
+
+        if(previousZoomLevel != mMap.getCameraPosition().zoom)
+        {
+            isZooming = true;
+            if (followListener != null){
+                myLocationRef.removeEventListener(followListener);
+            }
+            isInFollowMeMode = false;
+            followMeTextButton.setText("Follow mode");
+        }
+
+        previousZoomLevel = mMap.getCameraPosition().zoom;
+    }
+
+    @Override
+    public void onMapClick(LatLng latLng) {
+        mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+
+    }
+
+    @Override
+    public void onInfoWindowLongClick(Marker marker) {
+        //Nothing to do with this yet.
+    }
+
+    private void setUpClusterer() {
+
+        // Initialize the manager with the context and the map.
+        // (Activity extends context, so we can pass 'this' in the constructor.)
+        mClusterManager = new ClusterManager<OrigamiMarker>(getContext(), mMap);
+
+        // Point the map's listeners at the listeners implemented by the cluster
+        // manager.
+        mMap.setOnCameraChangeListener(mClusterManager);
+
+        mClusterManager.setRenderer(new OrigamiMarkerRenderer(getContext(), mMap, mClusterManager));
+    }
+
+    private void addOrigamiMarker(LatLng latlng , String title) {
+
+            OrigamiMarker offsetItem = new OrigamiMarker(latlng.latitude, latlng.longitude);
+            offsetItem.setOrigamiIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
+            offsetItem.setOrigamiTitle(title);
+            mClusterManager.addItem(offsetItem);
+
+    }
 
 }
