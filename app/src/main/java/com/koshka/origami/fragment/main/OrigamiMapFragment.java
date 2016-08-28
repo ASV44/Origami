@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.database.DatabaseRefUtil;
@@ -22,6 +23,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -30,6 +33,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,6 +44,7 @@ import com.koshka.origami.activity.friends.FriendProfileActivity;
 import com.koshka.origami.activity.main.MainActivity;
 import com.koshka.origami.activity.origami.CreatePublicOrigamiActivity;
 import com.koshka.origami.activity.origami.OpenedOrigamiActivity;
+import com.koshka.origami.model.Coordinate;
 import com.koshka.origami.model.SimpleTextOrigami;
 
 import butterknife.BindView;
@@ -55,10 +60,24 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
     @BindView(R.id.multiple_actions_map)
     FloatingActionsMenu plusButton;
 
+    @BindView(R.id.follow_me_button)
+    TextView followMeTextButton;
+
 
     private GoogleApiClient mGoogleApiClient;
 
     private GoogleMap mMap;
+
+
+    private  Marker marker; //My locationMarker
+
+    private boolean isInFollowMeMode = false;
+
+    private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+    private DatabaseReference ref = DatabaseRefUtil.getmRef();
+    private DatabaseReference myLocationRef =ref.child("user_current_location").child(currentUser.getUid());
+    private ValueEventListener followListener;
+    private ValueEventListener notFollowListener;
 
 
     @Nullable
@@ -108,6 +127,66 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
         plusButton.collapse();
     }
 
+    @OnClick(R.id.follow_me_button)
+    public void followMe(View view){
+        if(!isInFollowMeMode){
+            if (notFollowListener!= null){
+                myLocationRef.removeEventListener(notFollowListener);
+            }
+            isInFollowMeMode = true;
+            followMeTextButton.setText("Exit follow mode");
+            followListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (marker != null){
+                        marker.remove();
+                    }
+                    final Coordinate coordinate = dataSnapshot.getValue(Coordinate.class);
+                    LatLng latLng = new LatLng(coordinate.getLatitude(), coordinate.getLongitude());
+                    marker = mMap.addMarker( new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.mapmarker)));
+
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            };
+            myLocationRef.addValueEventListener(followListener);
+
+        } else {
+            if (followListener != null){
+                myLocationRef.removeEventListener(followListener);
+            }
+            isInFollowMeMode = false;
+            followMeTextButton.setText("Follow mode");
+            mMap.animateCamera(CameraUpdateFactory.zoomOut());
+
+            notFollowListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (marker != null){
+                        marker.remove();
+                    }
+                    final Coordinate coordinate = dataSnapshot.getValue(Coordinate.class);
+                    LatLng latLng = new LatLng(coordinate.getLatitude(), coordinate.getLongitude());
+                    marker = mMap.addMarker( new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.mapmarker)));
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            };
+
+            myLocationRef.addValueEventListener(notFollowListener);
+        }
+
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -121,13 +200,24 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
 
                 MainActivity activity = (MainActivity) getActivity();
 
-                int RANGE = 100; //Range in meters
+                int RANGE = 50; //Range in meters
                 Location currentUserLocation = activity.getUserLocation();
                 LatLng origamiLocation = arg0.getPosition();
 
-                double currentUserLocationLat = currentUserLocation.getLatitude();
-                double currentUserLocationLong = currentUserLocation.getLongitude();
-                double currentUserLocationAlt = currentUserLocation.getAltitude();
+                double currentUserLocationLat;
+                double currentUserLocationLong;
+                double currentUserLocationAlt;
+                if (currentUserLocation != null){
+
+                    currentUserLocationLat = currentUserLocation.getLatitude();
+                    currentUserLocationLong = currentUserLocation.getLongitude();
+                    currentUserLocationAlt = currentUserLocation.getAltitude();
+
+                } else {
+                    currentUserLocationLat = 0;
+                    currentUserLocationAlt = 0;
+                    currentUserLocationLong = 0;
+                }
 
                 double currentOrigamiLocationLat = origamiLocation.latitude;
                 double currentOrigamiLocationLong = origamiLocation.longitude;
