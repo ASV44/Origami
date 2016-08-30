@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string-array name="user_tables">
+        <item>users</item>
+        <item>friends</item>
+        <item>preferences</item>
+        <item>user_current_location</item>
+
+    </string-array>
+
     <array name="languages">
         <item>English</item>
         <item>Pусский</item>

@@ -28,6 +28,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.login.LoginActivity;
 import com.koshka.origami.activity.settings.account.field_validator.CurrentPasswordFieldValidator;
+import com.koshka.origami.utils.UiNavigationUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -145,6 +146,7 @@ public class ChangeEmailActivity extends AppCompatActivity {
                     @Override
                     public void onClick(SweetAlertDialog sDialog) {
                         sDialog.dismissWithAnimation();
+                        goHome();
                     }
                 });
 
@@ -178,7 +180,6 @@ public class ChangeEmailActivity extends AppCompatActivity {
                                                         Log.d(TAG, "Email was updated.");
                                                         successDialog.show();
                                                         currentEmailTextView.setText(currentUser.getEmail());
-                                                        goHome();
                                                     }
                                                     else {
                                                         Log.d(TAG, "Email was not updated.");
@@ -196,18 +197,14 @@ public class ChangeEmailActivity extends AppCompatActivity {
     }
 
     private void goHome(){
-        Intent intent = NavUtils.getParentActivityIntent(this);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        NavUtils.navigateUpTo(this, intent);
+        UiNavigationUtil.goHome(this);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
 
-            Intent intent = NavUtils.getParentActivityIntent(this);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            NavUtils.navigateUpTo(this, intent);
+           goHome();
             return true;
         } else {
             return super.onOptionsItemSelected(item);

@@ -100,4 +100,11 @@
     <string name="cancel">Cancel</string>
 
 
+    <!-- Firebase references -->
+    <string name="public_origami_ref">public_origami</string>
+    <string name="friends_ref">friends</string>
+    <string name="users_ref">users</string>
+    <string name="current_user_location">user_current_location</string>
+
+
 </resources>

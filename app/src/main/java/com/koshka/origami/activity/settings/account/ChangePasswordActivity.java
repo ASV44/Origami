@@ -1,5 +1,6 @@
 package com.koshka.origami.activity.settings.account;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -24,6 +25,7 @@ import com.koshka.origami.R;
 import com.koshka.origami.activity.login.LoginActivity;
 import com.koshka.origami.activity.settings.account.field_validator.CurrentPasswordFieldValidator;
 import com.koshka.origami.activity.settings.account.field_validator.NewPasswordFieldValidator;
+import com.koshka.origami.utils.UiNavigationUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -183,16 +185,13 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
     }
     private void goHome(){
-        Intent intent = NavUtils.getParentActivityIntent(this);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        NavUtils.navigateUpTo(this, intent);
+        UiNavigationUtil.goHome(this);
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
 
-            goHome();
+          goHome();
             return true;
         } else {
             return super.onOptionsItemSelected(item);

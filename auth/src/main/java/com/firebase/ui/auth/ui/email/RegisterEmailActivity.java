@@ -62,6 +62,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.koshka.origami.model.Friend;
 import com.koshka.origami.model.User;
 import com.wang.avi.AVLoadingIndicatorView;
 
@@ -199,7 +200,7 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
     private void registerUser(final String email, final String username, final String password) {
         final FirebaseAuth firebaseAuth = mActivityHelper.getFirebaseAuth();
 
-        DatabaseReference mUsernameRef = DatabaseRefUtil.getmUsersRef();
+        DatabaseReference mUsernameRef = DatabaseRefUtil.getUsersRef();
 
         final String lowerCaseUserName = username.toLowerCase();
 
@@ -280,7 +281,7 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
 
         //TAKE FIREBASE REFS
 
-        mMeRef = DatabaseRefUtil.getUserRefByUid(uid);
+        mMeRef = DatabaseRefUtil.getUserRef(uid);
        /* mOrigamiRef = DatabaseRefUtil.getUserOrigamiRefByUid(uid);*/
         /*mMyFriendsRef= DatabaseRefUtil.getUserFriendsRefByUid(uid);*/
         //-------------------------------------------
@@ -293,6 +294,24 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
             public void onComplete(DatabaseError databaseError, DatabaseReference reference) {
                 if (databaseError != null) {
                     Log.e(TAG, "Failed to store user to db", databaseError.toException());
+                }
+            }
+        });
+
+        //SETUP FIRST FRIEND /friends/uid
+        User ghostFriend = new User();
+
+        ghostFriend.setDisplayName("Ghost");
+        ghostFriend.setUsername("Ghost");
+        ghostFriend.setEmail("ghost@origami.com");
+
+        DatabaseReference friendsRef = DatabaseRefUtil.getUserFriendsRef(uid);
+
+        friendsRef.push().setValue(ghostFriend, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference reference) {
+                if (databaseError != null) {
+                    Log.e(TAG, "Failed to store friend to db", databaseError.toException());
                 }
             }
         });

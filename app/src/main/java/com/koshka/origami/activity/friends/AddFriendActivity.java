@@ -139,7 +139,7 @@ public class AddFriendActivity extends AppCompatActivity {
 
         final String lowerCaseUserName = username.toLowerCase();
 
-        DatabaseReference mUsernameRef = DatabaseRefUtil.getmUsersRef();
+        DatabaseReference mUsernameRef = DatabaseRefUtil.getUsersRef();
         Query mUsernameQuery = mUsernameRef.orderByChild("username").equalTo(lowerCaseUserName);
         mUsernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -165,8 +165,10 @@ public class AddFriendActivity extends AppCompatActivity {
                                 @Override
                                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                                     final User user = dataSnapshot.getValue(User.class);
-                                    DatabaseReference mMeRef = DatabaseRefUtil.getmFriendsRef().child(currentUser.getUid());
-                                    mMeRef.push().setValue(user, new DatabaseReference.CompletionListener() {
+                                    DatabaseReference mMeRef = DatabaseRefUtil.getUserFriendsRef(currentUser.getUid());
+                                    User friend = new User();
+                                    friend.setUsername(user.getUsername());
+                                    mMeRef.push().setValue(friend, new DatabaseReference.CompletionListener() {
                                         @Override
                                         public void onComplete(DatabaseError databaseError, DatabaseReference reference) {
                                             if (databaseError != null) {
@@ -309,14 +311,14 @@ public class AddFriendActivity extends AppCompatActivity {
                     .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                         @Override
                         public void onClick(final SweetAlertDialog sDialog) {
-                            DatabaseReference mUsernameRef = DatabaseRefUtil.getmUsersRef();
+                            DatabaseReference mUsernameRef = DatabaseRefUtil.getUsersRef();
                             Query mEmailQuery = mUsernameRef.orderByChild("email").equalTo(email);
 
                             mEmailQuery.addChildEventListener(new ChildEventListener() {
                                 @Override
                                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                                     final User user = dataSnapshot.getValue(User.class);
-                                    DatabaseReference mMeRef = DatabaseRefUtil.getmFriendsRef().child(currentUser.getUid());
+                                    DatabaseReference mMeRef = DatabaseRefUtil.getUserFriendsRef(currentUser.getUid());
                                     mMeRef.push().setValue(user, new DatabaseReference.CompletionListener() {
                                         @Override
                                         public void onComplete(DatabaseError databaseError, DatabaseReference reference) {

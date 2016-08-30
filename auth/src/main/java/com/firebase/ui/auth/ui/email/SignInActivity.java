@@ -183,8 +183,8 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
                                         });
                     } else {
 
-                        mRef = DatabaseRefUtil.getmUsersRef();
-                        mUserRef = DatabaseRefUtil.getmUsersRef();
+                        mRef = DatabaseRefUtil.getUsersRef();
+                        mUserRef = DatabaseRefUtil.getUsersRef();
                         usernameQuery = mRef.orderByChild("username").equalTo(inputEmail);
 
                         usernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -353,8 +353,8 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
             } else if (!isEmail) {
 
                 indicatorView.show();
-                mRef = DatabaseRefUtil.getmUsersRef();
-                mUserRef = DatabaseRefUtil.getmUsersRef();
+                mRef = DatabaseRefUtil.getUsersRef();
+                mUserRef = DatabaseRefUtil.getUsersRef();
                 usernameQuery = mRef.orderByChild("username").equalTo(loginInput.toLowerCase());
                 usernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override

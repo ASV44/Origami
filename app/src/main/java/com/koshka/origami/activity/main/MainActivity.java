@@ -5,8 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
+import android.hardware.GeomagneticField;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
@@ -24,8 +28,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.firebase.ui.database.DatabaseRefUtil;
+import com.firebase.ui.database.FirebaseDbUtils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
@@ -39,14 +44,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.login.LoginActivity;
 import com.koshka.origami.fragment.main.MainFragmentPagerAdapter;
-import com.koshka.origami.fragment.profile.UserProfileFragmentPagerAdapter;
 import com.koshka.origami.model.Coordinate;
-import com.koshka.origami.ui.ParallaxPagerTransformer;
 import com.koshka.origami.utils.PermissionUtils;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -88,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     protected Location mCurrentLocation;
 
 
-    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 4000;
 
     /**
      * The fastest rate for active location updates. Exact. Updates will never be more frequent
@@ -119,6 +124,15 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     protected Boolean mRequestingLocationUpdates = true;
 
 
+    //FIREBASE STUFF
+    private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+    private String uid;
+    private DatabaseReference userCurrentLocationRef;
+
+    private float mDeclination;
+    private float[] mRotationMatrix = new float[16];
+    private double bearing;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,6 +146,15 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        //Set Firebase stuff
+        uid = currentUser.getUid();
+        userCurrentLocationRef = DatabaseRefUtil.getUserCurrentLocationRef(uid);
+        //Build google api client
+        buildGoogleApiClient();
+
+        // Update values using data stored in the Bundle.
+        updateValuesFromBundle(savedInstanceState);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -163,11 +186,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         }
 
 
-        buildGoogleApiClient();
-
-        // Update values using data stored in the Bundle.
-        updateValuesFromBundle(savedInstanceState);
-
         mPager.setAdapter(new MainFragmentPagerAdapter(getSupportFragmentManager()));
         mPager.setCurrentItem(1);
         viewpagertab.setViewPager(mPager);
@@ -179,7 +197,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         }
 
     }
-
 
     /**
      * Updates fields based on data stored in the bundle.
@@ -369,46 +386,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                 mGoogleApiClient, mLocationRequest, this);
     }
 
-
-/*
-    @Override
-    public void onConnected(Bundle connectionHint) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
-        if (mLastLocation != null) {
-
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-            DatabaseReference publicOrigamiRef = ref.child("last_known_location").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-
-            Coordinate lastKnownCoordinate = new Coordinate();
-            lastKnownCoordinate.setLongitude(mLastLocation.getLongitude());
-            lastKnownCoordinate.setLatitude(mLastLocation.getLatitude());
-
-            publicOrigamiRef.setValue(lastKnownCoordinate).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()){
-                        Log.d(TAG, "Coordinate pushed succesfully");
-                    } else {
-                        Log.d(TAG, "Could not push last known location");
-                    }
-                }
-            });
-           *//* mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
-            mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));*//*
-        }
-    }*/
-
     /**
      * Runs when a GoogleApiClient object successfully connects.
      */
@@ -448,7 +425,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             startLocationUpdates();
         }
     }
-
 
 
     public static Intent createIntent(Context context) {
@@ -509,10 +485,18 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     public void onLocationChanged(Location location) {
 
         mCurrentLocation = location;
-        mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
 
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference publicOrigamiRef = ref.child("user_current_location").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        GeomagneticField field = new GeomagneticField(
+                (float)location.getLatitude(),
+                (float)location.getLongitude(),
+                (float)location.getAltitude(),
+                System.currentTimeMillis()
+        );
+
+        // getDeclination returns degrees
+        mDeclination = field.getDeclination();
+
+        mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
 
         Coordinate currentLocationCoordinate = new Coordinate();
         currentLocationCoordinate.setLongitude(mCurrentLocation.getLongitude());
@@ -520,10 +504,10 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         currentLocationCoordinate.setTime(mLastUpdateTime);
         currentLocationCoordinate.setAlt(mCurrentLocation.getAltitude());
 
-        publicOrigamiRef.setValue(currentLocationCoordinate).addOnCompleteListener(new OnCompleteListener<Void>() {
+        userCurrentLocationRef.setValue(currentLocationCoordinate).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()){
+                if (task.isSuccessful()) {
                     Log.d(TAG, "Coordinate pushed succesfully");
                 } else {
                     Log.d(TAG, "Could not push last known location");
@@ -543,9 +527,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    public Location getUserLocation(){
-
+    public Location getUserLocation() {
         return mCurrentLocation;
     }
+
+
+
 }
 

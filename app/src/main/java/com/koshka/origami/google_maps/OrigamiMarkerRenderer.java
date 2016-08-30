@@ -3,6 +3,7 @@ package com.koshka.origami.google_maps;
 import android.content.Context;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
@@ -19,8 +20,16 @@ public class OrigamiMarkerRenderer extends DefaultClusterRenderer<OrigamiMarker>
 
     @Override
     protected void onBeforeClusterItemRendered(OrigamiMarker item, MarkerOptions markerOptions) {
-        markerOptions.icon(item.getOrigamiIcon());
-        markerOptions.title(item.getOrigamiTitle());
         super.onBeforeClusterItemRendered(item, markerOptions);
+        markerOptions.icon(item.getOrigamiIcon());
+
+    }
+
+    @Override
+    protected void onClusterItemRendered(OrigamiMarker clusterItem, Marker marker) {
+        super.onClusterItemRendered(clusterItem, marker);
+        if (clusterItem.getOrigamiTitle() != null){
+            marker.setTitle(clusterItem.getOrigamiTitle());
+        }
     }
 }

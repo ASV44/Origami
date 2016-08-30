@@ -68,7 +68,7 @@ public class UserProfileFragmentMain extends Fragment {
 
 
         mAuth = FirebaseAuth.getInstance();
-        mMeRef = DatabaseRefUtil.getUserRefByUid(mAuth.getCurrentUser().getUid());
+        mMeRef = DatabaseRefUtil.getUserRef(mAuth.getCurrentUser().getUid());
 
         return view;
     }

@@ -1,5 +1,7 @@
 package com.firebase.ui.database;
 
+import android.content.res.Resources;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
@@ -11,36 +13,51 @@ import com.koshka.origami.model.User;
 public class DatabaseRefUtil {
 
     private static final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
-    private static final DatabaseReference mUsersRef = FirebaseDatabase.getInstance().getReference().child("users");
-    private static final DatabaseReference mConnectedRef= FirebaseDatabase.getInstance().getReference(".info/connected");
-    private static final Query findUserByEmailQuery = null;
-    private static final DatabaseReference mFriendsRef = FirebaseDatabase.getInstance().getReference().child("friends");
-    private static final DatabaseReference mOrigamiRef = FirebaseDatabase.getInstance().getReference().child("origami");
-    public static DatabaseReference getUserRefByUid(String uid){
-        return mUsersRef.child(uid);
-    }
-    public static DatabaseReference getUserFriendsRefByUid(String uid){
-        return mFriendsRef.child(uid);
-    }
-    public static DatabaseReference getUserOrigamiRefByUid(String uid){
-        return mOrigamiRef.child(uid);
-    }
 
-    public static DatabaseReference getUsersRef(){
-        return mUsersRef;
-    }
-
-    public static DatabaseReference getmRef() {
+    public static DatabaseReference getDatabaseReference(){
         return mRef;
     }
 
-    public static DatabaseReference getmUsersRef() {
-        return mUsersRef;
+    public static DatabaseReference getUsersRef(){
+        return mRef.child(String.valueOf(RefConstants.users));
     }
 
-    public static DatabaseReference getmConnectedRef() {
-        return mConnectedRef;
+    public static DatabaseReference getPublicOrigamiRef(){
+        return mRef.child(String.valueOf(RefConstants.public_origami));
     }
+
+    public static DatabaseReference getFriendsRef(){
+        return mRef.child(String.valueOf(RefConstants.friends));
+    }
+
+    public static DatabaseReference getPreferencesRef(){
+        return mRef.child(String.valueOf(RefConstants.preferences));
+    }
+
+    public static DatabaseReference getCurrentLocationRef(){
+        return mRef.child(String.valueOf(RefConstants.user_current_location));
+    }
+
+    public static DatabaseReference getUserRef(String uid){
+        return getUsersRef().child(uid);
+    }
+
+    public static DatabaseReference getUserFriendsRef(String uid){
+        return getFriendsRef().child(uid);
+    }
+
+    public static DatabaseReference getUserPreferencesRef(String uid){
+        return getPreferencesRef().child(uid);
+    }
+
+    public static DatabaseReference getUserCurrentLocationRef(String uid){
+        return getCurrentLocationRef().child(uid);
+    }
+
+    public static DatabaseReference isConnectedRef(){
+        return getDatabaseReference().child(String.valueOf(RefConstants.connected));
+    }
+
 
     public static Query getFindUserByEmailQuery(String email) {
         return FirebaseDatabase.getInstance().getReference().child("users").orderByChild("email").equalTo(email);
@@ -57,15 +74,4 @@ public class DatabaseRefUtil {
 
     }
 
-    public static Query getFindUserByEmailQuery() {
-        return findUserByEmailQuery;
-    }
-
-    public static DatabaseReference getmMyFriendsRef(String myUid) {
-        return mFriendsRef.child(myUid);
-    }
-
-    public static DatabaseReference getmFriendsRef() {
-        return mFriendsRef;
-    }
 }

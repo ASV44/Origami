@@ -89,8 +89,8 @@ public class AcquireEmailHelper {
                 }
             } else if (!emailValid) {
 
-                mRef = DatabaseRefUtil.getmUsersRef();
-                mUserRef = DatabaseRefUtil.getmUsersRef();
+                mRef = DatabaseRefUtil.getUsersRef();
+                mUserRef = DatabaseRefUtil.getUsersRef();
                 usernameQuery = mRef.orderByChild("nickname").equalTo(email);
 
                 usernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {

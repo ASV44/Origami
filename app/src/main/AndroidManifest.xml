@@ -116,6 +116,10 @@
             android:theme="@style/PurpleThemeNoActionBar"
             android:parentActivityName=".activity.main.UserProfileActivity"/>
         <activity
+            android:name=".activity.settings.account.DeleteAccountActivity"
+            android:theme="@style/PurpleThemeNoActionBar"
+            android:parentActivityName=".activity.main.UserProfileActivity"/>
+        <activity
             android:name=".activity.settings.application.DesignSettingsActivity"
             android:theme="@style/PurpleThemeNoActionBar" />
         <activity

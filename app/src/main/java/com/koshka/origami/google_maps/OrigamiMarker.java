@@ -3,8 +3,10 @@ package com.koshka.origami.google_maps;
 import android.graphics.drawable.Icon;
 
 import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
+import com.koshka.origami.R;
 
 /**
  * Created by imuntean on 8/28/16.
@@ -12,7 +14,7 @@ import com.google.maps.android.clustering.ClusterItem;
 public class OrigamiMarker implements ClusterItem{
 
     private final LatLng mPosition;
-    private BitmapDescriptor origamiIcon;
+    private BitmapDescriptor origamiIcon = BitmapDescriptorFactory.fromResource(R.drawable.marker);
     private String origamiTitle;
 
     public OrigamiMarker(double lat, double lng) {
