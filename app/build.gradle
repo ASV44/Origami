@@ -39,6 +39,8 @@ dependencies {
     compile "com.android.support:recyclerview-v7:${project.ext.support_library_version}"
     compile "com.android.support:support-v4:${project.ext.support_library_version}"
 
+
+    compile project(path: ':logic')
     compile project(path: ':auth')
     compile project(path: ':database')
     compile project(path: ':model')

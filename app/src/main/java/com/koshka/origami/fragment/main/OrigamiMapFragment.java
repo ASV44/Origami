@@ -3,13 +3,11 @@ package com.koshka.origami.fragment.main;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -35,7 +33,6 @@ import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.CameraPosition.Builder;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -49,6 +46,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.maps.android.clustering.ClusterManager;
+import com.koshka.origami.DistanceCalculator;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.main.MainActivity;
 import com.koshka.origami.activity.origami.CreatePublicOrigamiActivity;
@@ -77,23 +75,14 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
     @BindView(R.id.follow_me_button)
     TextView followMeTextButton;
 
-
+    private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
 
-    private GoogleMap mMap;
 
+    private Marker myLocationMarker; //My locationMarker
+    private ClusterManager<OrigamiMarker> origamiMarkerClusterManager;
 
-    private Marker marker; //My locationMarker
-
-    private boolean isInFollowMeMode = false;
-
-    //Initialize to a non-valid zoom value
-    private float previousZoomLevel = -1.0f;
-
-    private boolean isZooming = false;
-
-    private ClusterManager<OrigamiMarker> mClusterManager;
-
+    //Firebase stuff
     private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     private DatabaseReference myLocationRef;
     private ValueEventListener followListener;
@@ -108,14 +97,13 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
     private double bearing = 0;
     private LatLng currentUserLatLng;
 
+    private boolean isInFollowMeMode = false;
+
     private List<ValueEventListener> valueEventListenerList;
-    private AsyncTask asyncTask;
 
 
     //Ref for public origamis
     private DatabaseReference publicOrigamiRef;
-
-    private String uid;
 
     private List<Place> placeList = new ArrayList<>();
 
@@ -143,23 +131,8 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mGoogleApiClient = new GoogleApiClient
-                .Builder(getActivity())
-                .addApi(Places.GEO_DATA_API)
-                .addApi(Places.PLACE_DETECTION_API)
-                .enableAutoManage(getActivity(), this)
-                .build();
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-
-        publicOrigamiRef = DatabaseRefUtil.getPublicOrigamiRef();
-        publicOrigamiRef.addValueEventListener(this);
-
-        uid = currentUser.getUid();
-        myLocationRef = DatabaseRefUtil.getUserCurrentLocationRef(uid);
-
-
-        mGoogleApiClient.connect();
-
+        buildAndConnectGoogleApiClient();
+        initFirebase();
         activity = (MainActivity) getActivity();
 
     }
@@ -182,6 +155,34 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
         mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
 
     }
+
+    private void initFirebase(){
+
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+
+        publicOrigamiRef = DatabaseRefUtil.getPublicOrigamiRef();
+        publicOrigamiRef.addValueEventListener(this);
+
+        String uid = currentUser.getUid();
+        myLocationRef = DatabaseRefUtil.getUserCurrentLocationRef(uid);
+
+
+    }
+
+    private void buildAndConnectGoogleApiClient(){
+
+        mGoogleApiClient = new GoogleApiClient
+                .Builder(getActivity())
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .enableAutoManage(getActivity(), this)
+                .build();
+
+        mGoogleApiClient.connect();
+
+    }
+
 
   /*  @Override
     public void onDestroy() {
@@ -212,8 +213,8 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
             followListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (marker != null) {
-                        marker.remove();
+                    if (myLocationMarker != null) {
+                        myLocationMarker.remove();
                     }
                     if (userCircle != null) {
                         userCircle.remove();
@@ -222,10 +223,10 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
                     if (coordinate != null) {
 
                         currentUserLatLng = new LatLng(coordinate.getLatitude(), coordinate.getLongitude());
-                        marker = mMap.addMarker(new MarkerOptions().position(currentUserLatLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.mapmarker)));
+                        myLocationMarker = mMap.addMarker(new MarkerOptions().position(currentUserLatLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.mapmarker)));
 
                         userCircle = mMap.addCircle(new CircleOptions()
-                                .center(marker.getPosition())
+                                .center(myLocationMarker.getPosition())
                                 .radius(1)
                                 .strokeColor(res.getColor(R.color.transparent6))
                                 .fillColor(res.getColor(R.color.transparent6)));
@@ -234,16 +235,14 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
                         mMap.setMaxZoomPreference(20);
                         mMap.setMinZoomPreference(15);
 
-                        if(firstFollowPress){
-                            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(
-                                    new Builder()
-                                            .target(currentUserLatLng)
-                                            .tilt(50)
-                                            .bearing((float) bearing)
-                                            .zoom(17)
-                                            .build()));
-                            firstFollowPress = false;
-                        }
+                        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(
+                                new Builder()
+                                        .target(currentUserLatLng)
+                                        .tilt(50)
+                                        .bearing((float) bearing)
+                                        .zoom(17)
+                                        .build()));
+                        firstFollowPress = false;
 
                     } else {
                         //
@@ -275,17 +274,16 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
             notFollowListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (marker != null) {
-                        marker.remove();
+                    if (myLocationMarker != null) {
+                        myLocationMarker.remove();
                     }
                     final Coordinate coordinate = dataSnapshot.getValue(Coordinate.class);
                     if (coordinate != null) {
                         LatLng latLng = new LatLng(coordinate.getLatitude(), coordinate.getLongitude());
-                        marker = mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.mapmarker)));
+                        myLocationMarker = mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.mapmarker)));
                         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(
                                 new Builder()
                                         .target(latLng)
-                                        .zoom(13)
                                         .build()));
                     } else {
                         //nothing
@@ -305,19 +303,8 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
 
     }
 
-    private void registerSensorListeners(){
-        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                SensorManager.SENSOR_DELAY_GAME, SensorManager.SENSOR_DELAY_UI);
-        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
-                SensorManager.SENSOR_DELAY_GAME, SensorManager.SENSOR_DELAY_UI);
-    }
 
-    private void unregisterSensorListeners(){
-        // Don't receive any more updates from either sensor.
-        mSensorManager.unregisterListener(this);
-    }
-
-    private void animateFollowCamera(LatLng latLng){
+    private void animateFollowCamera(LatLng latLng) {
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(
                 new Builder()
                         .target(latLng)
@@ -331,6 +318,7 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
         mMap.setBuildingsEnabled(true);
         mMap.setOnMapLongClickListener(this);
         mMap.setOnInfoWindowClickListener(this);
@@ -340,26 +328,6 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
         mMap.setOnMarkerClickListener(this);
         setUpClusterer();
 
-    }
-
-    public static double distance(double lat1, double lat2, double lon1,
-                                  double lon2, double el1, double el2) {
-
-        final int R = 6371; // Radius of the earth
-
-        Double latDistance = Math.toRadians(lat2 - lat1);
-        Double lonDistance = Math.toRadians(lon2 - lon1);
-        Double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-        Double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double distance = R * c * 1000; // convert to meters
-
-        double height = el1 - el2;
-
-        distance = Math.pow(distance, 2) + Math.pow(height, 2);
-
-        return Math.sqrt(distance);
     }
 
     @Override
@@ -420,7 +388,7 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
 
     @Override
     public void onMapLongClick(LatLng latLng) {
-        marker = mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.mapmarker)));
+        myLocationMarker = mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker)));
         //SHOULD APPEAR SOME FRAGMENT FOR ADDING A NEW ORIGAMI RIGHT THERE
     }
 
@@ -476,7 +444,8 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
         double currentOrigamiLocationLat = origamiLocation.latitude;
         double currentOrigamiLocationLong = origamiLocation.longitude;
 
-        double distance = distance(currentUserLocationLat, currentOrigamiLocationLat, currentUserLocationLong, currentOrigamiLocationLong, 0, 0);
+
+        double distance = DistanceCalculator.getHaversineDistance(currentUserLocationLat, currentOrigamiLocationLat, currentUserLocationLong, currentOrigamiLocationLong, 0, 0);
 
         Toast.makeText(getActivity(), "" + distance, Toast.LENGTH_SHORT);
 
@@ -539,21 +508,21 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
 
         // Initialize the manager with the context and the map.
         // (Activity extends context, so we can pass 'this' in the constructor.)
-        mClusterManager = new ClusterManager<OrigamiMarker>(getContext(), mMap);
+        origamiMarkerClusterManager = new ClusterManager<OrigamiMarker>(getContext(), mMap);
 
 
         // Point the map's listeners at the listeners implemented by the cluster
         // manager.
-        mMap.setOnCameraChangeListener(mClusterManager);
+        mMap.setOnCameraChangeListener(origamiMarkerClusterManager);
 
-        mClusterManager.setRenderer(new OrigamiMarkerRenderer(getContext(), mMap, mClusterManager));
+        origamiMarkerClusterManager.setRenderer(new OrigamiMarkerRenderer(getContext(), mMap, origamiMarkerClusterManager));
     }
 
     private void addOrigamiMarker(LatLng latlng, String title) {
 
         OrigamiMarker offsetItem = new OrigamiMarker(latlng.latitude, latlng.longitude);
         offsetItem.setOrigamiTitle(title);
-        mClusterManager.addItem(offsetItem);
+        origamiMarkerClusterManager.addItem(offsetItem);
 
     }
 
@@ -561,9 +530,8 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
     public void onSensorChanged(SensorEvent sensorEvent) {
         if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             mAccelerometerReading = sensorEvent.values;
-        }
-        else if (sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-           mMagnetometerReading = sensorEvent.values;
+        } else if (sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+            mMagnetometerReading = sensorEvent.values;
         }
         if (mAccelerometerReading != null && mMagnetometerReading != null) {
             float R[] = new float[9];
@@ -574,18 +542,14 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
                 float orientation[] = new float[3];
                 SensorManager.getOrientation(R, orientation);
                 float azimut = orientation[0];
-                bearing = (Math.toDegrees(azimut)+360)%360;
-                if (currentUserLatLng != null){
-                    animateFollowCamera(currentUserLatLng);
-                } else
-                {
-                    LatLng latLng = new LatLng(0,0);
-                    animateFollowCamera(latLng);
+                bearing = (Math.toDegrees(azimut) + 360) % 360;
+                if (currentUserLatLng != null) {
+                } else {
+                    LatLng latLng = new LatLng(0, 0);
                 }
 
             }
         }
-
 
 
     }
@@ -594,5 +558,17 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
 
+    }
+
+    private void registerSensorListeners() {
+        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_GAME, SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
+                SensorManager.SENSOR_DELAY_GAME, SensorManager.SENSOR_DELAY_UI);
+    }
+
+    private void unregisterSensorListeners() {
+        // Don't receive any more updates from either sensor.
+        mSensorManager.unregisterListener(this);
     }
 }

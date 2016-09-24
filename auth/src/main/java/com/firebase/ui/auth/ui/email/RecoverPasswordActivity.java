@@ -20,7 +20,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
+import android.util.Patterns;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -56,7 +58,14 @@ public class RecoverPasswordActivity extends AppCompatBase implements View.OnCli
         Button nextButton = (Button) findViewById(R.id.button_done);
 
         if (email != null) {
-            mEmailEditText.setText(email);
+            boolean emailValid = Patterns.EMAIL_ADDRESS.matcher(email).matches();
+            if (emailValid){
+                mEmailEditText.setText(email);
+            } else {
+                mEmailEditText.setText("");
+                mEmailEditText.requestFocus();
+            }
+
         }
         nextButton.setOnClickListener(this);
     }

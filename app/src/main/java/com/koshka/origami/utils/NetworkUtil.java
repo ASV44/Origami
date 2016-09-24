@@ -14,6 +14,7 @@ import com.koshka.origami.activity.main.MainActivity;
  */
 public class NetworkUtil {
 
+    //Same values are used in database to know the connectivity status
     public static int TYPE_WIFI = 1;
     public static int TYPE_MOBILE = 2;
     public static int TYPE_NOT_CONNECTED = 0;
@@ -38,11 +39,11 @@ public class NetworkUtil {
         int conn = NetworkUtil.getConnectivityStatus(context);
         String status = null;
         if (conn == NetworkUtil.TYPE_WIFI) {
-            status = "Wifi enabled";
+            status = String.valueOf(TYPE_WIFI);
         } else if (conn == NetworkUtil.TYPE_MOBILE) {
-            status = "Mobile data enabled";
+            status = String.valueOf(TYPE_MOBILE);
         } else if (conn == NetworkUtil.TYPE_NOT_CONNECTED) {
-            status = "Not connected to Internet";
+            status = String.valueOf(TYPE_NOT_CONNECTED);
         }
         return status;
     }

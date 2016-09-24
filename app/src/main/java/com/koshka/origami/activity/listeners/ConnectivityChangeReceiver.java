@@ -20,7 +20,16 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String status = NetworkUtil.getConnectivityStatusString(context);
 
-        Toast.makeText(context, status, Toast.LENGTH_LONG).show();
+        if (status.equals("1") || status.equals("2")){
+            //Connected to the internet, send data to the server
+        } else {
+            //status.equals("0")
+            //Not connected to the internet
+            //Save statuses in the local db
+
+        }
+/*
+            Toast.makeText(context, status, Toast.LENGTH_LONG).show();*/
     }
 
 }
