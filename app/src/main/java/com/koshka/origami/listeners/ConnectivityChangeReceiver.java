@@ -1,12 +1,10 @@
-package com.koshka.origami.activity.listeners;
+package com.koshka.origami.listeners;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import android.widget.Toast;
-
-import com.koshka.origami.utils.NetworkUtil;
+import com.koshka.origami.utils.net.NetworkUtil;
 
 /**
  * Created by imuntean on 7/29/16.

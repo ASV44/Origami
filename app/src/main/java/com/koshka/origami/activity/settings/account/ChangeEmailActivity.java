@@ -1,14 +1,10 @@
 package com.koshka.origami.activity.settings.account;
 
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -28,7 +24,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.login.LoginActivity;
 import com.koshka.origami.activity.settings.account.field_validator.CurrentPasswordFieldValidator;
-import com.koshka.origami.utils.UiNavigationUtil;
+import com.koshka.origami.utils.ui.UiNavigationUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

@@ -1,55 +1,22 @@
 package com.koshka.origami.activity.main;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.annotation.MainThread;
-import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.transition.Fade;
-import android.transition.Slide;
-import android.transition.TransitionInflater;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.database.DatabaseRefUtil;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.koshka.origami.R;
-import com.koshka.origami.activity.login.LoginActivity;
-import com.koshka.origami.fragment.main.MainFragmentPagerAdapter;
 import com.koshka.origami.fragment.profile.UserProfileFragmentPagerAdapter;
-import com.koshka.origami.model.User;
-import com.koshka.origami.ui.ParallaxPagerTransformer;
+import com.koshka.origami.utils.ui.ParallaxPagerTransformer;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Created by imuntean on 7/19/16.

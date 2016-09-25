@@ -1,7 +1,6 @@
 package com.koshka.origami.activity.settings.account;
 
 import android.content.res.Resources;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
@@ -25,7 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.login.LoginActivity;
 import com.koshka.origami.activity.settings.account.field_validator.CurrentPasswordFieldValidator;
-import com.koshka.origami.utils.UiNavigationUtil;
+import com.koshka.origami.utils.ui.UiNavigationUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

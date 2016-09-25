@@ -13,7 +13,6 @@ import android.support.annotation.MainThread;
 import android.support.annotation.StringRes;
 import android.support.annotation.StyleRes;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -28,7 +27,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.main.MainActivity;
 import com.koshka.origami.fragment.login.LoginFragmentPagerAdapter;
-import com.koshka.origami.ui.ParallaxPagerTransformer;
+import com.koshka.origami.utils.net.NetworkUtil;
+import com.koshka.origami.utils.ui.ParallaxPagerTransformer;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -62,6 +62,7 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.title_text)
     TextView titleTextView;
 
+    //TODO: I REALLY DON'T LIKE THIS IMAGE BUTTON
     @BindView(R.id.language_text_button)
     ImageButton languageTextButton;
 
@@ -78,10 +79,11 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
-        /*mPager.setBackgroundColor(0xFF000000);*/
         ParallaxPagerTransformer pt = new ParallaxPagerTransformer((R.id.image));
+        //TODO: PLEASE, EXPORT THOSE IN A CONFIG FILE, PROP FILE OR SOME CONST CLASS OR SOMETHING
         pt.setBorder(0);
         pt.setSpeed(0.7f);
+
         mPager.setPageTransformer(false, pt);
         mPager.setAdapter(new LoginFragmentPagerAdapter(getSupportFragmentManager()));
 
@@ -90,13 +92,19 @@ public class LoginActivity extends AppCompatActivity {
 
         final Typeface font = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/actonia.ttf");
 
-        titleTextView.setTypeface(font);
+        if (font != null){
+            titleTextView.setTypeface(font);
+        }
+
 
     }
 
     @OnClick(R.id.sign_in)
     public void signIn(View view) {
-        if (isNetworkConnected() == true) {
+
+        boolean isConnectedToNetwork = NetworkUtil.isNetworkConnected(this);
+
+        if (isConnectedToNetwork) {
             startActivityForResult(
                     AuthUI.getInstance().createSignInIntentBuilder()
                             .setTheme(getSelectedTheme())
@@ -133,7 +141,7 @@ public class LoginActivity extends AppCompatActivity {
             showSnackbar(R.string.sign_in_cancelled);
             return;
         }
-
+        //TODO:UNKOWN SIGN IN RESPONSE, HANDLE THIS BY SENDING USER TO SUPPORT OR HELP PAGE.
         showSnackbar(R.string.unknown_sign_in_response);
     }
 
@@ -151,6 +159,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @MainThread
     private String[] getSelectedProviders() {
+
         ArrayList<String> selectedProviders = new ArrayList<>();
         selectedProviders.add(AuthUI.EMAIL_PROVIDER);
         return selectedProviders.toArray(new String[selectedProviders.size()]);
@@ -161,25 +170,12 @@ public class LoginActivity extends AppCompatActivity {
         return GOOGLE_TOS_URL;
     }
 
-    @MainThread
-    private void showSnackbar(@StringRes int errorMessageRes) {
-        Snackbar.make(mRootView, errorMessageRes, Snackbar.LENGTH_LONG).show();
-    }
 
-    @MainThread
-    private void showShortSnackbar(@StringRes int errorMessageRes) {
-        Snackbar.make(mRootView, errorMessageRes, Snackbar.LENGTH_SHORT).show();
-    }
-
-    //util method for intent creation from other activities
-    public static Intent createIntent(Context context) {
-        Intent in = new Intent();
-        in.setClass(context, LoginActivity.class);
-        return in;
-    }
 
     @Override
     public void onBackPressed() {
+
+        //TODO: ON DOUBLE BACK PRESSED ISN't WORKING PROPERLY, FIND ANOTHER SOLUTION...
         if (backButtonCount >= 1) {
             Intent intent = new Intent(Intent.ACTION_MAIN);
             intent.addCategory(Intent.CATEGORY_HOME);
@@ -191,15 +187,10 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    //Check if there is internet connection
-    private boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm.getActiveNetworkInfo() != null;
-    }
-
-
     @OnClick(R.id.language_text_button)
     public void changeLanguageButton(final View view) {
+
+        //TODO: CHANGE LANGUAGE IS TOO HARDCODED, NEEDS REFACTOR, LOOP THE LANGUAGES ARRAY
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.choose_language)
                 .setItems(R.array.languages, new DialogInterface.OnClickListener() {
@@ -233,7 +224,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void setLocale(String lang) {
-
+        //TODO: conf.locale is deprecated, find another solution...
         myLocale = new Locale(lang);
         Resources res = getResources();
         DisplayMetrics dm = res.getDisplayMetrics();
@@ -242,6 +233,24 @@ public class LoginActivity extends AppCompatActivity {
         res.updateConfiguration(conf, dm);
         Intent refresh = new Intent(this, LoginActivity.class);
         startActivity(refresh);
+    }
+
+    @MainThread
+    private void showSnackbar(@StringRes int errorMessageRes) {
+        Snackbar.make(mRootView, errorMessageRes, Snackbar.LENGTH_LONG).show();
+    }
+
+    @MainThread
+    private void showShortSnackbar(@StringRes int errorMessageRes) {
+        Snackbar.make(mRootView, errorMessageRes, Snackbar.LENGTH_SHORT).show();
+    }
+
+
+    //util method for intent creation from other activities
+    public static Intent createIntent(Context context) {
+        Intent in = new Intent();
+        in.setClass(context, LoginActivity.class);
+        return in;
     }
 
 

@@ -18,7 +18,7 @@
         tools:replace="android:icon">
 
         <receiver
-            android:name=".activity.listeners.ConnectivityChangeReceiver"
+            android:name=".listeners.ConnectivityChangeReceiver"
             android:label="ConnectivityChangeReveiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />

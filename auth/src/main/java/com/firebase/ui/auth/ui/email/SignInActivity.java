@@ -14,11 +14,9 @@
 
 package com.firebase.ui.auth.ui.email;
 
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
@@ -29,8 +27,6 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.RotateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -47,6 +43,7 @@ import com.firebase.ui.auth.ui.TaskFailureLogger;
 import com.firebase.ui.auth.ui.account_link.SaveCredentialsActivity;
 import com.firebase.ui.auth.ui.email.field_validators.RequiredFieldValidator;
 import com.firebase.ui.auth.util.FirebaseAuthWrapperFactory;
+import com.firebase.ui.auth.util.LoginActionBarBuilder;
 import com.firebase.ui.database.DatabaseRefUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -79,9 +76,10 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
     private DatabaseReference mUserRef;
     private AcquireEmailHelper mAcquireEmailHelper;
     private List<String> providers = new ArrayList<>();
-    private AVLoadingIndicatorView indicatorView;
     public static final int RC_REGISTER_ACCOUNT = 14;
     public static final int RC_SIGN_IN = 16;
+
+    private LoginActionBarBuilder actionBarBuilder;
 
 
     @Override
@@ -119,29 +117,8 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
         TextView recoveryButton = (TextView) findViewById(R.id.trouble_signing_in);
 
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_sign_in);
-        setSupportActionBar(toolbar);
-
-        final ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setHomeButtonEnabled(false); // disable the button
-            actionBar.setDisplayShowCustomEnabled(true);
-            actionBar.setDisplayHomeAsUpEnabled(false); // remove the left caret
-            actionBar.setDisplayShowHomeEnabled(false); // remove the icon
-            actionBar.setDisplayShowTitleEnabled(true);
-
-            LayoutInflater inflater = (LayoutInflater) this
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            Toolbar.LayoutParams layout = new Toolbar.LayoutParams(Toolbar.LayoutParams.WRAP_CONTENT, Toolbar.LayoutParams.WRAP_CONTENT);
-            layout.height = 180;
-            layout.width = 180;
-            layout.gravity = Gravity.CENTER;
-            View view = inflater.inflate(R.layout.av_progress_indicator,null);
-            toolbar.addView(view, layout);
-        }
-
-        indicatorView = (AVLoadingIndicatorView) findViewById(R.id.av_progress_indicator);
-        indicatorView.hide();
+        actionBarBuilder = new LoginActionBarBuilder(this, R.id.toolbar_sign_in);
+        actionBarBuilder.buildTitlePlusIndicatorActionBar("Login");
 
         if (email != null) {
             mEmailEditText.setText(email);
@@ -173,10 +150,10 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
                                                     } else {
                                                         TextInputLayout loginTextLayout = (TextInputLayout) findViewById(R.id.email_nickname_layout);
                                                         loginTextLayout.setError("Email already registered");
-                                                        indicatorView.hide();
+                                                        actionBarBuilder.hideIndicator();
                                                     }
                                                 } else {
-                                                    indicatorView.hide();
+                                                    actionBarBuilder.hideIndicator();
                                                 }
                                             }
 
@@ -191,13 +168,13 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.exists()) {
-                                    indicatorView.show();
+                                    actionBarBuilder.showIndicatorHideTitle();
                                     TextInputLayout loginTextLayout = (TextInputLayout) findViewById(R.id.email_nickname_layout);
                                     loginTextLayout.setError("Username already registered");
-                                    indicatorView.hide();
+                                    actionBarBuilder.hideIndicator();
                                 } else {
 
-                                    indicatorView.show();
+                                    actionBarBuilder.showIndicatorHideTitle();
 
                                         ArrayList<String> selectedProviders = new ArrayList<>();
                                         startEmailHandler(inputEmail, selectedProviders);
@@ -226,8 +203,9 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
 
     }
 
+
     private void startEmailHandler(String email, List<String> providers) {
-        indicatorView.hide();
+        actionBarBuilder.hideIndicator();
         if (providers == null || providers.isEmpty()) {
             // account doesn't exist yet
             Intent registerIntent = RegisterEmailActivity.createIntent(
@@ -270,7 +248,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        indicatorView.hide();
+                        actionBarBuilder.hideIndicator();
                         if (task.isSuccessful()) {
                             FirebaseUser firebaseUser = task.getResult().getUser();
                             if (FirebaseAuthWrapperFactory.getFirebaseAuthWrapper(
@@ -321,7 +299,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
                 return;
             } else if (isEmail && passwordValid) {
                 final FirebaseAuth firebaseAuth = mActivityHelper.getFirebaseAuth();
-                indicatorView.show();
+                actionBarBuilder.showIndicatorHideTitle();
                 if (loginInput != null && !loginInput.isEmpty()) {
                     firebaseAuth
                             .fetchProvidersForEmail(loginInput)
@@ -344,7 +322,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
                                                     }
                                                 }
                                             } else {
-                                                indicatorView.hide();
+                                                actionBarBuilder.hideIndicator();
                                             }
                                         }
                                     });
@@ -352,7 +330,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
                 }
             } else if (!isEmail) {
 
-                indicatorView.show();
+                actionBarBuilder.showIndicatorHideTitle();
                 mRef = DatabaseRefUtil.getUsersRef();
                 mUserRef = DatabaseRefUtil.getUsersRef();
                 usernameQuery = mRef.orderByChild("username").equalTo(loginInput.toLowerCase());

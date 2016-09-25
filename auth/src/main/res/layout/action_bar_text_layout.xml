@@ -1,0 +1,8 @@
+<TextView android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:text="Login"
+    android:textColor="#ffffff"
+    android:id="@+id/mytext"
+    android:textSize="29sp"
+    xmlns:android="http://schemas.android.com/apk/res/android" />

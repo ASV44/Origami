@@ -1,13 +1,10 @@
-package com.koshka.origami.utils;
+package com.koshka.origami.utils.net;
 
 
+import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-
-import com.koshka.origami.R;
-import com.koshka.origami.activity.main.MainActivity;
 
 /**
  * Created by imuntean on 7/29/16.
@@ -47,4 +44,10 @@ public class NetworkUtil {
         }
         return status;
     }
+
+    public static boolean isNetworkConnected(Activity activity) {
+        ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null;
+    }
+
 }

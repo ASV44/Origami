@@ -21,7 +21,7 @@
     <string name="tos_header">Terms of Service URL:</string>
     <string name="unknown_response">Unexpected onActivityResult response code</string>
     <string name="ok_label">OK</string>
-    <string name="unknown_sign_in_response">Unknown response from AuthUI sign-in</string>
+    <string name="unknown_sign_in_response">Unknown error has occured.Try to contact support team.</string>
     <string name="sign_in_cancelled">Sign in cancelled</string>
     <string name="signed_in_header">My Profile</string>
     <string name="sign_out">Sign out</string>
@@ -75,7 +75,7 @@
     <string name="change_email_warning">Please enter your password</string>
     <string name="positive_change">Change</string>
     <!--ERROR MESSAGES-->
-    <string name="no_internet_connection">No internet connection!</string>
+    <string name="no_internet_connection">Sorry, but you are not connected to internet!</string>
     <string name="no_place">You didn\'t pick a place</string>
 
     <!-- ACTION BAR -->

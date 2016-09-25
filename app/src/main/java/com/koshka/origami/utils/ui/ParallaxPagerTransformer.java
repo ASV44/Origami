@@ -1,4 +1,4 @@
-package com.koshka.origami.ui;
+package com.koshka.origami.utils.ui;
 
 import android.annotation.TargetApi;
 import android.os.Build;

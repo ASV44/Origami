@@ -137,6 +137,7 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
 
     }
 
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -160,7 +161,6 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-
         publicOrigamiRef = DatabaseRefUtil.getPublicOrigamiRef();
         publicOrigamiRef.addValueEventListener(this);
 
@@ -180,6 +180,23 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
                 .build();
 
         mGoogleApiClient.connect();
+
+    }
+
+
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        mMap.setBuildingsEnabled(true);
+        mMap.setOnMapLongClickListener(this);
+        mMap.setOnInfoWindowClickListener(this);
+        mMap.setOnCameraMoveListener(this);
+        mMap.setOnMapClickListener(this);
+        mMap.setOnInfoWindowLongClickListener(this);
+        mMap.setOnMarkerClickListener(this);
+        setUpClusterer();
 
     }
 
@@ -315,20 +332,6 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
 
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-
-        mMap.setBuildingsEnabled(true);
-        mMap.setOnMapLongClickListener(this);
-        mMap.setOnInfoWindowClickListener(this);
-        mMap.setOnCameraMoveListener(this);
-        mMap.setOnMapClickListener(this);
-        mMap.setOnInfoWindowLongClickListener(this);
-        mMap.setOnMarkerClickListener(this);
-        setUpClusterer();
-
-    }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
