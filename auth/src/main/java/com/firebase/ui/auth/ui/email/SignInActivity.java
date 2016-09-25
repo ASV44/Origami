@@ -17,9 +17,11 @@ package com.firebase.ui.auth.ui.email;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.view.ViewPager;
 import android.util.Patterns;
 import android.util.TypedValue;
 import android.view.View;
@@ -40,6 +42,8 @@ import com.firebase.ui.auth.ui.account_link.SaveCredentialsActivity;
 import com.firebase.ui.auth.ui.email.field_validators.RequiredFieldValidator;
 import com.firebase.ui.auth.util.FirebaseAuthWrapperFactory;
 import com.firebase.ui.auth.util.LoginActionBarHelper;
+import com.firebase.ui.auth.util.ui.LoginFragmentPagerAdapter;
+import com.firebase.ui.auth.util.ui.ParallaxPagerTransformer;
 import com.firebase.ui.database.DatabaseRefUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -59,6 +63,8 @@ import com.koshka.origami.model.User;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+
 public class SignInActivity extends AppCompatBase implements View.OnClickListener {
     private static final String TAG = "SignInActivity";
     private EditText mEmailEditText;
@@ -75,6 +81,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
     public static final int RC_SIGN_IN = 16;
 
     private LoginActionBarHelper actionBarHelper;
+    private ViewPager mPager;
 
 
     @Override
@@ -117,6 +124,8 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
 
         actionBarHelper = new LoginActionBarHelper(this, R.id.toolbar_sign_in);
         actionBarHelper.buildTitlePlusIndicatorActionBar("Login");
+
+        setUpViewPager();
 
         if (email != null) {
             mEmailEditText.setText(email);
@@ -198,6 +207,27 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
             }
         });
         recoveryButton.setOnClickListener(this);
+
+    }
+
+    private void setUpViewPager(){
+
+        mPager = (ViewPager) findViewById(R.id.login_pager1);
+
+       ParallaxPagerTransformer pt = new ParallaxPagerTransformer((R.id.quote));
+        //TODO: PLEASE, EXPORT THOSE IN A CONFIG FILE, PROP FILE OR SOME CONST CLASS OR SOMETHING
+        pt.setBorder(0);
+        pt.setSpeed(0.7f);
+
+        mPager.setPageTransformer(false, pt);
+        mPager.setAdapter(new LoginFragmentPagerAdapter(getSupportFragmentManager()));
+
+        final Typeface font = Typeface.createFromAsset(getAssets(), "fonts/origamibats.ttf");
+
+        TextView transparentLogo = (TextView) findViewById(R.id.transparent_logo);
+        if (font != null){
+            transparentLogo.setTypeface(font);
+        }
 
     }
 

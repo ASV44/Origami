@@ -34,6 +34,7 @@ import com.firebase.ui.auth.ui.ExtraConstants;
 import com.firebase.ui.auth.ui.FlowParameters;
 import com.firebase.ui.auth.ui.TaskFailureLogger;
 import com.firebase.ui.auth.ui.email.field_validators.EmailFieldValidator;
+import com.firebase.ui.auth.util.LoginActionBarHelper;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -56,6 +57,9 @@ public class RecoverPasswordActivity extends AppCompatBase implements View.OnCli
 
         mEmailEditText = (EditText) findViewById(R.id.email);
         Button nextButton = (Button) findViewById(R.id.button_done);
+
+        LoginActionBarHelper recoveryActionBarHelper = new LoginActionBarHelper(this, R.id.toolbar_recover_password);
+        recoveryActionBarHelper.buildTitlePlusIndicatorActionBar("Recovery");
 
         if (email != null) {
             boolean emailValid = Patterns.EMAIL_ADDRESS.matcher(email).matches();

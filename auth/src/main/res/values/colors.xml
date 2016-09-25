@@ -16,8 +16,11 @@
     <color name="shadowColor">#eeeeee</color>
 
     <color name="transparent4">#6b000000</color>
-    <color name="transparent6">#13000000</color>
+    <color name="transparent6">#05000000</color>
     <color name="transparent5">#96000000</color>
 
     <color name="white">#ffffff</color>
+    <color name="transparent10">#01000000</color>
+    <color name="transparent11">#03000000</color>
+    <color name="transparent12">#04000000</color>
 </resources>

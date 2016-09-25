@@ -4,10 +4,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.koshka.origami.fragment.login.LoginFragment1;
-import com.koshka.origami.fragment.login.LoginFragment2;
-import com.koshka.origami.fragment.login.LoginFragment3;
-
 /**
  * Created by imuntean on 7/31/16.
  */

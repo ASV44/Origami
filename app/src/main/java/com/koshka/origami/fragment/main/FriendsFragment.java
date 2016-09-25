@@ -109,8 +109,14 @@ public class FriendsFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        attachRecyclerViewAdapter();
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mRecyclerViewAdapter != null) {
+            mRecyclerViewAdapter.cleanup();
+        }
     }
 
     @Override

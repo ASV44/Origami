@@ -21,11 +21,11 @@ import com.wang.avi.AVLoadingIndicatorView;
 
 public class LoginActionBarHelper {
 
-    private static final boolean homeButtonEnabled = false;
-    private static final boolean displayShowCustomEnabled = true;
-    private static final boolean homeAsUpEnabled = false;
-    private static final boolean showHomeEnabled = false;
-    private static final boolean showTitleEnabled = false;
+    private boolean homeButtonEnabled = false;
+    private boolean displayShowCustomEnabled = true;
+    private boolean homeAsUpEnabled = false;
+    private boolean showHomeEnabled = false;
+    private boolean showTitleEnabled = false;
 
     @ColorRes
     private static final int defaultColor = R.color.white;
@@ -61,7 +61,6 @@ public class LoginActionBarHelper {
                 activity.setSupportActionBar(toolbar);
         }
         actionBar = activity.getSupportActionBar();
-        setUpActionBar();
 
          inflater = (LayoutInflater) activity
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -92,7 +91,7 @@ public class LoginActionBarHelper {
     }
 
     public void buildTitlePlusIndicatorActionBar(String title){
-
+        setUpActionBar();
         hideIndicator();
         this.title = title;
         titleView.setText(title);
@@ -117,7 +116,7 @@ public class LoginActionBarHelper {
     }
 
     public void buildTitleOnlyActionBar(String title){
-
+        setUpActionBar();
         titleView.setText(title);
 
         Toolbar.LayoutParams layout = new Toolbar.LayoutParams(Toolbar.LayoutParams.WRAP_CONTENT, Toolbar.LayoutParams.WRAP_CONTENT);
@@ -187,5 +186,45 @@ public class LoginActionBarHelper {
 
     public void setTitleColorId(int titleColorId) {
         this.titleColorId = titleColorId;
+    }
+
+    public boolean isHomeButtonEnabled() {
+        return homeButtonEnabled;
+    }
+
+    public void setHomeButtonEnabled(boolean homeButtonEnabled) {
+        this.homeButtonEnabled = homeButtonEnabled;
+    }
+
+    public boolean isDisplayShowCustomEnabled() {
+        return displayShowCustomEnabled;
+    }
+
+    public void setDisplayShowCustomEnabled(boolean displayShowCustomEnabled) {
+        this.displayShowCustomEnabled = displayShowCustomEnabled;
+    }
+
+    public boolean isHomeAsUpEnabled() {
+        return homeAsUpEnabled;
+    }
+
+    public void setHomeAsUpEnabled(boolean homeAsUpEnabled) {
+        this.homeAsUpEnabled = homeAsUpEnabled;
+    }
+
+    public boolean isShowHomeEnabled() {
+        return showHomeEnabled;
+    }
+
+    public void setShowHomeEnabled(boolean showHomeEnabled) {
+        this.showHomeEnabled = showHomeEnabled;
+    }
+
+    public boolean isShowTitleEnabled() {
+        return showTitleEnabled;
+    }
+
+    public void setShowTitleEnabled(boolean showTitleEnabled) {
+        this.showTitleEnabled = showTitleEnabled;
     }
 }

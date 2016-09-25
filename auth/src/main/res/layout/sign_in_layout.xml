@@ -4,6 +4,14 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <android.support.v4.view.ViewPager
+        android:id="@+id/login_pager1"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_above="@+id/linearLayout2"
+        android:layout_below="@+id/relativeLayout" />
+
     <android.support.design.widget.AppBarLayout
         android:id="@+id/view2"
         android:layout_width="match_parent"
@@ -105,7 +113,8 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_toRightOf="@+id/linearLayout"
-        android:layout_toEndOf="@+id/linearLayout">
+        android:layout_toEndOf="@+id/linearLayout"
+        android:id="@+id/linearLayout2">
 
     <Button
         style="@style/FirebaseUI.Button"
@@ -127,5 +136,19 @@
         android:layout_weight="8.70"
         android:layout_margin="1dp"/>
     </LinearLayout>
+
+    <TextView
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="D"
+        android:id="@+id/transparent_logo"
+        android:textColor="@color/transparent12"
+        android:textSize="200dp"
+        android:textAlignment="center"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/relativeLayout"
+        android:layout_above="@+id/linearLayout2" />
 
 </RelativeLayout>

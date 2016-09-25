@@ -13,12 +13,12 @@ import com.koshka.origami.R;
 /**
  * Created by imuntean on 7/19/16.
  */
-public class LoginFragment1 extends Fragment {
+public class FirstPageFragment3 extends Fragment {
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.login_fragment1, container, false);
+        return inflater.inflate(R.layout.first_page_fragment3, container, false);
     }
 
     @Override
