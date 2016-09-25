@@ -67,6 +67,7 @@ public class FriendsFragment extends Fragment {
 
 
     private void attachRecyclerViewAdapter() {
+        mAuth = FirebaseAuth.getInstance();
         String uid = mAuth.getCurrentUser().getUid();
         Query lastFifty = DatabaseRefUtil.getUserFriendsRef(uid).limitToLast(50);
         mRecyclerViewAdapter = new FirebaseRecyclerAdapter<User, FriendHolder>(

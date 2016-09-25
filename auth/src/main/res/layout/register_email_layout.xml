@@ -27,7 +27,9 @@
     android:layout_below="@+id/view2"
     android:layout_alignParentLeft="true"
     android:layout_alignParentStart="true"
-    android:id="@+id/scrollView">
+    android:overScrollMode="always"
+    android:id="@+id/register_scroll_view"
+    android:fillViewport="true">
 
 
     <RelativeLayout
@@ -118,11 +120,23 @@
             style="@style/FirebaseUI.Text.BodyText"
             />
 
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/create_account_text"
+            android:paddingBottom="30dp" />
+
     </RelativeLayout>
+
+
 </ScrollView>
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true">
         <Button
@@ -130,10 +144,11 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
             android:text="@string/button_text_save"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/transparent6"
-            android:textColor="@android:color/white"/>
-    </RelativeLayout>
+            android:background="@color/transparent4"
+            android:textColor="@android:color/white"
+            android:textAlignment="center" />
+    </LinearLayout>
 
 </RelativeLayout>

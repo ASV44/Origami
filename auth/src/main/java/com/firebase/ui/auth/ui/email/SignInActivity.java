@@ -20,12 +20,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
 import android.util.Patterns;
 import android.util.TypedValue;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -43,7 +39,7 @@ import com.firebase.ui.auth.ui.TaskFailureLogger;
 import com.firebase.ui.auth.ui.account_link.SaveCredentialsActivity;
 import com.firebase.ui.auth.ui.email.field_validators.RequiredFieldValidator;
 import com.firebase.ui.auth.util.FirebaseAuthWrapperFactory;
-import com.firebase.ui.auth.util.LoginActionBarBuilder;
+import com.firebase.ui.auth.util.LoginActionBarHelper;
 import com.firebase.ui.database.DatabaseRefUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -59,7 +55,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.koshka.origami.model.User;
-import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +74,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
     public static final int RC_REGISTER_ACCOUNT = 14;
     public static final int RC_SIGN_IN = 16;
 
-    private LoginActionBarBuilder actionBarBuilder;
+    private LoginActionBarHelper actionBarHelper;
 
 
     @Override
@@ -100,6 +95,9 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
         getResources().getValue(R.dimen.slightly_visible_icon, slightlyVisibleIcon, true);
 
         mPasswordEditText = (EditText) findViewById(R.id.password);
+        if (email != null){
+            mPasswordEditText.requestFocus();
+        }
         mTogglePasswordImage = (ImageView) findViewById(R.id.toggle_visibility);
 
         mPasswordEditText.setOnFocusChangeListener(new ImageFocusTransparencyChanger(
@@ -117,8 +115,8 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
         TextView recoveryButton = (TextView) findViewById(R.id.trouble_signing_in);
 
 
-        actionBarBuilder = new LoginActionBarBuilder(this, R.id.toolbar_sign_in);
-        actionBarBuilder.buildTitlePlusIndicatorActionBar("Login");
+        actionBarHelper = new LoginActionBarHelper(this, R.id.toolbar_sign_in);
+        actionBarHelper.buildTitlePlusIndicatorActionBar("Login");
 
         if (email != null) {
             mEmailEditText.setText(email);
@@ -150,10 +148,10 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
                                                     } else {
                                                         TextInputLayout loginTextLayout = (TextInputLayout) findViewById(R.id.email_nickname_layout);
                                                         loginTextLayout.setError("Email already registered");
-                                                        actionBarBuilder.hideIndicator();
+                                                        actionBarHelper.hideIndicator();
                                                     }
                                                 } else {
-                                                    actionBarBuilder.hideIndicator();
+                                                    actionBarHelper.hideIndicator();
                                                 }
                                             }
 
@@ -168,13 +166,13 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.exists()) {
-                                    actionBarBuilder.showIndicatorHideTitle();
+                                    actionBarHelper.showIndicatorHideTitle();
                                     TextInputLayout loginTextLayout = (TextInputLayout) findViewById(R.id.email_nickname_layout);
                                     loginTextLayout.setError("Username already registered");
-                                    actionBarBuilder.hideIndicator();
+                                    actionBarHelper.hideIndicator();
                                 } else {
 
-                                    actionBarBuilder.showIndicatorHideTitle();
+                                    actionBarHelper.showIndicatorHideTitle();
 
                                         ArrayList<String> selectedProviders = new ArrayList<>();
                                         startEmailHandler(inputEmail, selectedProviders);
@@ -205,7 +203,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
 
 
     private void startEmailHandler(String email, List<String> providers) {
-        actionBarBuilder.hideIndicator();
+        actionBarHelper.hideIndicator();
         if (providers == null || providers.isEmpty()) {
             // account doesn't exist yet
             Intent registerIntent = RegisterEmailActivity.createIntent(
@@ -248,7 +246,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        actionBarBuilder.hideIndicator();
+                        actionBarHelper.hideIndicator();
                         if (task.isSuccessful()) {
                             FirebaseUser firebaseUser = task.getResult().getUser();
                             if (FirebaseAuthWrapperFactory.getFirebaseAuthWrapper(
@@ -299,7 +297,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
                 return;
             } else if (isEmail && passwordValid) {
                 final FirebaseAuth firebaseAuth = mActivityHelper.getFirebaseAuth();
-                actionBarBuilder.showIndicatorHideTitle();
+                actionBarHelper.showIndicatorHideTitle();
                 if (loginInput != null && !loginInput.isEmpty()) {
                     firebaseAuth
                             .fetchProvidersForEmail(loginInput)
@@ -322,7 +320,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
                                                     }
                                                 }
                                             } else {
-                                                actionBarBuilder.hideIndicator();
+                                                actionBarHelper.hideIndicator();
                                             }
                                         }
                                     });
@@ -330,7 +328,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
                 }
             } else if (!isEmail) {
 
-                actionBarBuilder.showIndicatorHideTitle();
+                actionBarHelper.showIndicatorHideTitle();
                 mRef = DatabaseRefUtil.getUsersRef();
                 mUserRef = DatabaseRefUtil.getUsersRef();
                 usernameQuery = mRef.orderByChild("username").equalTo(loginInput.toLowerCase());

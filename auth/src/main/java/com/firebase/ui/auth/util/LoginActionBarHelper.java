@@ -1,6 +1,7 @@
 package com.firebase.ui.auth.util;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.support.annotation.ColorRes;
 import android.support.annotation.IdRes;
 import android.support.v7.app.ActionBar;
@@ -18,7 +19,7 @@ import com.wang.avi.AVLoadingIndicatorView;
  * Created by qm0937 on 9/25/16.
  */
 
-public class LoginActionBarBuilder {
+public class LoginActionBarHelper {
 
     private static final boolean homeButtonEnabled = false;
     private static final boolean displayShowCustomEnabled = true;
@@ -51,7 +52,7 @@ public class LoginActionBarBuilder {
     private AVLoadingIndicatorView indicatorView;
 
 
-    public LoginActionBarBuilder(AppCompatActivity activity, int toolbarId) {
+    public LoginActionBarHelper(AppCompatActivity activity, int toolbarId) {
         this.activity = activity;
         this.toolbarId = toolbarId;
 
@@ -66,6 +67,11 @@ public class LoginActionBarBuilder {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         titleView = (TextView) inflater.inflate(R.layout.action_bar_text_layout, null);
+
+        //HARD
+        Typeface font = Typeface.createFromAsset(activity.getAssets(),
+                "fonts/actonia.ttf");
+        titleView.setTypeface(font);
         indicatorView = (AVLoadingIndicatorView) inflater.inflate(R.layout.av_progress_indicator,null);
 
     }

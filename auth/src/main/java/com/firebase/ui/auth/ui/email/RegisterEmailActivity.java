@@ -32,12 +32,15 @@ import android.util.Patterns;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.auth.R;
 import com.firebase.ui.auth.ui.ActivityHelper;
@@ -50,6 +53,7 @@ import com.firebase.ui.auth.ui.email.field_validators.EmailFieldValidator;
 import com.firebase.ui.auth.ui.email.field_validators.UsernameValidator;
 import com.firebase.ui.auth.ui.email.field_validators.PasswordFieldValidator;
 import com.firebase.ui.auth.util.FirebaseAuthWrapperFactory;
+import com.firebase.ui.auth.util.LoginActionBarHelper;
 import com.firebase.ui.database.DatabaseRefUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -79,7 +83,9 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
     private ImageView mTogglePasswordImage;
     private FirebaseAuth mAuth;
     private DatabaseReference mMeRef;
-    private AVLoadingIndicatorView indicatorView;
+    private LoginActionBarHelper actionBarHelper;
+
+    private TextInputLayout mEmailInputLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,34 +134,31 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
             }
         }
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_sign_up);
-        setSupportActionBar(toolbar);
 
-        final ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setHomeButtonEnabled(false); // disable the button
-            actionBar.setDisplayShowCustomEnabled(true);
-            actionBar.setDisplayHomeAsUpEnabled(false); // remove the left caret
-            actionBar.setDisplayShowHomeEnabled(false); // remove the icon
-            actionBar.setDisplayShowTitleEnabled(true);
+        actionBarHelper = new LoginActionBarHelper(this, R.id.toolbar_sign_up);
+        actionBarHelper.buildTitlePlusIndicatorActionBar("Register...");
 
-            LayoutInflater inflater = (LayoutInflater) this
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            Toolbar.LayoutParams layout = new Toolbar.LayoutParams(Toolbar.LayoutParams.WRAP_CONTENT, Toolbar.LayoutParams.WRAP_CONTENT);
-            layout.height = 180;
-            layout.width = 180;
-            layout.gravity = Gravity.CENTER;
-            View view = inflater.inflate(R.layout.av_progress_indicator,null);
-            toolbar.addView(view, layout);
-
-        }
-
-        indicatorView = (AVLoadingIndicatorView) findViewById(R.id.av_progress_indicator);
-        indicatorView.hide();
 
         setUpTermsOfService();
         Button createButton = (Button) findViewById(R.id.button_create);
         createButton.setOnClickListener(this);
+        setupTheScrollView();
+    }
+
+    private void setupTheScrollView(){
+        final ScrollView scrollView = (ScrollView) findViewById(R.id.register_scroll_view);
+
+        final Context context = getApplicationContext();
+
+        mNameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus){
+                    scrollView.smoothScrollTo(0, mNameEditText.getTop());
+                }
+            }
+        });
+
     }
 
     private void setUpTermsOfService() {
@@ -229,14 +232,14 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
                                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<Void> task) {
-                                                        indicatorView.hide();
+                                                        actionBarHelper.hideIndicator();
                                                         if (task.isSuccessful()) {
                                                             startSaveCredentials(firebaseUser, password);
                                                         }
                                                     }
                                                 });
                                     } else {
-                                        indicatorView.hide();
+                                        actionBarHelper.hideIndicator();
                                         String errorMessage = task.getException().getLocalizedMessage();
                                         errorMessage = errorMessage.substring(errorMessage.indexOf(":") + 1);
                                         TextInputLayout emailInput =
@@ -247,7 +250,7 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
                             });
                 }else {
 
-                    indicatorView.hide();
+                    actionBarHelper.hideIndicator();
                     TextInputLayout nameLayout =
                             (TextInputLayout) findViewById(R.id.name_layout);
                     nameLayout.setError("This username is taken");
@@ -368,7 +371,7 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
             boolean passwordValid = mPasswordFieldValidator.validate(password);
 
             if (emailValid && passwordValid && usernameValid) {
-                indicatorView.show();
+                actionBarHelper.showIndicatorHideTitle();
                 registerUser(email, username, password);
             }
         }

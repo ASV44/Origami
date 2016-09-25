@@ -4,5 +4,6 @@
     android:text="Login"
     android:textColor="#ffffff"
     android:id="@+id/mytext"
-    android:textSize="29sp"
+    android:textSize="45sp"
+    android:textStyle="bold"
     xmlns:android="http://schemas.android.com/apk/res/android" />
