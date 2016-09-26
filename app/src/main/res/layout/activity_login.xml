@@ -34,18 +34,6 @@
         android:textAlignment="center"
         android:lineSpacingExtra="10sp" />
 
-    <TextView
-        android:id="@+id/title_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:text="Origami"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="100dp"
-        android:textStyle="bold"
-        android:textColor="@color/white"/>
-
     <me.relex.circleindicator.CircleIndicator
         android:id="@+id/indicator"
         android:layout_width="match_parent"
@@ -68,15 +56,29 @@
             android:background="@color/colorAccent" />-->
 
 
+    <TextView
+        android:id="@+id/title_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Origami"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="90dp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:layout_marginBottom="152dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
     <ImageButton
         android:id="@+id/language_text_button"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:layout_alignBottom="@+id/indicator"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_margin="8dp"
         android:background="@drawable/lang"
-        android:padding="30dp" />
+        android:padding="30dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="5dp"
+        />
 
 </RelativeLayout>

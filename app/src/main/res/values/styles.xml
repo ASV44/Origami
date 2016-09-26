@@ -15,7 +15,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowBackground">@drawable/background_color</item>
+        <item name="android:windowBackground">@drawable/sweet_morning_gradient</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="colorButtonNormal">@color/colorPrimaryDark</item>
@@ -27,6 +27,71 @@
         <item name="android:windowActionBarOverlay">true</item>
 
     </style>
+    
+    <style name="DayPurpleTheme" parent="PurpleTheme">
+        
+    </style>
+    
+    <style name="NighPurpleTheme" parent="PurpleTheme">
+
+        
+    </style>
+    
+    <style name="passion_theme" parent="DayPurpleTheme">
+        <item name="android:windowBackground">@drawable/passion_gradient</item>
+    </style>
+
+
+    <style name="sweet_morning_theme" parent="DayPurpleTheme">
+        <item name="android:windowBackground">@drawable/sweet_morning_gradient</item>
+    </style>
+
+
+    <style name="virgin_theme" parent="DayPurpleTheme">
+        <item name="android:windowBackground">@drawable/virgin_gradient</item>
+    </style>
+
+
+    <style name="reef_theme" parent="DayPurpleTheme">
+        <item name="android:windowBackground">@drawable/reef_gradient</item>
+    </style>
+
+
+    <style name="bloody_mary__theme" parent="DayPurpleTheme">
+        <item name="android:windowBackground">@drawable/bloody_mary_gradient</item>
+    </style>
+
+
+    <style name="little_leaf_theme" parent="DayPurpleTheme">
+        <item name="android:windowBackground">@drawable/little_leaf_gradient</item>
+    </style>
+
+    <style name="amethist_theme" parent="NighPurpleTheme">
+        <item name="android:windowBackground">@drawable/amethist_gradient</item>
+    </style>
+    <style name="purple_bliss_theme" parent="NighPurpleTheme">
+        <item name="android:windowBackground">@drawable/purple_bliss_gradient</item>
+    </style>
+
+
+    <style name="kashmir_theme" parent="NighPurpleTheme">
+        <item name="android:windowBackground">@drawable/kashmir_gradient</item>
+    </style>
+
+    <style name="grapefruit_sunset_theme" parent="NighPurpleTheme">
+        <item name="android:windowBackground">@drawable/grapefruit_sunset_gradient</item>
+    </style>
+
+    <style name="shroom_theme" parent="NighPurpleTheme">
+        <item name="android:windowBackground">@drawable/shroom_gradient</item>
+    </style>
+
+    <style name="influenza_theme" parent="NighPurpleTheme">
+        <item name="android:windowBackground">@drawable/influenza_gradient</item>
+    </style>
+
+
+
 
     <style name="ThemeActionBar"
         parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">

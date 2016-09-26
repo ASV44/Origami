@@ -4,7 +4,7 @@
     android:fitsSystemWindows="true">
 
     <TextView
-        android:text="“Imagination is the only weapon in the war against reality.”"
+        android:text="@string/login_quote2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

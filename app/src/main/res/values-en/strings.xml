@@ -3,7 +3,7 @@
     <string name="title_activity_maps">Map</string>
 
 
-    <string name="sign_in">Login</string>
+    <string name="sign_in">Log in</string>
     <string name="green_theme">Green Theme</string>
     <string name="purple_theme">Purple Theme</string>
     <string name="use_theme_header">Use theme:</string>

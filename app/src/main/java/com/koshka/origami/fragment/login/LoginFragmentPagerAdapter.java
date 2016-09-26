@@ -14,8 +14,8 @@ public class LoginFragmentPagerAdapter extends FragmentPagerAdapter {
     }
 
     private final Fragment[] mFragments = new Fragment[]{
-            new FirstPageFragment1(),
             new FirstPageFragment2(),
+            new FirstPageFragment1(),
             new FirstPageFragment3(),
 
 

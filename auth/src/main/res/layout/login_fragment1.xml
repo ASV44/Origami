@@ -5,7 +5,7 @@
 
 
     <TextView
-        android:text="“Who in the world am I? Ah, that's the great puzzle.”"
+        android:text="@string/login_quote1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

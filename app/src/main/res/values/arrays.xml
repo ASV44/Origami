@@ -17,6 +17,33 @@
         <item>Español</item>
         <item>Română</item>
     </array>
-    
+
+    <array name="day_login_background_gradient_array">
+        <item>@drawable/passion_gradient</item>
+        <item>@drawable/sweet_morning_gradient</item>
+        <item>@drawable/virgin_gradient</item>
+        <item>@drawable/reef_gradient</item>
+        <item>@drawable/bloody_mary_gradient</item>
+        <item>@drawable/little_leaf_gradient</item>
+    </array>
+
+    <array name="night_login_background_gradient_array">
+        <item>@drawable/amethist_gradient</item>
+        <item>@drawable/purple_bliss_gradient</item>
+        <item>@drawable/kashmir_gradient</item>
+        <item>@drawable/grapefruit_sunset_gradient</item>
+        <item>@drawable/shroom_gradient</item>
+        <item>@drawable/influenza_gradient</item>
+    </array>
+
+    <array name="day_style">
+        <item>@style/passion_theme</item>
+        <item>@style/sweet_morning_theme</item>
+        <item>@style/virgin_theme</item>
+        <item>@style/reef_theme</item>
+        <item>@style/bloody_mary__theme</item>
+        <item>@style/little_leaf_theme</item>
+    </array>
+
 
 </resources>

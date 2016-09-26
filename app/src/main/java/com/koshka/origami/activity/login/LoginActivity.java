@@ -5,7 +5,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
@@ -16,6 +18,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
@@ -31,7 +35,12 @@ import com.koshka.origami.utils.net.NetworkUtil;
 import com.koshka.origami.utils.ui.ParallaxPagerTransformer;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
+import java.util.Random;
+import java.util.TimeZone;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -66,9 +75,21 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.language_text_button)
     ImageButton languageTextButton;
 
+    private TypedArray day_theme_array;
+    private TypedArray night_theme_array;
+
+    private TypedArray day_background_array;
+    private TypedArray night_background_array;
+
+    private  int random_background_drawable_int;
+
+    private boolean isNight = false;
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
@@ -90,10 +111,41 @@ public class LoginActivity extends AppCompatActivity {
         CircleIndicator indicator = (CircleIndicator) findViewById(R.id.indicator);
         indicator.setViewPager(mPager);
 
-        final Typeface font = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/actonia.ttf");
+        final Typeface font = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/Origami.ttf");
 
         if (font != null){
             titleTextView.setTypeface(font);
+        }
+
+        backgroundSetup();
+
+
+
+    }
+
+    //Randomly sets up a drawable from array
+    //day + night drawables
+    private void backgroundSetup(){
+        Resources res = getResources();
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeZone(TimeZone.getDefault());
+
+        int hourofday = cal.get(Calendar.HOUR_OF_DAY);
+        //AS AN IDEA: if the phone has light sensors check wether it's in a dark or light environment and choose the background by that
+        if ( hourofday > 21 || hourofday < 6) {
+            isNight = true;
+            night_background_array = res.obtainTypedArray(R.array.night_login_background_gradient_array);
+            random_background_drawable_int = new Random().nextInt(night_background_array.length()) + 0;
+            Drawable rand = night_background_array.getDrawable(random_background_drawable_int);
+            getWindow().setBackgroundDrawable(rand);
+        } else {
+            isNight = false;
+            day_background_array = res.obtainTypedArray(R.array.day_login_background_gradient_array);
+            random_background_drawable_int = new Random().nextInt(day_background_array.length()) + 0;
+            Drawable rand = day_background_array.getDrawable(random_background_drawable_int);
+            getWindow().setBackgroundDrawable(rand);
+
         }
 
 
@@ -148,7 +200,44 @@ public class LoginActivity extends AppCompatActivity {
     @MainThread
     @StyleRes
     private int getSelectedTheme() {
-        return R.style.PurpleTheme;
+
+        if (isNight){
+            switch (random_background_drawable_int){
+                case 0:
+                    return R.style.amethist_theme;
+                case 1:
+                    return R.style.purple_bliss_theme;
+                case 2:
+                    return R.style.kashmir_theme;
+                case 3:
+                    return R.style.grapefruit_sunset_theme;
+                case 4:
+                    return R.style.shroom_theme;
+                case 5:
+                    return R.style.influenza_theme;
+                default:
+                    return R.style.amethist_theme;
+            }
+        } else {
+
+            switch (random_background_drawable_int) {
+                case 0:
+                    return R.style.passion_theme;
+                case 1:
+                    return R.style.sweet_morning_theme;
+                case 2:
+                    return R.style.virgin_theme;
+                case 3:
+                    return R.style.reef_theme;
+                case 4:
+                    return R.style.bloody_mary__theme;
+                case 5:
+                    return R.style.little_leaf_theme;
+                default:
+                    return R.style.virgin_theme;
+            }
+        }
+        
     }
 
     @MainThread
