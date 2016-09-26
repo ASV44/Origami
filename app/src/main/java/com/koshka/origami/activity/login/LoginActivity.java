@@ -90,7 +90,6 @@ public class LoginActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
             startActivity(MainActivity.createIntent(this));
@@ -111,15 +110,13 @@ public class LoginActivity extends AppCompatActivity {
         CircleIndicator indicator = (CircleIndicator) findViewById(R.id.indicator);
         indicator.setViewPager(mPager);
 
-        final Typeface font = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/Origami.ttf");
+        final Typeface font = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/actonia.ttf");
 
         if (font != null){
             titleTextView.setTypeface(font);
         }
 
         backgroundSetup();
-
-
 
     }
 
@@ -314,6 +311,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void setLocale(String lang) {
         //TODO: conf.locale is deprecated, find another solution...
+        //pressing multiple times crashes the app
         myLocale = new Locale(lang);
         Resources res = getResources();
         DisplayMetrics dm = res.getDisplayMetrics();

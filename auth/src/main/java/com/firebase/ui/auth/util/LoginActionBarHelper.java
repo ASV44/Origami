@@ -172,6 +172,11 @@ public class LoginActionBarHelper {
         hideTitle();
     }
 
+    public void showTitleHideIndicator(){
+        hideIndicator();
+        showTitle();
+    }
+
     public String getTitle() {
         return title;
     }

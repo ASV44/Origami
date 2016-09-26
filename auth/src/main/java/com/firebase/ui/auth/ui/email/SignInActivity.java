@@ -157,10 +157,10 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
                                                     } else {
                                                         TextInputLayout loginTextLayout = (TextInputLayout) findViewById(R.id.email_nickname_layout);
                                                         loginTextLayout.setError("Email already registered");
-                                                        actionBarHelper.hideIndicator();
+                                                        actionBarHelper.showTitleHideIndicator();
                                                     }
                                                 } else {
-                                                    actionBarHelper.hideIndicator();
+                                                    actionBarHelper.showTitleHideIndicator();
                                                 }
                                             }
 
@@ -178,7 +178,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
                                     actionBarHelper.showIndicatorHideTitle();
                                     TextInputLayout loginTextLayout = (TextInputLayout) findViewById(R.id.email_nickname_layout);
                                     loginTextLayout.setError("Username already registered");
-                                    actionBarHelper.hideIndicator();
+                                    actionBarHelper.showTitleHideIndicator();
                                 } else {
 
                                     actionBarHelper.showIndicatorHideTitle();
@@ -233,7 +233,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
 
 
     private void startEmailHandler(String email, List<String> providers) {
-        actionBarHelper.hideIndicator();
+        actionBarHelper.showTitleHideIndicator();
         if (providers == null || providers.isEmpty()) {
             // account doesn't exist yet
             Intent registerIntent = RegisterEmailActivity.createIntent(
@@ -276,7 +276,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        actionBarHelper.hideIndicator();
+                        actionBarHelper.showTitleHideIndicator();
                         if (task.isSuccessful()) {
                             FirebaseUser firebaseUser = task.getResult().getUser();
                             if (FirebaseAuthWrapperFactory.getFirebaseAuthWrapper(
@@ -350,7 +350,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
                                                     }
                                                 }
                                             } else {
-                                                actionBarHelper.hideIndicator();
+                                                actionBarHelper.showTitleHideIndicator();
                                             }
                                         }
                                     });
