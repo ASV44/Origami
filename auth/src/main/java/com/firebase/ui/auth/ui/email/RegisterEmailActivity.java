@@ -291,7 +291,6 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
         //SETUP THE USER /users/uid
 
         User user = new User(email, username);
-
         mMeRef.setValue(user, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference reference) {

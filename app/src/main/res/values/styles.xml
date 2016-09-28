@@ -113,12 +113,11 @@
         <item name="android:textColor">@color/transparent6</item>
     </style>
 
-
     <style name="PurpleThemeNoActionBar" parent="AppTheme.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowBackground">@drawable/background_color</item>
+        <item name="android:windowBackground">@drawable/clouds_gradient</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="colorButtonNormal">@color/colorPrimaryDark</item>

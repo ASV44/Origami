@@ -6,13 +6,6 @@
     xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/map_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-    </RelativeLayout>
 
     <com.getbase.floatingactionbutton.FloatingActionsMenu
         android:id="@+id/multiple_actions_map"
@@ -51,5 +44,56 @@
         android:layout_marginBottom="62dp"
         android:padding="20dp"
         android:textColor="@color/black"/>
+
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout
+        xmlns:sothree="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/sliding_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        sothree:umanoPanelHeight="68dp"
+        sothree:umanoShadowHeight="4dp"
+        sothree:umanoOverlay="true"
+        sothree:umanoParallaxOffset="100dp">
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/map_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+        </RelativeLayout>
+    
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusable="false"
+            android:background="@color/transparent4"
+            android:layout_marginTop="100dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="68dp">
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="start|top"
+                android:background="@drawable/mapmarker"
+                android:paddingTop="5dp"/>
+            <TextView
+                android:id="@+id/origami_button_map"
+                android:textColor="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center|top"
+                android:text="D"
+                android:textSize="40sp"
+                android:paddingTop="5dp"/>
+
+        </RelativeLayout>
+
+        </RelativeLayout>
+
+    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
 
 </RelativeLayout>

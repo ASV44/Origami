@@ -3,6 +3,7 @@ package com.koshka.origami.fragment.main;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -155,6 +156,14 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
         fragment.getMapAsync(this);
         mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
 
+        TextView textView = (TextView) getActivity().findViewById(R.id.origami_button_map);
+
+        final Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/origamibats.ttf");
+
+        if (font != null){
+            textView.setTypeface(font);
+        }
+
     }
 
     private void initFirebase(){
@@ -209,7 +218,7 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
 
     }*/
 
-    @OnClick(R.id.create_origami_button)
+    @OnClick(R.id.origami_button_map)
     public void createOrigami(View view) {
 
         startActivity(new Intent(getActivity(), CreatePublicOrigamiActivity.class));

@@ -14,6 +14,7 @@ public class User {
     private String username;
     private String displayName;
     private String photoUrl;
+    private String backgroundDrawable;
     public User() {
     }
 
@@ -83,6 +84,11 @@ public class User {
         this.photoUrl = photoUrl;
     }
 
+    public String getBackgroundDrawable() {
+        return backgroundDrawable;
+    }
 
-
+    public void setBackgroundDrawable(String backgroundDrawable) {
+        this.backgroundDrawable = backgroundDrawable;
+    }
 }

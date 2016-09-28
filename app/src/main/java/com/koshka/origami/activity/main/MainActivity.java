@@ -72,7 +72,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     @BindView(R.id.viewpagertab)
     SmartTabLayout viewpagertab;
 
-
     private int backButtonCount;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private boolean locationPermissionGranted = false;
