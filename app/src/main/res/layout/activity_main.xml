@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:elevation="0dp"
-        android:background="@color/transparent6">
+        android:background="@color/transparent4">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -34,7 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="42dp"
         app:stl_clickable="true"
-        app:stl_defaultTabBackground="@color/transparent6"
+        app:stl_defaultTabBackground="@color/transparent4"
         app:stl_defaultTabTextColor="@color/white"
         app:stl_defaultTabTextSize="14sp"
         app:stl_distributeEvenly="true"
