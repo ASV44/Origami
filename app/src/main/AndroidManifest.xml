@@ -39,7 +39,8 @@
         <activity
             android:name=".activity.main.MainActivity"
             android:configChanges="locale"
-            android:theme="@style/PurpleThemeNoActionBar">
+            android:theme="@style/PurpleThemeNoActionBar"
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

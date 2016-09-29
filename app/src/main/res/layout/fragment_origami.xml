@@ -6,7 +6,105 @@
     android:layout_height="match_parent">
 
 
-        <com.getbase.floatingactionbutton.FloatingActionsMenu
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout
+        xmlns:sothree="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/origami_sliding_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        sothree:umanoPanelHeight="68dp"
+        sothree:umanoShadowHeight="4dp"
+        sothree:umanoOverlay="true">
+
+        <RelativeLayout
+            android:id="@+id/parallaxContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="200dp">
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusable="false"
+            android:background="@color/transparent4"
+            android:layout_marginTop="90dp">
+
+            <LinearLayout
+                android:id="@+id/origami_elements_bar"
+                android:layout_width="match_parent"
+                android:layout_height="68dp">
+
+                <TextView
+                    android:id="@+id/origami_create_button"
+                    android:textColor="@color/white"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|top"
+                    android:text="D"
+                    android:textSize="50sp" />
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/fold_origami_title"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="70dp"
+                android:textSize="15dp"
+                android:text="Fold and origami"
+                android:textColor="@color/white"
+                android:gravity="center|top"/>
+            </LinearLayout>
+
+         <!--   <LinearLayout
+                android:id="@+id/create_origami_elements"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+
+                <CheckBox
+                    android:text="CheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/checkBox2"
+                    android:layout_weight="1" />
+
+                <CheckBox
+                    android:text="CheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/checkBox"
+                    android:layout_weight="1" />
+
+                <Switch
+                    android:text="Switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/switch1"
+                    android:layout_weight="1" />
+
+                <SeekBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/seekBar"
+                    android:layout_weight="1" />
+            </LinearLayout>-->
+
+        </RelativeLayout>
+
+    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
+
+      <!--  <com.getbase.floatingactionbutton.FloatingActionsMenu
             android:id="@+id/multiple_actions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -29,5 +127,5 @@
             fab:fab_colorPressed="@color/transparent4"
             fab:fab_title="Create origami" />
 
-    </com.getbase.floatingactionbutton.FloatingActionsMenu>
+    </com.getbase.floatingactionbutton.FloatingActionsMenu>-->
 </RelativeLayout>

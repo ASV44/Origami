@@ -47,14 +47,13 @@
 
     <com.sothree.slidinguppanel.SlidingUpPanelLayout
         xmlns:sothree="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/sliding_layout"
+        android:id="@+id/map_sliding_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="bottom"
         sothree:umanoPanelHeight="68dp"
         sothree:umanoShadowHeight="4dp"
-        sothree:umanoOverlay="true"
-        sothree:umanoParallaxOffset="100dp">
+        sothree:umanoOverlay="true">
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/map_container"
@@ -69,28 +68,103 @@
             android:layout_height="match_parent"
             android:focusable="false"
             android:background="@color/transparent4"
-            android:layout_marginTop="100dp">
+            android:layout_marginTop="90dp">
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="68dp">
+            android:layout_height="68dp"
+            android:layout_centerHorizontal="true">
 
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="start|top"
-                android:background="@drawable/mapmarker"
-                android:paddingTop="5dp"/>
+
+
             <TextView
                 android:id="@+id/origami_button_map"
                 android:textColor="@color/white"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center|top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
                 android:text="D"
+                android:textSize="50sp" />
+
+            <TextView
+                android:id="@+id/my_location_button_map"
+                android:textColor="@color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_toLeftOf="@id/origami_button_map"
+                android:text="P"
                 android:textSize="40sp"
-                android:paddingTop="5dp"/>
+                android:paddingTop="15dp"
+                android:paddingRight="30dp"/>
+
+            <TextView
+                android:id="@+id/map_settings_button"
+                android:textColor="@color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/origami_button_map"
+                android:text="C"
+                android:textSize="40sp"
+                android:paddingTop="15dp"
+                android:paddingLeft="30dp"/>
+
 
         </RelativeLayout>
+
+
+            <LinearLayout
+                android:id="@+id/origami_map_panel_title"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="75dp"
+                    android:textSize="15dp"
+                    android:text="Folding :)"
+                    android:textColor="@color/white"
+                    android:gravity="center|top"
+                    android:layout_marginBottom="10dp"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/location_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="99dp"
+                android:textSize="15dp"
+                android:text="Location:"
+                android:textColor="@color/white"
+                android:gravity="start|top"
+                android:layout_marginBottom="10dp"/>
+
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pick a place"
+                android:id="@+id/pick_a_place_button"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="150dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/editOrigamiText"
+                android:layout_below="@+id/pick_a_place_button" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Let's go"
+                android:id="@+id/create_public_origami_button"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="85dp" />
+
+
 
         </RelativeLayout>
 
