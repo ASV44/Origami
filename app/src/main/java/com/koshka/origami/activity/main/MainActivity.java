@@ -29,6 +29,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 import com.firebase.ui.database.DatabaseRefUtil;
 import com.firebase.ui.database.FirebaseDbUtils;
 import com.google.android.gms.common.ConnectionResult;
@@ -47,6 +49,7 @@ import com.koshka.origami.fragment.main.MainFragmentPagerAdapter;
 import com.koshka.origami.model.Coordinate;
 import com.koshka.origami.utils.PermissionUtils;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -142,6 +145,9 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             finish();
             return;
         }
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
 
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
@@ -311,6 +317,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         if (mGoogleApiClient.isConnected()) {
             stopLocationUpdates();
         }
+        AppEventsLogger.deactivateApp(this);
     }
 
     @Override
@@ -335,6 +342,18 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         createLocationRequest();
     }
 
+    public GoogleApiClient getmGoogleApiClient() {
+        return mGoogleApiClient;
+    }
+
+    public void setmGoogleApiClient(GoogleApiClient mGoogleApiClient) {
+        this.mGoogleApiClient = mGoogleApiClient;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
     /**
      * Sets up the location request. Android has two location request settings:
@@ -529,8 +548,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     public Location getUserLocation() {
         return mCurrentLocation;
     }
-
-
 
 }
 

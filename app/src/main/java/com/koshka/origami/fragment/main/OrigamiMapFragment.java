@@ -17,6 +17,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,6 +65,8 @@ import com.koshka.origami.google_maps.OrigamiMarker;
 import com.koshka.origami.google_maps.OrigamiMarkerRenderer;
 import com.koshka.origami.model.Coordinate;
 import com.koshka.origami.model.SimpleTextOrigami;
+import com.sothree.slidinguppanel.ScrollableViewHelper;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,11 +83,8 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
 
     private static final String TAG = "OrigamiMap";
 
-    @BindView(R.id.multiple_actions_map)
-    FloatingActionsMenu plusButton;
-
-    @BindView(R.id.follow_me_button)
-    TextView followMeTextButton;
+    @BindView(R.id.map_sliding_layout)
+    SlidingUpPanelLayout slidingUpPanelLayout;
 
     @BindView(R.id.my_location_button_map)
     TextView myLocationButton;
@@ -184,20 +184,36 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
         final Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/origamibats.ttf");
         final Typeface font2 = Typeface.createFromAsset(getContext().getAssets(), "fonts/heydings_icons.ttf");
 
-        if (font != null){
+        if (font != null) {
             textView.setTypeface(font);
         }
 
-        if (font2 != null){
+        if (font2 != null) {
             myLocationButton.setTypeface(font2);
             mapSettingsButton.setTypeface(font2);
         }
 
+        slidingUpPanelLayout.setFadeOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+            }
+        });
 
+        slidingUpPanelLayout.setOnDragListener(new View.OnDragListener() {
+            @Override
+            public boolean onDrag(View v, DragEvent event) {
+
+                    slidingUpPanelLayout.setAnchorPoint(0.9f);
+
+
+                return false;
+            }
+        });
 
     }
 
-    private void initFirebase(){
+    private void initFirebase() {
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -210,7 +226,7 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
 
     }
 
-    private void buildAndConnectGoogleApiClient(){
+    private void buildAndConnectGoogleApiClient() {
 
         mGoogleApiClient = new GoogleApiClient
                 .Builder(getActivity())
@@ -222,7 +238,6 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
         mGoogleApiClient.connect();
 
     }
-
 
 
     @Override
@@ -240,6 +255,15 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
 
     }
 
+    @OnClick(R.id.map_settings_button)
+    public void settingsButtonPressed() {
+        slidingUpPanelLayout.setAnchorPoint(0.3f);
+        slidingUpPanelLayout.setShadowHeight(0);
+        slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
+    }
+
+    private void initSlidingPanelState(){
+    }
 
   /*  @Override
     public void onDestroy() {
@@ -636,4 +660,5 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
         // Don't receive any more updates from either sensor.
         mSensorManager.unregisterListener(this);
     }
+
 }

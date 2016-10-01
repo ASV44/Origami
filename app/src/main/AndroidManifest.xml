@@ -35,6 +35,8 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+
         <!-- MAIN ACTIVITY -->
         <activity
             android:name=".activity.main.MainActivity"

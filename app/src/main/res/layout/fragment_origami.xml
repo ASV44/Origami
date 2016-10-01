@@ -33,7 +33,7 @@
             android:background="@color/transparent4"
             android:layout_marginTop="90dp">
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/origami_elements_bar"
                 android:layout_width="match_parent"
                 android:layout_height="68dp">
@@ -41,14 +41,36 @@
                 <TextView
                     android:id="@+id/origami_create_button"
                     android:textColor="@color/white"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|top"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
                     android:text="D"
                     android:textSize="50sp" />
 
+                <TextView
+                    android:id="@+id/origami_type_one_button"
+                    android:textColor="@color/white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/origami_create_button"
+                    android:text="F"
+                    android:textSize="50sp"
+                    android:paddingRight="30dp"
+                    android:visibility="invisible"/>
 
-            </LinearLayout>
+                <TextView
+                    android:id="@+id/origami_type_three_button"
+                    android:textColor="@color/white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/origami_create_button"
+                    android:text="W"
+                    android:textSize="50sp"
+                    android:paddingLeft="30dp"
+                    android:visibility="invisible"/>
+
+
+            </RelativeLayout>
 
 
             <LinearLayout
@@ -104,28 +126,4 @@
 
     </com.sothree.slidinguppanel.SlidingUpPanelLayout>
 
-      <!--  <com.getbase.floatingactionbutton.FloatingActionsMenu
-            android:id="@+id/multiple_actions"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginBottom="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            fab:fab_addButtonColorNormal="@color/transparent6"
-            fab:fab_addButtonColorPressed="@color/transparent4"
-            fab:fab_addButtonPlusIconColor="@color/white"
-            fab:fab_labelStyle="@style/menu_labels_style">
-
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/create_origami_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            fab:fab_colorNormal="@color/transparent6"
-            fab:fab_colorPressed="@color/transparent4"
-            fab:fab_title="Create origami" />
-
-    </com.getbase.floatingactionbutton.FloatingActionsMenu>-->
 </RelativeLayout>
