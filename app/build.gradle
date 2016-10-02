@@ -36,6 +36,8 @@ dependencies {
     compile "com.android.support:appcompat-v7:${project.ext.support_library_version}"
     compile "com.android.support:design:${project.ext.support_library_version}"
     compile "com.android.support:recyclerview-v7:${project.ext.support_library_version}"
+    compile "com.android.support:cardview-v7:${project.ext.support_library_version}"
+
     compile "com.android.support:support-v4:${project.ext.support_library_version}"
 
 
@@ -70,6 +72,8 @@ dependencies {
     compile 'cn.pedant.sweetalert:library:1.3'
     compile 'com.getbase:floatingactionbutton:1.10.1'
     compile 'com.sothree.slidinguppanel:library:3.3.1'
+
+    compile 'com.fivehundredpx:blurringview:1.0.0'
 
 }
 apply plugin: 'com.google.gms.google-services'

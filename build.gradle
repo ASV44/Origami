@@ -22,11 +22,10 @@ allprojects {
         flatDir {
             dirs 'libs'
         }
-        maven {
-            url 'http://dl.bintray.com/amulyakhare/maven'
+        maven { url 'https://github.com/500px/500px-android-blur/raw/master/releases/'}
+
         }
     }
-}
 
 //Skip Javadoc generation for Java 1.8 as it breaks build
 if (JavaVersion.current().isJava8Compatible()) {

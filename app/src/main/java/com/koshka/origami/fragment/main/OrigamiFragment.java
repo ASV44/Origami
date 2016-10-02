@@ -6,6 +6,8 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
@@ -15,9 +17,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.koshka.origami.R;
+import com.koshka.origami.fragment.friends.MyAdapter;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.w3c.dom.Text;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,17 +47,27 @@ public class OrigamiFragment extends Fragment {
     @BindView(R.id.origami_sliding_layout)
     SlidingUpPanelLayout slidingUpPanelLayout;
 
+    //------------------------------------------------
+    @BindView(R.id.recycler_view)
+    RecyclerView origamiRecycleView;
+    private RecyclerView.Adapter mOrigamiAdapter;
+    private RecyclerView.LayoutManager mOrigamiLayoutManager;
+
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_origami, container, false);
-        ButterKnife.bind(this, view);
+
         return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
+
         final Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/origamibats.ttf");
 
         if (font != null){
@@ -60,73 +75,32 @@ public class OrigamiFragment extends Fragment {
             origamiTypeOneButton.setTypeface(font);
             origamiTypeThreeButton.setTypeface(font);
         }
+        attachRecycleViews();
 
-        setSlidingUpPanel();
+    }
+
+    private void attachRecycleViews(){
+        mOrigamiLayoutManager = new LinearLayoutManager(getActivity());
+
+        origamiRecycleView.setLayoutManager(mOrigamiLayoutManager);
+
+        mOrigamiAdapter = new MyAdapter(getDummyArrayList());
+        origamiRecycleView.setAdapter(mOrigamiAdapter);
 
     }
 
+    private ArrayList<String> getDummyArrayList(){
 
-    private void setSlidingUpPanel() {
-/*
-        slidingUpPanelLayout.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getX() < v.getWidth()/2) {
-                    slidingUpPanelLayout.setAnchorPoint(0.5f);
-                } else if (event.getX() >v.getWidth()/2){
-                    slidingUpPanelLayout.setAnchorPoint(0.9f);
-                }
-                return false;
-            }
-        });
-        */
+        ArrayList<String> list = new ArrayList<>();
 
-        slidingUpPanelLayout.setOnDragListener(new View.OnDragListener() {
-            @Override
-            public boolean onDrag(View v, DragEvent event) {
-                slidingUpPanelLayout.setAnchorPoint(0.5f);
-                return false;
-            }
-        });
+        for (int i = 0; i<100; i++){
+            list.add(i, "Hello");
+        }
 
-        slidingUpPanelLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
-            @Override
-            public void onPanelSlide(View panel, float slideOffset) {
+        return list;
 
-            }
-
-            @Override
-            public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
-                if (newState == SlidingUpPanelLayout.PanelState.COLLAPSED){
-                    slidingUpPanelLayout.setAnchorPoint(1f);
-                    origamiTypeOneButton.setVisibility(View.INVISIBLE);
-                    origamiTypeThreeButton.setVisibility(View.INVISIBLE);
-                }
-            }
-        });
-
-        origamiCreateButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                slidingUpPanelLayout.setAnchorPoint(1f);
-                origamiTypeOneButton.animate().alpha(0.5f).setDuration(500).setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        origamiTypeOneButton.setVisibility(View.VISIBLE);
-                        super.onAnimationEnd(animation);
-                    }
-                });
-                origamiTypeThreeButton.animate().alpha(0.5f).setDuration(500).setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        origamiTypeThreeButton.setVisibility(View.VISIBLE);
-                    }
-                });
-                return false;
-            }
-        });
 
     }
+
 
 }

@@ -1,9 +1,12 @@
 package com.koshka.origami.activity.main;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
@@ -27,6 +30,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.facebook.FacebookSdk;
@@ -48,6 +52,7 @@ import com.koshka.origami.activity.login.LoginActivity;
 import com.koshka.origami.fragment.main.MainFragmentPagerAdapter;
 import com.koshka.origami.model.Coordinate;
 import com.koshka.origami.utils.PermissionUtils;
+import com.koshka.origami.utils.ui.ParallaxPagerTransformer;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
@@ -74,6 +79,12 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     @BindView(R.id.viewpagertab)
     SmartTabLayout viewpagertab;
+
+    @BindView(R.id.loading_layout)
+    RelativeLayout loadingLayout;
+
+    @BindView(R.id.text_origami_logo)
+    TextView origamiLogoTextView;
 
     private int backButtonCount;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
@@ -138,7 +149,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
             startActivity(LoginActivity.createIntent(this));
@@ -151,6 +161,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        startLoadingPageFirst();
 
         //Set Firebase stuff
         uid = currentUser.getUid();
@@ -165,11 +177,10 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         setSupportActionBar(toolbar);
 
 
- /*       ParallaxPagerTransformer pt = new ParallaxPagerTransformer((R.id.instant_message));
-        pt.setBorder(3);
-        pt.setSpeed(0.7f);*/
-      /*  mPager.setPageTransformer(false, pt);
-*/
+        ParallaxPagerTransformer pt = new ParallaxPagerTransformer((R.id.recycler_view));
+        pt.setBorder(0);
+        pt.setSpeed(0.7f);
+        mPager.setPageTransformer(false, pt);
 
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -201,6 +212,26 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             startLocationUpdates();
         }
 
+    }
+
+    //StartLoading Page on another thread to prepare everything
+    private void startLoadingPageFirst(){
+        final Typeface font = Typeface.createFromAsset(getAssets(), "fonts/origamibats.ttf");
+
+        origamiLogoTextView.setTypeface(font);
+
+        loadingLayout.postDelayed(new Runnable() { public void run() {
+
+            loadingLayout.animate().alpha(0).setDuration(1000).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    loadingLayout.setVisibility(View.GONE);
+                }
+            });
+
+        }
+        }, 5000);
     }
 
     /**
@@ -295,7 +326,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     @Override
     protected void onStart() {
         super.onStart();
-        mGoogleApiClient.connect();
+       /* mGoogleApiClient.connect();*/
     }
 
     @Override
@@ -305,24 +336,24 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         // connection to GoogleApiClient intact.  Here, we resume receiving
         // location updates if the user has requested them.
 
-        if (mGoogleApiClient.isConnected() && mRequestingLocationUpdates) {
+       /* if (mGoogleApiClient.isConnected() && mRequestingLocationUpdates) {
             startLocationUpdates();
-        }
+        }*/
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         // Stop location updates to save battery, but don't disconnect the GoogleApiClient object.
-        if (mGoogleApiClient.isConnected()) {
+     /*   if (mGoogleApiClient.isConnected()) {
             stopLocationUpdates();
-        }
+        }*/
         AppEventsLogger.deactivateApp(this);
     }
 
     @Override
     protected void onStop() {
-        mGoogleApiClient.disconnect();
+        //mGoogleApiClient.disconnect();
 
         super.onStop();
     }
@@ -470,7 +501,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         // The connection to Google Play services was lost for some reason. We call connect() to
         // attempt to re-establish the connection.
         Log.i(TAG, "Connection suspended");
-        mGoogleApiClient.connect();
+       /* mGoogleApiClient.connect();*/
     }
 
     @Override

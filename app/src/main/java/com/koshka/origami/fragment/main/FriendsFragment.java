@@ -25,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -36,6 +37,7 @@ import com.facebook.share.widget.AppInviteDialog;
 import com.firebase.ui.auth.ui.TaskFailureLogger;
 import com.firebase.ui.database.DatabaseRefUtil;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.fivehundredpx.android.blur.BlurringView;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.gms.appinvite.AppInvite;
 import com.google.android.gms.appinvite.AppInviteInvitation;
@@ -46,6 +48,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.vision.text.Line;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.ProviderQueryResult;
@@ -61,9 +64,12 @@ import com.koshka.origami.activity.friends.AddFriendActivity;
 import com.koshka.origami.activity.friends.FriendProfileActivity;
 import com.koshka.origami.activity.friends.InviteFriendActivity;
 import com.koshka.origami.activity.main.MainActivity;
+import com.koshka.origami.adapter.SimpleRecyclerAdapter;
+import com.koshka.origami.fragment.friends.MyAdapter;
 import com.koshka.origami.model.User;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -72,11 +78,12 @@ import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 import static android.app.Activity.RESULT_OK;
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
 /**
  * Created by imuntean on 7/20/16.
  */
-public class FriendsFragment extends Fragment implements GoogleApiClient.OnConnectionFailedListener{
+public class FriendsFragment extends Fragment{
 
     private static final String TAG = "FriendsFragment";
     private static final int REQUEST_INVITE = 0;
@@ -84,11 +91,22 @@ public class FriendsFragment extends Fragment implements GoogleApiClient.OnConne
     @BindView(R.id.friends_sliding_layout)
     SlidingUpPanelLayout slidingPaneLayout;
 
+    @BindView(R.id.main_friends_panel_elements_layout)
+    LinearLayout mainPanelElementsLayout;
+
+
+    //------------------------------------------------
+
     @BindView(R.id.invite_friend_relative_layout)
     RelativeLayout inviteFriendLayout;
 
     @BindView(R.id.add_friend_relative_layout)
     RelativeLayout addFriendLayout;
+
+    @BindView(R.id.friends_small_bar_layout)
+    LinearLayout friendsSmallBarLayout;
+
+    //------------------------------------------------
 
     @BindView(R.id.add_friend_button)
     TextView addFriendButton;
@@ -101,6 +119,8 @@ public class FriendsFragment extends Fragment implements GoogleApiClient.OnConne
 
     @BindView(R.id.friends_email_nick_edit_text)
     EditText nicknameEditText;
+
+    //------------------------------------------------
 
     @BindView(R.id.facebook_invite_button)
     TextView facebookInviteButton;
@@ -117,25 +137,49 @@ public class FriendsFragment extends Fragment implements GoogleApiClient.OnConne
     @BindView(R.id.invite_friend_email_layout)
     RelativeLayout inviteFriendEmailLayout;
 
-    @BindView(R.id.main_friends_panel_elements_layout)
-    LinearLayout mainPanelElementsLayout;
-
     @BindView(R.id.invite_email_text)
     EditText inviteEmailEditText;
 
+    //------------------------------------------------
+    //FRIENDS RECYCLE VIEW
+
+    @BindView(R.id.friends_main_layout)
+    RelativeLayout friendsMainLayout;
+
+    @BindView(R.id.recycler_view)
+    RecyclerView friendsRecycleView;
+
+    //GROUPS RECYCLE VIEW
+
+    @BindView(R.id.groups_recycler_view)
+    RecyclerView groupsRecycleView;
+
+    @BindView(R.id.groups_main_layout)
+    RelativeLayout groupsMainLayout;
+
+    //------------------------------------------------
+    //RECYCLE STAFF
+
+    private RecyclerView.Adapter mFriendsAdapter;
+    private RecyclerView.LayoutManager mFriendsLayoutManager;
+
+    private RecyclerView.Adapter mGroupsAdapter;
+    private RecyclerView.LayoutManager mGroupsLayoutManager;
+
+
+    //------------------------------------------------
 
     private SlidingUpPanelLayout.PanelSlideListener mainPanelSlideListener;
 
-    private SlidingUpPanelLayout.PanelSlideListener addFriendPanelListener;
-    private SlidingUpPanelLayout.PanelSlideListener inviteFriendPanelListener;
-    private SlidingUpPanelLayout.PanelSlideListener searchFriendPanelListener;
+    //------------------------------------------------
 
+    @BindView(R.id.blurring_view_expanded)
+    BlurringView blurringViewExpanded;
+
+    //Keep panel number on touch
     private int panelNumber;
 
     private boolean sendEmailInvitationButtonPressed = false;
-
-    private LinearLayoutManager mManager;
-    private FirebaseRecyclerAdapter<User, FriendHolder> mRecyclerViewAdapter;
 
     private FirebaseAuth mAuth;
 
@@ -145,54 +189,90 @@ public class FriendsFragment extends Fragment implements GoogleApiClient.OnConne
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_friends, container, false);
-        ButterKnife.bind(this, view);
         return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
         mAuth = FirebaseAuth.getInstance();
+
+        blurringViewExpanded.setBlurredView(friendsRecycleView);
 
         setTypefaces();
 
+        attachRecycleViews();
+        final ViewGroup.LayoutParams params = blurringViewExpanded.getLayoutParams();
+        params.width = MATCH_PARENT;
         mainPanelSlideListener = new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
 
+                if (slideOffset > 0.5){
+                    blurringViewExpanded.invalidate();
+                    blurringViewExpanded.animate().alpha(slideOffset).setDuration(0).setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+                            super.onAnimationStart(animation);
+                            blurringViewExpanded.setVisibility(View.VISIBLE);
+                        }
+                    });
+                } else {
+                    blurringViewExpanded.invalidate();
+                    blurringViewExpanded.animate().alpha(0).setDuration(50).setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            blurringViewExpanded.setVisibility(View.INVISIBLE);
+                        }
+                    });
+                }
+
+                if (slideOffset > 0.8){
+                    friendsSmallBarLayout.setVisibility(View.INVISIBLE);
+                } else {
+                    friendsSmallBarLayout.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override
             public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
                 if (newState == SlidingUpPanelLayout.PanelState.COLLAPSED) {
+                    //Collapsing the panel should return elements to init state in any case
                     returnSlidingPanelToInitialState();
-                } else if (newState == SlidingUpPanelLayout.PanelState.ANCHORED){
-                    switch (panelNumber){
-                        case 0:{
-
+                } else if (newState == SlidingUpPanelLayout.PanelState.ANCHORED) {
+                    friendsSmallBarLayout.setVisibility(View.VISIBLE);
+                    //Different behavior on Anchored state
+                    switch (panelNumber) {
+                        case 0: {
                             return;
                         }
-                        case 1:{
+                        case 1: {
                             return;
                         }
-                        case 2:{
+                        case 2: {
                             sendEmailInvitationButtonPressed = false;
                             getInviteLayoutToInitState();
+
+
                             hideKeyboard();
                         }
                     }
-                } else if (newState == SlidingUpPanelLayout.PanelState.EXPANDED){
-
-                    switch (panelNumber){
-                        case 0:{
+                } else if (newState == SlidingUpPanelLayout.PanelState.EXPANDED) {
+                    friendsSmallBarLayout.setVisibility(View.GONE);
+                    blurringViewExpanded.setVisibility(View.VISIBLE);
+                    switch (panelNumber) {
+                        case 0: {
+                            slidingPaneLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
+                            return;
+                        }
+                        case 1: {
+                            // openKeyboardForEditText(nicknameEditText);
 
                             return;
                         }
-                        case 1:{
-                           // openKeyboardForEditText(nicknameEditText);
-                            return;
-                        }
-                        case 2:{
+                        case 2: {
                             sendEmailInvitationButtonPressed = true;
                             setUpEmailInvitationLayout();
 
@@ -209,21 +289,43 @@ public class FriendsFragment extends Fragment implements GoogleApiClient.OnConne
     }
 
 
+    private void attachRecycleViews() {
+        // use a linear layout manager
+        mFriendsLayoutManager = new LinearLayoutManager(getActivity());
+        mGroupsLayoutManager = new LinearLayoutManager(getActivity());
+
+        groupsRecycleView.setLayoutManager(mGroupsLayoutManager);
+        friendsRecycleView.setLayoutManager(mFriendsLayoutManager);
+
+        mFriendsAdapter = new MyAdapter(getDummyArrayList());
+        friendsRecycleView.setAdapter(mFriendsAdapter);
+
+
+    }
+
+    private ArrayList<String> getDummyArrayList() {
+
+        ArrayList<String> list = new ArrayList<>();
+
+        for (int i = 0; i < 100; i++) {
+            list.add(i, "Hello");
+        }
+
+        return list;
+
+
+    }
+
+
     //Opens the keyboard focusing on a edit text view
-    private void openKeyboardForEditText(EditText editText){
+    //TODO:Add to a util class
+    private void openKeyboardForEditText(EditText editText) {
         editText.requestFocus();
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
 
     }
 
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mGoogleApiClient.stopAutoManage(getActivity());
-        mGoogleApiClient.disconnect();
-    }
 
     //TODO: HArd coded, I know
     private void setTypefaces() {
@@ -257,6 +359,7 @@ public class FriendsFragment extends Fragment implements GoogleApiClient.OnConne
 
         addFriendLayout.setVisibility(View.GONE);
         inviteFriendLayout.setVisibility(View.GONE);
+        friendsSmallBarLayout.setVisibility(View.VISIBLE);
         hideKeyboard();
 
     }
@@ -267,33 +370,6 @@ public class FriendsFragment extends Fragment implements GoogleApiClient.OnConne
         addFriendButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                panelNumber = 1;
-                slidingPaneLayout.setAnchorPoint(1.0f);
-                addFriendLayout.setVisibility(View.VISIBLE);
-                inviteFriendButton.setVisibility(View.GONE);
-                findFriendButton.setVisibility(View.GONE);
-                nicknameEditText.requestFocus();
-                return false;
-            }
-        });
-
-
-        addFriendButton.setOnGenericMotionListener(new View.OnGenericMotionListener() {
-            @Override
-            public boolean onGenericMotion(View v, MotionEvent event) {
-                panelNumber = 1;
-                slidingPaneLayout.setAnchorPoint(1.0f);
-                addFriendLayout.setVisibility(View.VISIBLE);
-                inviteFriendButton.setVisibility(View.GONE);
-                findFriendButton.setVisibility(View.GONE);
-                return false;
-            }
-        });
-
-
-        addFriendButton.setOnDragListener(new View.OnDragListener() {
-            @Override
-            public boolean onDrag(View v, DragEvent event) {
                 panelNumber = 1;
                 slidingPaneLayout.setAnchorPoint(1.0f);
                 addFriendLayout.setVisibility(View.VISIBLE);
@@ -323,27 +399,14 @@ public class FriendsFragment extends Fragment implements GoogleApiClient.OnConne
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 panelNumber = 0;
-                findFriendButton.setGravity(Gravity.CENTER_HORIZONTAL);
-                slidingPaneLayout.setAnchorPoint(0.3f);
+                findFriendButton.setGravity(Gravity.RIGHT);
+                slidingPaneLayout.setAnchorPoint(0.01f);
                 addFriendButton.setVisibility(View.GONE);
                 inviteFriendButton.setVisibility(View.GONE);
 
                 return false;
             }
         });
-
-    }
-
-    private void setAddFriendLayout() {
-
-
-    }
-
-    private void setInviteFriendLayout() {
-
-    }
-
-    private void setFindFriendLayout() {
 
     }
 
@@ -656,7 +719,7 @@ public class FriendsFragment extends Fragment implements GoogleApiClient.OnConne
     }
 
     @OnClick(R.id.facebook_invite_button)
-    public void facebookInvite(){
+    public void facebookInvite() {
 
         String appLinkUrl, previewImageUrl;
 
@@ -689,7 +752,7 @@ public class FriendsFragment extends Fragment implements GoogleApiClient.OnConne
     }
 
     @OnClick(R.id.google_invite_button)
-    public void sendEmailInvitation(){
+    public void sendEmailInvitation() {
         Intent intent = new AppInviteInvitation.IntentBuilder(getString(R.string.invitation_title))
                 .setMessage(getString(R.string.invitation_message))
                 .setDeepLink(Uri.parse(getString(R.string.invitation_deep_link)))
@@ -699,26 +762,6 @@ public class FriendsFragment extends Fragment implements GoogleApiClient.OnConne
         startActivityForResult(intent, REQUEST_INVITE);
 
     }
-
-/*    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "onActivityResult: requestCode=" + requestCode + ", resultCode=" + resultCode);
-
-        if (requestCode == REQUEST_INVITE) {
-            if (resultCode == RESULT_OK) {
-                // Get the invitation IDs of all sent messages
-                String[] ids = AppInviteInvitation.getInvitationIds(resultCode, data);
-                for (String id : ids) {
-                    Log.d(TAG, "onActivityResult: sent invitation " + id);
-                }
-            } else {
-                // Sending failed or it was canceled, show failure message to the user
-                // ...
-            }
-        }
-    }*/
-
 
 
     private void getInviteLayoutToInitState() {
@@ -750,10 +793,6 @@ public class FriendsFragment extends Fragment implements GoogleApiClient.OnConne
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
 }
 
 

@@ -98,6 +98,9 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
     @BindView(R.id.editOrigamiText)
     EditText editOrigamiText;
 
+    @BindView(R.id.origami_button_map)
+    TextView origamiButton;
+
     private Place place;
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
@@ -147,17 +150,17 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_origami_map, container, false);
-        ButterKnife.bind(this, view);
+
         return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        buildAndConnectGoogleApiClient();
+        ButterKnife.bind(this, view);
+ /*       buildAndConnectGoogleApiClient();
         initFirebase();
-        activity = (MainActivity) getActivity();
+        activity = (MainActivity) getActivity();*/
 
     }
 
@@ -165,7 +168,7 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        FragmentManager fm = getChildFragmentManager();
+     FragmentManager fm = getChildFragmentManager();
         SupportMapFragment fragment = (SupportMapFragment) fm.findFragmentById(R.id.map_container);
         if (fragment == null) {
 
@@ -177,39 +180,25 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
         }
 
         fragment.getMapAsync(this);
-        mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
 
-        TextView textView = (TextView) getActivity().findViewById(R.id.origami_button_map);
 
         final Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/origamibats.ttf");
         final Typeface font2 = Typeface.createFromAsset(getContext().getAssets(), "fonts/heydings_icons.ttf");
 
         if (font != null) {
-            textView.setTypeface(font);
+            origamiButton.setTypeface(font);
         }
 
         if (font2 != null) {
             myLocationButton.setTypeface(font2);
             mapSettingsButton.setTypeface(font2);
         }
-
-        slidingUpPanelLayout.setFadeOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-            }
-        });
-
-        slidingUpPanelLayout.setOnDragListener(new View.OnDragListener() {
-            @Override
-            public boolean onDrag(View v, DragEvent event) {
-
-                    slidingUpPanelLayout.setAnchorPoint(0.9f);
+    /*
+        fragment.getMapAsync(this);
+        mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
 
 
-                return false;
-            }
-        });
+*/
 
     }
 
@@ -232,7 +221,6 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
                 .Builder(getActivity())
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
-                .enableAutoManage(getActivity(), this)
                 .build();
 
         mGoogleApiClient.connect();
@@ -262,43 +250,6 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
         slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
     }
 
-    private void initSlidingPanelState(){
-    }
-
-  /*  @Override
-    public void onDestroy() {
-        super.onDestroy();
-        //REMOVE LISTENERES
-        FirebaseDbUtils.removeEventListener(publicOrigamiRef,this);
-
-    }*/
-
-
-  /*  @OnClick(R.id.origami_button_map)
-    public void createOrigami(View view) {
-
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference publicOrigamiRef = ref.child("public_origami");
-
-        if (place != null){
-
-            SimpleTextOrigami origami = new SimpleTextOrigami();
-            origami.setPlaceId(place.getId());
-            origami.setText(editOrigamiText.getText().toString());
-            origami.setCreatedBy(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
-            publicOrigamiRef.push().setValue(origami).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()){
-                        Log.d(TAG, "Origami pushed succesfully");
-                    } else {
-                        Log.d(TAG, "Could not push origami");
-                    }
-                }
-            });
-
-        }
-    }*/
 
     @OnClick(R.id.my_location_button_map)
     public void followMe(View view) {
@@ -447,12 +398,11 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
     public void onCancelled(DatabaseError databaseError) {
 
     }
-
+/*
     @Override
     public void onPause() {
         super.onPause();
 
-        mGoogleApiClient.stopAutoManage(getActivity());
         mGoogleApiClient.disconnect();
 
         // Don't receive any more updates from either sensor.
@@ -467,7 +417,7 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
     public void onStop() {
         mGoogleApiClient.disconnect();
         super.onStop();
-    }
+    }*/
 
     @Override
     public void onMapLongClick(LatLng latLng) {
@@ -481,12 +431,6 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
 
     }
 
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-    }
 
     @Override
     public boolean onMarkerClick(Marker marker) {
