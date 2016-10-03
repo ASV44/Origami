@@ -3,6 +3,7 @@ package com.koshka.origami.activity.main;
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -62,6 +63,7 @@ import com.koshka.origami.model.Coordinate;
 import com.koshka.origami.model.User;
 import com.koshka.origami.utils.PermissionUtils;
 import com.koshka.origami.utils.ui.ParallaxPagerTransformer;
+import com.koshka.origami.utils.ui.ViewThemeUtil;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
@@ -83,8 +85,9 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     public static final String SHARED_PREFS = "SharedPrefs";
 
     private static final int PICK_PREFERENCES_REQUEST = 1;
-    private static final int RESULT_OK = 1;
+    private static final int PROFILE_REQUEST = 69;
 
+    private static final int RESULT_OK = 101;
 
     @BindView(android.R.id.content)
     View mRootView;
@@ -185,11 +188,10 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        setUpBackgroundFromFirebaseForView(mRootView);
 
         setTypeFace();
         startLoadingPageFirst();
-
-       // setUpFromDbPreferences();
 
         //Set Firebase stuff
         uid = currentUser.getUid();
@@ -241,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     }
 
-    private void runBeforeStarting(){
+    private void runBeforeStarting() {
         firstTimeUse();
 
         FacebookSdk.sdkInitialize(getApplicationContext());
@@ -250,50 +252,44 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         SharedPreferences prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         int theme = prefs.getInt("theme", -1);
 
-        if (theme != -1){
+        if (theme != -1) {
             setTheme(theme);
 
         }
 
 
-        setUpFromDbPreferences();
     }
 
     //StartLoading Page on another thread to prepare everything
-    private void startLoadingPageFirst(){
+    private void startLoadingPageFirst() {
 
         SharedPreferences prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         int backgroundInt = prefs.getInt("gradient", -1);
 
+        if (backgroundInt  != -1){
+            loadingLayout.setBackground(getResources().getDrawable(backgroundInt));
+        } else {
+            setUpBackgroundFromFirebaseForView(loadingLayout);
+        }
 
-/*
-        if (backgroundInt != -1){
-            Drawable backgroundDrawable = getResources().getDrawable(backgroundInt);
-            if (backgroundDrawable != null){
-                loadingLayout.setBackground(backgroundDrawable);
+
+        loadingLayout.postDelayed(new Runnable() {
+            public void run() {
+
+                loadingLayout.animate().alpha(0).setDuration(1000).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        loadingLayout.setVisibility(View.GONE);
+                    }
+                });
+
             }
-
-        }
-*/
-
-
-        loadingLayout.postDelayed(new Runnable() { public void run() {
-
-            loadingLayout.animate().alpha(0).setDuration(1000).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    super.onAnimationEnd(animation);
-                    loadingLayout.setVisibility(View.GONE);
-                }
-            });
-
-        }
         }, 4000);
-
 
     }
 
-    private void setTypeFace(){
+    private void setTypeFace() {
         final Typeface font = Typeface.createFromAsset(getAssets(), "fonts/origamibats.ttf");
 
         origamiLogoTextView.setTypeface(font);
@@ -340,11 +336,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         switch (item.getItemId()) {
             case R.id.action_profile:
                 Intent intent = new Intent();
-                intent.setClass(MainActivity.this, UserProfileActivity.class);
+                intent.setClass(this, UserProfileActivity.class);
                 startActivity(intent);
                 break;
             case R.id.map_view:
-                startActivity(new Intent(MainActivity.this, OrigamiMapActivity.class));
+                startActivity(new Intent(this, OrigamiMapActivity.class));
                 break;
             default:
                 // If we got here, the user's action was not recognized.
@@ -391,7 +387,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     @Override
     protected void onStart() {
         super.onStart();
-       /* mGoogleApiClient.connect();*/
+
     }
 
     @Override
@@ -448,20 +444,42 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // Check which request we're responding to
-        if (requestCode == PICK_PREFERENCES_REQUEST) {
-            // Make sure the request was successful
-            if (resultCode == RESULT_OK) {
-                setUpFromDbPreferences();
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference ref = DatabaseRefUtil.getUserRef(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("firstTimeIn");
-                ref.setValue(false).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-
-                    }
-                });
+        handleUserProfileResult();
+        switch (requestCode) {
+            case PICK_PREFERENCES_REQUEST: {
+                if (resultCode == RESULT_OK) {
+                    afterFirstTimeLogin();
+                }
+                break;
             }
+
+            case PROFILE_REQUEST: {
+                handleUserProfileResult();
+
+                break;
+
+            }
+        }
+    }
+
+    private void afterFirstTimeLogin() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = DatabaseRefUtil.getUserRef(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("firstTimeIn");
+        ref.setValue(false).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+            }
+        });
+    }
+
+    private void handleUserProfileResult() {
+        SharedPreferences prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        int backgroundInt = prefs.getInt("gradient", -1);
+
+        if (backgroundInt != -1) {
+            getWindow().setBackgroundDrawable(getResources().getDrawable(backgroundInt));
+
         }
     }
 
@@ -583,18 +601,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
        /* mGoogleApiClient.connect();*/
     }
 
-    @Override
-    public void onBackPressed() {
-        if (backButtonCount >= 1) {
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_HOME);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        } else {
-            showShortSnackbar(R.string.press_back);
-            backButtonCount++;
-        }
-    }
 
     /**
      * Removes location updates from the FusedLocationApi.
@@ -615,9 +621,9 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         mCurrentLocation = location;
 
         GeomagneticField field = new GeomagneticField(
-                (float)location.getLatitude(),
-                (float)location.getLongitude(),
-                (float)location.getAltitude(),
+                (float) location.getLatitude(),
+                (float) location.getLongitude(),
+                (float) location.getAltitude(),
                 System.currentTimeMillis()
         );
 
@@ -660,7 +666,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     }
 
 
-    private void firstTimeUse(){
+    private void firstTimeUse() {
 
         DatabaseReference mUsernameRef = DatabaseRefUtil.getUserRef(currentUser.getUid());
 
@@ -668,8 +674,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Boolean firstTimeIn = (Boolean) dataSnapshot.child("firstTimeIn").getValue();
-                if (firstTimeIn != null){
-                    if (firstTimeIn){
+                if (firstTimeIn != null) {
+                    if (firstTimeIn) {
                         doSomething();
                     } else {
                     }
@@ -684,12 +690,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         });
 
 
-
         //startActivityForResult();
 
     }
 
-    private void setUpFromDbPreferences(){
+    private void setUpBackgroundFromFirebaseForView(final View view) {
 
         DatabaseReference mUsernameRef = FirebaseDatabase.getInstance().getReference().child("prefs").child(currentUser.getUid()).child("backgroundColor");
 
@@ -697,67 +702,12 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         mUsernameRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Long  backgroundColor = (Long) dataSnapshot.getValue();
-                if (backgroundColor != null){
+                Long backgroundColor = (Long) dataSnapshot.getValue();
+                if (backgroundColor != null) {
                     int integer = new BigDecimal(backgroundColor).intValueExact();
-                    switch (integer){
-                        case 0:{
-                            setBackground(R.drawable.amethist_gradient);
-                            putIntInSharedPreference(R.style.amethist_theme,R.drawable.amethist_gradient);
-                            break;
-                        }
-                        case 1:{
-                            setBackground(R.drawable.bloody_mary_gradient);
-                            putIntInSharedPreference(R.style.bloody_mary__theme,R.drawable.bloody_mary_gradient );
-                            break;
-                        }
-                        case 2:{
-                            setBackground(R.drawable.influenza_gradient);
-                            putIntInSharedPreference(R.style.influenza_theme, R.drawable.influenza_gradient);
-                            break;
-                        }
-                        case 3:{
-                            setBackground(R.drawable.shroom_gradient);
-                            putIntInSharedPreference(R.style.shroom_theme, R.drawable.shroom_gradient);
-                            break;
-                        }
-                        case 4:{
-                            setBackground(R.drawable.kashmir_gradient);
-                            putIntInSharedPreference(R.style.kashmir_theme, R.drawable.kashmir_gradient);
-                            break;
-                        }
-                        case 5:{
-                            setBackground(R.drawable.grapefruit_sunset_gradient);
-                            putIntInSharedPreference(R.style.grapefruit_sunset_theme, R.drawable.grapefruit_sunset_gradient);
-                            break;
-                        }
-                        case 6:{
-                            setBackground(R.drawable.moonrise_gradient);
-                            putIntInSharedPreference(R.style.moonrise_theme, R.drawable.moonrise_gradient);
-                            break;
-                        }
-                        case 7:{
-                            setBackground(R.drawable.purple_bliss_gradient);
-                            putIntInSharedPreference(R.style.purple_bliss_theme, R.drawable.purple_bliss_gradient);
-                            break;
-                        }
-                        case 8:{
-                            setBackground(R.drawable.passion_gradient);
-                            putIntInSharedPreference(R.style.passion_theme, R.drawable.passion_gradient);
-                            break;
-                        }
-                        case 9:{
-                            setBackground(R.drawable.little_leaf_gradient);
-                            putIntInSharedPreference(R.style.little_leaf_theme, R.drawable.little_leaf_gradient);
-                            break;
-                        }
-                        case 10:{
-                            setBackground(R.drawable.reef_gradient);
-                            putIntInSharedPreference(R.style.reef_theme, R.drawable.reef_gradient);
-                            break;
-                        }
+                    if (integer != -1){
+                        setBackgroundForView(view, integer);
                     }
-
 
                 }
 
@@ -770,36 +720,29 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         });
     }
 
-    private void putIntInSharedPreference(int themeCode, int gradientCode){
-        SharedPreferences preferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putInt("theme", themeCode);
-        editor.putInt("gradient", gradientCode);
-        editor.commit();
-        editor.apply();
-    }
-    private Drawable getDrawableFromInt(int code){
-        return getResources().getDrawable(code);
-    }
 
-    private void setBackground(int drawable){
-        mRootView.setBackground(getDrawableFromInt(drawable));
-    }
-
-    private void doSomething(){
+    private void doSomething() {
         Intent intent = new Intent(this, FirstTimeLaunchPreferencesActivity.class);
         startActivityForResult(intent, PICK_PREFERENCES_REQUEST);
-        mRootView.getBackground();
+        finish();
 
     }
 
-    private void refreshBackgroundVariable(){
+    private void refreshBackgroundVariable() {
         currentBackground = mRootView.getBackground();
     }
 
-   public static Drawable getCurrentBackgroundDrawable(){
-       return currentBackground;
-   }
+    public static Drawable getCurrentBackgroundDrawable() {
+        return currentBackground;
+    }
+
+
+    private void setBackgroundForView(View view, int firebaseBackgroundInt) {
+        ViewThemeUtil util = new ViewThemeUtil(this, view);
+        util.setBackgroundToViewAndSavePreference(firebaseBackgroundInt);
+
+    }
 
 }
+
 

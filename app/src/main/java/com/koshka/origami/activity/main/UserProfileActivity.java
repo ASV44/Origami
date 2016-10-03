@@ -1,10 +1,12 @@
 package com.koshka.origami.activity.main;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -37,7 +39,6 @@ public class UserProfileActivity extends AppCompatActivity {
     @BindView(R.id.profile_pager)
     ViewPager mPager;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +51,6 @@ public class UserProfileActivity extends AppCompatActivity {
 
         setContentView(R.layout.user_profile_layout);
         ButterKnife.bind(this);
-
 
 
         ParallaxPagerTransformer pt = new ParallaxPagerTransformer((R.id.image));
@@ -72,11 +72,13 @@ public class UserProfileActivity extends AppCompatActivity {
             actionBar.setDisplayShowTitleEnabled(false);
         }
     }
+
     public static Intent createIntent(Context context) {
         Intent in = new Intent();
         in.setClass(context, UserProfileActivity.class);
         return in;
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -87,6 +89,7 @@ public class UserProfileActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+
             case R.id.map_view:
                 break;
             default:

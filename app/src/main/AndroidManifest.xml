@@ -130,7 +130,7 @@
             android:theme="@style/PurpleThemeNoActionBar"
             android:parentActivityName=".activity.main.UserProfileActivity"/>
         <activity
-            android:name=".activity.settings.application.DesignSettingsActivity"
+            android:name=".activity.settings.application.UISettingsActivity"
             android:theme="@style/PurpleThemeNoActionBar" />
         <activity
             android:name=".activity.settings.application.NotificationsActivity"

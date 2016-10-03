@@ -2,6 +2,7 @@ package com.koshka.origami.fragment.profile;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -12,8 +13,6 @@ import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,12 +22,9 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.DatabaseRefUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.EmailAuthCredential;
-import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.login.LoginActivity;
 import com.koshka.origami.activity.settings.about.AboutUsActivity;
@@ -38,25 +34,32 @@ import com.koshka.origami.activity.settings.about.ToSActivity;
 import com.koshka.origami.activity.settings.account.ChangeEmailActivity;
 import com.koshka.origami.activity.settings.account.ChangePasswordActivity;
 import com.koshka.origami.activity.settings.account.DeleteAccountActivity;
-import com.koshka.origami.activity.settings.application.DesignSettingsActivity;
+import com.koshka.origami.activity.settings.application.UISettingsActivity;
 import com.koshka.origami.activity.settings.application.NotificationsActivity;
+import com.koshka.origami.activity.tutorial.FirstTimeLaunchPreferencesActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
+import static android.app.Activity.RESULT_OK;
+import static android.content.Context.MODE_PRIVATE;
+
 /**
  * Created by imuntean on 8/6/16.
  */
 public class UserProfileFragmentSettings extends Fragment {
 
+    private static final String SHARED_PREFS = "SharedPrefs";
     private FirebaseAuth mAuth;
 
     @BindView(R.id.origami_text_logo)
     TextView origamiTextLogo;
 
+    private static final int UI_PREFS_REQUEST = 2;
     SweetAlertDialog dialog;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -83,27 +86,6 @@ public class UserProfileFragmentSettings extends Fragment {
     public void signOut() {
 
         Resources res = getResources();
-
-/*        new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
-                .setTitleText("Hmm...")
-                .setContentText(res.getString(R.string.log_out_warning))
-                .setCancelText(res.getString(R.string.cancel))
-                .setConfirmText(res.getString(R.string.positive_log_out))
-                .showCancelButton(true)
-                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sDialog) {
-                        sDialog.cancel();
-                    }
-                })
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        signOutFromFirebase();
-                    }
-                })
-                .show();
-        */
 
         AlertDialog dialog = new AlertDialog.Builder(getActivity())
                 .setMessage(res.getString(R.string.log_out_warning))
@@ -139,36 +121,38 @@ public class UserProfileFragmentSettings extends Fragment {
 
     @OnClick({R.id.change_email_textview, R.id.change_password_textview})
     public void changeEmail(TextView view) {
-      switch (view.getId()){
-          case R.id.change_email_textview:{
-              startMyActivity(ChangeEmailActivity.class);
-              break;
-          }
-          case R.id.change_password_textview:{
-              startMyActivity(ChangePasswordActivity.class);
-              break;
-          }
-          default:
-              break;
-      }
+        switch (view.getId()) {
+            case R.id.change_email_textview: {
+                startMyActivity(ChangeEmailActivity.class);
+                break;
+            }
+            case R.id.change_password_textview: {
+                startMyActivity(ChangePasswordActivity.class);
+                break;
+            }
+            default:
+                break;
+        }
 
     }
 
     @OnClick({R.id.notifications_settings_text_button, R.id.blocked_users_text_button, R.id.connect_with_facebook_text_button, R.id.design_settings_text_button})
     public void changeAppSettings(TextView view) {
-        switch (view.getId()){
-            case R.id.notifications_settings_text_button:{
+        switch (view.getId()) {
+            case R.id.notifications_settings_text_button: {
                 startMyActivity(NotificationsActivity.class);
                 break;
             }
-            case R.id.blocked_users_text_button:{
+            case R.id.blocked_users_text_button: {
                 break;
             }
-            case R.id.connect_with_facebook_text_button:{
+            case R.id.connect_with_facebook_text_button: {
                 break;
             }
-            case R.id.design_settings_text_button:{
-                startMyActivity(DesignSettingsActivity.class);
+            case R.id.design_settings_text_button: {
+                Intent intent = new Intent(getActivity(), UISettingsActivity.class);
+                startActivityForResult(intent, UI_PREFS_REQUEST);
+
                 break;
             }
             default:
@@ -202,7 +186,7 @@ public class UserProfileFragmentSettings extends Fragment {
         }
     }
 
-    private void startMyActivity(Class clazz){
+    private void startMyActivity(Class clazz) {
         Intent intent = new Intent(getActivity(), clazz);
         startActivity(intent);
     }
@@ -214,6 +198,17 @@ public class UserProfileFragmentSettings extends Fragment {
         startMyActivity(DeleteAccountActivity.class);
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // Check which request we're responding to
+        if (requestCode == UI_PREFS_REQUEST) {
+            SharedPreferences prefs = getActivity().getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+            int backgroundGradient = prefs.getInt("gradient", -1);
+            getActivity().getWindow().setBackgroundDrawable(getResources().getDrawable(backgroundGradient));
+        }
+
+    }
 
 
     @MainThread

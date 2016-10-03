@@ -70,16 +70,9 @@
             android:text="D"
             android:id="@+id/text_origami_logo"
             android:layout_marginTop="96dp"
-            android:textSize="200dp"
+            android:textSize="120dp"
             android:layout_centerHorizontal="true" />
 
-        <TextView
-            android:layout_centerInParent="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Loading..."
-            android:textColor="@color/white"
-            android:layout_below="@id/text_origami_logo"/>
 
     </RelativeLayout>
 
