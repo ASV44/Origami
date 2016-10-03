@@ -1,26 +1,19 @@
 package com.koshka.origami.fragment.main;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.koshka.origami.R;
-import com.koshka.origami.fragment.friends.MyAdapter;
+import com.koshka.origami.fragment.friends.FriendsRecyclerViewAdapter;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -84,7 +77,7 @@ public class OrigamiFragment extends Fragment {
 
         origamiRecycleView.setLayoutManager(mOrigamiLayoutManager);
 
-        mOrigamiAdapter = new MyAdapter(getDummyArrayList());
+        mOrigamiAdapter = new FriendsRecyclerViewAdapter(getDummyArrayList());
         origamiRecycleView.setAdapter(mOrigamiAdapter);
 
     }

@@ -1,8 +1,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="80dp"
+    android:layout_height="40dp"
     android:padding="6dip"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:background="@drawable/clouds_gradient"
+    android:layout_marginTop="1dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp">
 
     <ImageView
         android:id="@+id/icon"
@@ -17,7 +21,8 @@
         android:layout_toRightOf="@id/icon"
         android:ellipsize="marquee"
         android:text="Description"
-        android:textSize="12sp" />
+        android:textSize="12sp"
+        android:textColor="@color/black"/>
 
     <TextView
         android:id="@+id/firstLine"
@@ -27,7 +32,8 @@
         android:layout_toRightOf="@id/icon"
         android:gravity="center_vertical"
         android:text="Example application"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:textColor="@color/black"/>
 
 </LinearLayout>
 

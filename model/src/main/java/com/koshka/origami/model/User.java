@@ -15,6 +15,8 @@ public class User {
     private String displayName;
     private String photoUrl;
     private String backgroundDrawable;
+    private boolean firstTimeIn;
+
     public User() {
     }
 
@@ -90,5 +92,13 @@ public class User {
 
     public void setBackgroundDrawable(String backgroundDrawable) {
         this.backgroundDrawable = backgroundDrawable;
+    }
+
+    public boolean isFirstTimeIn() {
+        return firstTimeIn;
+    }
+
+    public void setFirstTimeIn(boolean firstTimeIn) {
+        this.firstTimeIn = firstTimeIn;
     }
 }

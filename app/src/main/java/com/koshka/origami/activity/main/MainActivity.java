@@ -32,6 +32,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
@@ -45,12 +46,17 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.login.LoginActivity;
+import com.koshka.origami.activity.tutorial.FirstTimeLaunchPreferencesActivity;
 import com.koshka.origami.fragment.main.MainFragmentPagerAdapter;
 import com.koshka.origami.model.Coordinate;
+import com.koshka.origami.model.User;
 import com.koshka.origami.utils.PermissionUtils;
 import com.koshka.origami.utils.ui.ParallaxPagerTransformer;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
@@ -70,6 +76,8 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
     private final static String TAG = "MainActivity";
+
+    static final int PICK_PREFERENCES_REQUEST = 1;
 
     @BindView(android.R.id.content)
     View mRootView;
@@ -155,6 +163,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             finish();
             return;
         }
+        firstTimeUse();
+
 
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
@@ -232,6 +242,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
         }
         }, 5000);
+
+
     }
 
     /**
@@ -383,7 +395,16 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        // Check which request we're responding to
+        if (requestCode == PICK_PREFERENCES_REQUEST) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                // The user picked a contact.
+                // The Intent's data Uri identifies which contact was selected.
+
+                // Do something with the contact here (bigger example below)
+            }
+        }
     }
 
     /**
@@ -578,6 +599,43 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     public Location getUserLocation() {
         return mCurrentLocation;
+    }
+
+
+    private void firstTimeUse(){
+
+        DatabaseReference mUsernameRef = DatabaseRefUtil.getUserRef(currentUser.getUid());
+
+        mUsernameRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Boolean firstTimeIn = (Boolean) dataSnapshot.child("firstTimeIn").getValue();
+                if (firstTimeIn != null){
+                    if (firstTimeIn){
+                        doSomething();
+                    } else {
+
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+        //startActivityForResult();
+
+    }
+
+    private void doSomething(){
+        Intent intent = new Intent(this, FirstTimeLaunchPreferencesActivity.class);
+        startActivityForResult(intent, PICK_PREFERENCES_REQUEST);
+
     }
 
 }

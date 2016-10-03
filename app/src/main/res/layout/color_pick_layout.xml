@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center">
+
+        <RelativeLayout
+            android:id="@+id/welcoming_text_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="40dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp">
+
+            <TextView
+                android:id="@+id/welcoming_origami_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:text="Welcome to Origami!"
+                android:textColor="@color/white"
+                android:textSize="40dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/welcoming_origami_text"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:text="First of all, let's pick a color for the background!"
+                android:textColor="@color/white" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/colors_grid_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/welcoming_text_layout"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="5dip">
+
+            <GridView
+                android:id="@+id/colors_grid_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/welcoming_text_layout"
+                android:background="@color/transparent4"
+                android:gravity="center"
+                android:numColumns="4"
+                android:stretchMode="columnWidth" />
+        </LinearLayout>
+
+        <Button
+            android:layout_alignParentBottom="true"
+            android:id="@+id/color_next_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Next"
+            android:textColor="@color/white"
+            android:background="@color/transparent4"
+            android:layout_margin="5dp"/>
+    </RelativeLayout>
+
+
+</LinearLayout>

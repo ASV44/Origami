@@ -58,6 +58,13 @@
             android:screenOrientation="portrait"
             android:theme="@style/PurpleThemeNoActionBar" />
 
+        <activity
+            android:name=".activity.tutorial.FirstTimeLaunchPreferencesActivity"
+            android:parentActivityName=".activity.main.MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/PurpleThemeNoActionBar" />
+
+
         <!-- USER PROFILE ACTIVITY -->
         <activity
             android:name=".activity.main.UserProfileActivity"
