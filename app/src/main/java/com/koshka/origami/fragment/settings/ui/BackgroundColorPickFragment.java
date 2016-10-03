@@ -99,11 +99,11 @@ public class BackgroundColorPickFragment extends Fragment implements AdapterView
             }
         });
 
-        setBackground(position);
+        setSharedPref(position);
 
     }
 
-    private void setBackground(int position){
+    private void setSharedPref(int position){
         switch (position){
             case 0:{
                 putIntInSharedPreference(R.style.amethist_theme,R.drawable.amethist_gradient);

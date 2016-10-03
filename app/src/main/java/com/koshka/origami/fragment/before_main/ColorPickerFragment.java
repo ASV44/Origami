@@ -2,6 +2,7 @@ package com.koshka.origami.fragment.before_main;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -33,6 +34,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static android.R.id.message;
+import static android.content.Context.MODE_PRIVATE;
+import static com.koshka.origami.activity.main.MainActivity.SHARED_PREFS;
 
 /**
  * Created by qm0937 on 10/3/16.
@@ -110,6 +113,8 @@ public class ColorPickerFragment extends Fragment implements AdapterView.OnItemC
             }
         });
 
+        setSharedPref(position);
+
     }
 
     private void typeFaceSetUp() {
@@ -119,6 +124,65 @@ public class ColorPickerFragment extends Fragment implements AdapterView.OnItemC
             welcomeText.setTypeface(font);
         }
 
+    }
+
+    private void setSharedPref(int position){
+        switch (position){
+            case 0:{
+                putIntInSharedPreference(R.style.amethist_theme,R.drawable.amethist_gradient);
+                break;
+            }
+            case 1:{
+                putIntInSharedPreference(R.style.bloody_mary__theme,R.drawable.bloody_mary_gradient );
+                break;
+            }
+            case 2:{
+                putIntInSharedPreference(R.style.influenza_theme, R.drawable.influenza_gradient);
+                break;
+            }
+            case 3:{
+                putIntInSharedPreference(R.style.shroom_theme, R.drawable.shroom_gradient);
+                break;
+            }
+            case 4:{
+                putIntInSharedPreference(R.style.kashmir_theme, R.drawable.kashmir_gradient);
+                break;
+            }
+            case 5:{
+                putIntInSharedPreference(R.style.grapefruit_sunset_theme, R.drawable.grapefruit_sunset_gradient);
+                break;
+            }
+            case 6:{
+                putIntInSharedPreference(R.style.moonrise_theme, R.drawable.moonrise_gradient);
+                break;
+            }
+            case 7:{
+                putIntInSharedPreference(R.style.purple_bliss_theme, R.drawable.purple_bliss_gradient);
+                break;
+            }
+            case 8:{
+                putIntInSharedPreference(R.style.passion_theme, R.drawable.passion_gradient);
+                break;
+            }
+            case 9:{
+                putIntInSharedPreference(R.style.little_leaf_theme, R.drawable.little_leaf_gradient);
+                break;
+            }
+            case 10:{
+                putIntInSharedPreference(R.style.reef_theme, R.drawable.reef_gradient);
+                break;
+            }
+        }
+
+    }
+
+    private void putIntInSharedPreference(int themeCode, int gradientCode){
+        SharedPreferences preferences = getActivity().getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt("theme", themeCode);
+        editor.putInt("gradient", gradientCode);
+        editor.commit();
+        editor.apply();
     }
 
 }

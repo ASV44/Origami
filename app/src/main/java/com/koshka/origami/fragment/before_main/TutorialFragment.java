@@ -15,6 +15,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static android.R.id.message;
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by qm0937 on 10/3/16.
@@ -22,7 +23,6 @@ import static android.R.id.message;
 
 public class TutorialFragment extends Fragment {
 
-    private static final int RESULT_OK = 1;
 
     @Nullable
     @Override

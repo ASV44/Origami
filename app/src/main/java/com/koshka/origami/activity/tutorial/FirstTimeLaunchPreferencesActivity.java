@@ -49,7 +49,7 @@ public class FirstTimeLaunchPreferencesActivity extends AppCompatActivity {
         viewPager.setAdapter(pagerAdapter);
     }
 
-    public void goToNextFragment(){
+        public void goToNextFragment(){
         viewPager.setCurrentItem(viewPager.getCurrentItem() +1, true);
 
     }

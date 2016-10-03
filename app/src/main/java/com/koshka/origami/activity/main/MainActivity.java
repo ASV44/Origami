@@ -85,9 +85,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     public static final String SHARED_PREFS = "SharedPrefs";
 
     private static final int PICK_PREFERENCES_REQUEST = 1;
-    private static final int PROFILE_REQUEST = 69;
-
-    private static final int RESULT_OK = 101;
 
     @BindView(android.R.id.content)
     View mRootView;
@@ -182,11 +179,12 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             return;
         }
 
-        runBeforeStarting();
 
 
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        beforeStartingCheck();
 
         setUpBackgroundFromFirebaseForView(mRootView);
 
@@ -243,19 +241,12 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     }
 
-    private void runBeforeStarting() {
+    private void beforeStartingCheck() {
         firstTimeUse();
 
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
 
-        SharedPreferences prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        int theme = prefs.getInt("theme", -1);
-
-        if (theme != -1) {
-            setTheme(theme);
-
-        }
 
 
     }
@@ -269,9 +260,10 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         if (backgroundInt  != -1){
             loadingLayout.setBackground(getResources().getDrawable(backgroundInt));
         } else {
-            setUpBackgroundFromFirebaseForView(loadingLayout);
+
         }
 
+        setUpBackgroundFromFirebaseForView(loadingLayout);
 
         loadingLayout.postDelayed(new Runnable() {
             public void run() {
@@ -444,25 +436,23 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        handleUserProfileResult();
         switch (requestCode) {
             case PICK_PREFERENCES_REQUEST: {
-                if (resultCode == RESULT_OK) {
+                if(resultCode == RESULT_OK){
+
                     afterFirstTimeLogin();
+                SharedPreferences prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+                int backgroundGradient = prefs.getInt("gradient", -1);
+                getWindow().setBackgroundDrawable(getResources().getDrawable(backgroundGradient));
                 }
+            }
                 break;
             }
 
-            case PROFILE_REQUEST: {
-                handleUserProfileResult();
-
-                break;
-
-            }
         }
-    }
 
     private void afterFirstTimeLogin() {
+
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = DatabaseRefUtil.getUserRef(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("firstTimeIn");
         ref.setValue(false).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -473,15 +463,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         });
     }
 
-    private void handleUserProfileResult() {
-        SharedPreferences prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        int backgroundInt = prefs.getInt("gradient", -1);
-
-        if (backgroundInt != -1) {
-            getWindow().setBackgroundDrawable(getResources().getDrawable(backgroundInt));
-
-        }
-    }
 
     /**
      * Sets up the location request. Android has two location request settings:
@@ -724,7 +705,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     private void doSomething() {
         Intent intent = new Intent(this, FirstTimeLaunchPreferencesActivity.class);
         startActivityForResult(intent, PICK_PREFERENCES_REQUEST);
-        finish();
 
     }
 
