@@ -2,6 +2,8 @@ package com.koshka.origami.activity.main;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -24,6 +26,7 @@ import butterknife.ButterKnife;
 public class UserProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "UserProfileActivity";
+    public static final String SHARED_PREFS = "SharedPrefs";
 
     @BindView(android.R.id.content)
     View mRootView;
@@ -39,8 +42,16 @@ public class UserProfileActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+        SharedPreferences prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        int theme = prefs.getInt("theme", -1);
+
+        setTheme(theme);
+
         setContentView(R.layout.user_profile_layout);
         ButterKnife.bind(this);
+
+
 
         ParallaxPagerTransformer pt = new ParallaxPagerTransformer((R.id.image));
         pt.setBorder(0);

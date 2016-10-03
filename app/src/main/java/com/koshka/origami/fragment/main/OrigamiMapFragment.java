@@ -79,7 +79,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 /**
  * Created by imuntean on 8/27/16.
  */
-public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, ValueEventListener, GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnCameraMoveListener, GoogleMap.OnMapClickListener, GoogleMap.OnInfoWindowLongClickListener, SensorEventListener {
+public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, ValueEventListener, GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapClickListener, GoogleMap.OnInfoWindowLongClickListener, SensorEventListener {
 
     private static final String TAG = "OrigamiMap";
 
@@ -235,7 +235,6 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
         mMap.setBuildingsEnabled(true);
         mMap.setOnMapLongClickListener(this);
         mMap.setOnInfoWindowClickListener(this);
-        mMap.setOnCameraMoveListener(this);
         mMap.setOnMapClickListener(this);
         mMap.setOnInfoWindowLongClickListener(this);
         mMap.setOnMarkerClickListener(this);
@@ -254,7 +253,7 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
     @OnClick(R.id.my_location_button_map)
     public void followMe(View view) {
 
-        registerSensorListeners();
+        /*registerSensorListeners();
         final Resources res = getResources();
         if (!isInFollowMeMode) {
             if (notFollowListener != null) {
@@ -347,7 +346,7 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
 
             myLocationRef.addValueEventListener(notFollowListener);
         }
-
+*/
     }
 
 
@@ -512,20 +511,6 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
         }
     }
 
-    @Override
-    public void onCameraMove() {
-
-  /*      if (previousZoomLevel != mMap.getCameraPosition().zoom) {
-            isZooming = true;
-            if (followListener != null) {
-                myLocationRef.removeEventListener(followListener);
-            }
-            isInFollowMeMode = false;
-            followMeTextButton.setText("Follow mode");
-        }
-
-        previousZoomLevel = mMap.getCameraPosition().zoom;*/
-    }
 
     @Override
     public void onMapClick(LatLng latLng) {

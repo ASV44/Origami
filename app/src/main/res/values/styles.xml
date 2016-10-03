@@ -90,6 +90,10 @@
         <item name="android:windowBackground">@drawable/influenza_gradient</item>
     </style>
 
+    <style name="moonrise_theme" parent="DayPurpleTheme">
+
+        <item name="android:windowBackground">@drawable/moonrise_gradient</item>
+    </style>
 
 
 

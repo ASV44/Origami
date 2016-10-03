@@ -7,7 +7,7 @@ public enum RefConstants {
 
     users("users"),
     friends("friends"),
-    preferences("preferences"),
+    preferences("prefs"),
     public_origami("public_origami"),
     user_current_location("user_current_location"),
     connected(".info/connected");

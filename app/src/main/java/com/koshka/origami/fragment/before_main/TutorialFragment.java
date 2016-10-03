@@ -22,6 +22,8 @@ import static android.R.id.message;
 
 public class TutorialFragment extends Fragment {
 
+    private static final int RESULT_OK = 1;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -38,7 +40,7 @@ public class TutorialFragment extends Fragment {
         Intent intent=new Intent();
         intent.putExtra("MESSAGE",message);
 
-        getActivity().setResult(2, intent);
+        getActivity().setResult(RESULT_OK, intent);
 
         getActivity().finish();
     }

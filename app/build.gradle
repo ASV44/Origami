@@ -52,7 +52,10 @@ dependencies {
     compile "com.google.android.gms:play-services-auth:${project.ext.firebase_version}"
     compile "com.google.firebase:firebase-invites:${project.ext.firebase_version}"
     compile "com.google.firebase:firebase-messaging:${project.ext.firebase_version}"
-    compile "com.google.android.gms:play-services:${project.ext.firebase_version}"
+    //compile "com.google.android.gms:play-services:${project.ext.firebase_version}"
+    compile "com.google.android.gms:play-services-places:${project.ext.firebase_version}"
+    compile "com.google.android.gms:play-services-location:${project.ext.firebase_version}"
+    compile "com.google.android.gms:play-services-maps:${project.ext.firebase_version}"
     compile "com.google.android.gms:play-services-ads:${project.ext.firebase_version}"
     compile "com.google.android.gms:play-services-gcm:${project.ext.firebase_version}"
     compile 'com.google.maps.android:android-maps-utils:0.4.3'
@@ -74,6 +77,9 @@ dependencies {
     compile 'com.sothree.slidinguppanel:library:3.3.1'
 
     compile 'com.fivehundredpx:blurringview:1.0.0'
+
+
+    compile 'com.android.support:multidex:1.0.1'
 
 }
 apply plugin: 'com.google.gms.google-services'

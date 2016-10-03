@@ -5,9 +5,11 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -15,6 +17,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
@@ -62,6 +65,7 @@ import com.koshka.origami.utils.ui.ParallaxPagerTransformer;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -76,11 +80,17 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
     private final static String TAG = "MainActivity";
+    public static final String SHARED_PREFS = "SharedPrefs";
 
-    static final int PICK_PREFERENCES_REQUEST = 1;
+    private static final int PICK_PREFERENCES_REQUEST = 1;
+    private static final int RESULT_OK = 1;
+
 
     @BindView(android.R.id.content)
     View mRootView;
+
+    @BindView(R.id.main_layout)
+    RelativeLayout mainLayout;
 
     @BindView(R.id.main_pager)
     ViewPager mPager;
@@ -154,25 +164,32 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     private float[] mRotationMatrix = new float[16];
     private double bearing;
 
+    private int mainDrawable;
+
+    private static Drawable currentBackground;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
             startActivity(LoginActivity.createIntent(this));
             finish();
             return;
         }
-        firstTimeUse();
 
+        runBeforeStarting();
 
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        AppEventsLogger.activateApp(this);
 
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+
+        setTypeFace();
         startLoadingPageFirst();
+
+       // setUpFromDbPreferences();
 
         //Set Firebase stuff
         uid = currentUser.getUid();
@@ -224,11 +241,41 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     }
 
+    private void runBeforeStarting(){
+        firstTimeUse();
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
+
+        SharedPreferences prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        int theme = prefs.getInt("theme", -1);
+
+        if (theme != -1){
+            setTheme(theme);
+
+        }
+
+
+        setUpFromDbPreferences();
+    }
+
     //StartLoading Page on another thread to prepare everything
     private void startLoadingPageFirst(){
-        final Typeface font = Typeface.createFromAsset(getAssets(), "fonts/origamibats.ttf");
 
-        origamiLogoTextView.setTypeface(font);
+        SharedPreferences prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        int backgroundInt = prefs.getInt("gradient", -1);
+
+
+/*
+        if (backgroundInt != -1){
+            Drawable backgroundDrawable = getResources().getDrawable(backgroundInt);
+            if (backgroundDrawable != null){
+                loadingLayout.setBackground(backgroundDrawable);
+            }
+
+        }
+*/
+
 
         loadingLayout.postDelayed(new Runnable() { public void run() {
 
@@ -241,9 +288,15 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             });
 
         }
-        }, 5000);
+        }, 4000);
 
 
+    }
+
+    private void setTypeFace(){
+        final Typeface font = Typeface.createFromAsset(getAssets(), "fonts/origamibats.ttf");
+
+        origamiLogoTextView.setTypeface(font);
     }
 
     /**
@@ -399,10 +452,15 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         if (requestCode == PICK_PREFERENCES_REQUEST) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
-                // The user picked a contact.
-                // The Intent's data Uri identifies which contact was selected.
+                setUpFromDbPreferences();
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference ref = DatabaseRefUtil.getUserRef(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("firstTimeIn");
+                ref.setValue(false).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
 
-                // Do something with the contact here (bigger example below)
+                    }
+                });
             }
         }
     }
@@ -614,7 +672,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                     if (firstTimeIn){
                         doSomething();
                     } else {
-
                     }
                 }
 
@@ -632,11 +689,117 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     }
 
+    private void setUpFromDbPreferences(){
+
+        DatabaseReference mUsernameRef = FirebaseDatabase.getInstance().getReference().child("prefs").child(currentUser.getUid()).child("backgroundColor");
+
+
+        mUsernameRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Long  backgroundColor = (Long) dataSnapshot.getValue();
+                if (backgroundColor != null){
+                    int integer = new BigDecimal(backgroundColor).intValueExact();
+                    switch (integer){
+                        case 0:{
+                            setBackground(R.drawable.amethist_gradient);
+                            putIntInSharedPreference(R.style.amethist_theme,R.drawable.amethist_gradient);
+                            break;
+                        }
+                        case 1:{
+                            setBackground(R.drawable.bloody_mary_gradient);
+                            putIntInSharedPreference(R.style.bloody_mary__theme,R.drawable.bloody_mary_gradient );
+                            break;
+                        }
+                        case 2:{
+                            setBackground(R.drawable.influenza_gradient);
+                            putIntInSharedPreference(R.style.influenza_theme, R.drawable.influenza_gradient);
+                            break;
+                        }
+                        case 3:{
+                            setBackground(R.drawable.shroom_gradient);
+                            putIntInSharedPreference(R.style.shroom_theme, R.drawable.shroom_gradient);
+                            break;
+                        }
+                        case 4:{
+                            setBackground(R.drawable.kashmir_gradient);
+                            putIntInSharedPreference(R.style.kashmir_theme, R.drawable.kashmir_gradient);
+                            break;
+                        }
+                        case 5:{
+                            setBackground(R.drawable.grapefruit_sunset_gradient);
+                            putIntInSharedPreference(R.style.grapefruit_sunset_theme, R.drawable.grapefruit_sunset_gradient);
+                            break;
+                        }
+                        case 6:{
+                            setBackground(R.drawable.moonrise_gradient);
+                            putIntInSharedPreference(R.style.moonrise_theme, R.drawable.moonrise_gradient);
+                            break;
+                        }
+                        case 7:{
+                            setBackground(R.drawable.purple_bliss_gradient);
+                            putIntInSharedPreference(R.style.purple_bliss_theme, R.drawable.purple_bliss_gradient);
+                            break;
+                        }
+                        case 8:{
+                            setBackground(R.drawable.passion_gradient);
+                            putIntInSharedPreference(R.style.passion_theme, R.drawable.passion_gradient);
+                            break;
+                        }
+                        case 9:{
+                            setBackground(R.drawable.little_leaf_gradient);
+                            putIntInSharedPreference(R.style.little_leaf_theme, R.drawable.little_leaf_gradient);
+                            break;
+                        }
+                        case 10:{
+                            setBackground(R.drawable.reef_gradient);
+                            putIntInSharedPreference(R.style.reef_theme, R.drawable.reef_gradient);
+                            break;
+                        }
+                    }
+
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void putIntInSharedPreference(int themeCode, int gradientCode){
+        SharedPreferences preferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt("theme", themeCode);
+        editor.putInt("gradient", gradientCode);
+        editor.commit();
+        editor.apply();
+    }
+    private Drawable getDrawableFromInt(int code){
+        return getResources().getDrawable(code);
+    }
+
+    private void setBackground(int drawable){
+        mRootView.setBackground(getDrawableFromInt(drawable));
+    }
+
     private void doSomething(){
         Intent intent = new Intent(this, FirstTimeLaunchPreferencesActivity.class);
         startActivityForResult(intent, PICK_PREFERENCES_REQUEST);
+        mRootView.getBackground();
 
     }
+
+    private void refreshBackgroundVariable(){
+        currentBackground = mRootView.getBackground();
+    }
+
+   public static Drawable getCurrentBackgroundDrawable(){
+       return currentBackground;
+   }
 
 }
 
