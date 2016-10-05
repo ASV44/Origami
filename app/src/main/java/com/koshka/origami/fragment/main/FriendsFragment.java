@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -54,6 +55,8 @@ public class FriendsFragment extends Fragment {
     @BindView(R.id.main_friends_panel_elements_layout)
     LinearLayout mainPanelElementsLayout;
 
+    @BindView(R.id.collapsed_panel_elements)
+    RelativeLayout collapsedLayout;
 
     //------------------------------------------------
 
@@ -125,6 +128,9 @@ public class FriendsFragment extends Fragment {
     TextView myGroupsSmallButton;
 
 
+    private int previousState;
+
+
     //------------------------------------------------
     //RECYCLE STAFF
 
@@ -167,6 +173,7 @@ public class FriendsFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
 
         setUpUI();
+
 
     }
 

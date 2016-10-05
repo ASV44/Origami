@@ -8,20 +8,20 @@
 
 
     <android.support.v4.view.ViewPager
-        android:id="@+id/main_pager"
+        android:id="@+id/main_view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1.09" />
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/view2"
+        android:id="@+id/main_app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:elevation="0dp"
         android:background="@color/transparent4">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/main_toolbar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/actionBarSize"
             app:layout_scrollFlags="scroll|enterAlways"
@@ -32,7 +32,7 @@
     </android.support.design.widget.AppBarLayout>
 
     <com.ogaclejapan.smarttablayout.SmartTabLayout
-        android:id="@+id/viewpagertab"
+        android:id="@+id/smart_pager_tab_layout"
         android:layout_width="match_parent"
         android:layout_height="42dp"
         app:stl_clickable="true"
@@ -53,7 +53,7 @@
         app:stl_indicatorWithoutPadding="true"
         app:stl_overlineThickness="0dp"
         app:stl_titleOffset="auto_center"
-        android:layout_below="@+id/view2"
+        android:layout_below="@+id/main_app_bar_layout"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 

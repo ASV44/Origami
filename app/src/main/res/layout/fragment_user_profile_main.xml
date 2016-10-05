@@ -59,7 +59,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="270dp"
-                android:layout_alignBottom="@+id/viewpagertab"
+                android:layout_alignBottom="@+id/smart_pager_tab_layout"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/my_small_map"

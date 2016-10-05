@@ -1,6 +1,5 @@
 package com.koshka.origami.activity.settings.application;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,7 +12,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.login.LoginActivity;
-import com.koshka.origami.fragment.before_main.FirstLoginFragmentPagerAdapter;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import butterknife.BindView;
@@ -27,7 +25,7 @@ public class UISettingsActivity extends AppCompatActivity {
     @BindView(R.id.ui_settings_view_pager)
     ViewPager viewPager;
 
-    @BindView(R.id.viewpagertab)
+    @BindView(R.id.smart_pager_tab_layout)
     SmartTabLayout viewpagertab;
 
     public static final String SHARED_PREFS = "SharedPrefs";

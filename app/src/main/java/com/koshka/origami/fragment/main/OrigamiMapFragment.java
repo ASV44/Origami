@@ -79,7 +79,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 /**
  * Created by imuntean on 8/27/16.
  */
-public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, ValueEventListener, GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapClickListener, GoogleMap.OnInfoWindowLongClickListener, SensorEventListener {
+public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, ValueEventListener, GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, GoogleMap.OnInfoWindowLongClickListener, SensorEventListener {
 
     private static final String TAG = "OrigamiMap";
 
@@ -234,7 +234,6 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
 
         mMap.setBuildingsEnabled(true);
         mMap.setOnMapLongClickListener(this);
-        mMap.setOnInfoWindowClickListener(this);
         mMap.setOnMapClickListener(this);
         mMap.setOnInfoWindowLongClickListener(this);
         mMap.setOnMarkerClickListener(this);
@@ -448,7 +447,7 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
         return false;
     }
 
-    @Override
+   /* @Override
     public void onInfoWindowClick(Marker marker) {
         boolean userIsInOrigamiRange = false;
 
@@ -509,7 +508,7 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
                     });
             successDialog.show();
         }
-    }
+    }*/
 
 
     @Override
@@ -577,13 +576,13 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
     public void onAccuracyChanged(Sensor sensor, int i) {
 
     }
-
+/*
     private void registerSensorListeners() {
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                 SensorManager.SENSOR_DELAY_GAME, SensorManager.SENSOR_DELAY_UI);
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
                 SensorManager.SENSOR_DELAY_GAME, SensorManager.SENSOR_DELAY_UI);
-    }
+    }*/
 
     private void unregisterSensorListeners() {
         // Don't receive any more updates from either sensor.

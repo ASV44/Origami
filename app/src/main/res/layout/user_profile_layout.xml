@@ -13,7 +13,7 @@
 
 
     <com.ogaclejapan.smarttablayout.SmartTabLayout
-        android:id="@+id/viewpagertab"
+        android:id="@+id/smart_pager_tab_layout"
         android:layout_width="match_parent"
         android:layout_height="42dp"
         android:layout_alignParentBottom="true"
