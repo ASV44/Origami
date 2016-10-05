@@ -42,10 +42,11 @@
             android:name=".activity.main.MainActivity"
             android:configChanges="locale"
             android:theme="@style/PurpleThemeNoActionBar"
+            android:noHistory="false"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+_
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

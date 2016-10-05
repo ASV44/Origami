@@ -2,6 +2,7 @@ package com.koshka.origami.activity.main;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,11 +15,13 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.DatabaseRefUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -85,20 +88,34 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+
+        beforeBindingViews();
+
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        afterBindingViews();
+
+    }
+
+    private void beforeBindingViews(){
+
+        SharedPreferences prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        int theme = prefs.getInt("theme", -1);
+
+        setTheme(theme);
+    }
+
+    private void afterBindingViews(){
         beforeStartingCheck();
 
         setTypeFace();
         loadingPageStart();
 
         setUI();
-
-
     }
 
-    private void setUI(){
+    private void setUI() {
 
         setSupportActionBar(mToolbar);
 
@@ -129,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         int backgroundInt = prefs.getInt("gradient", -1);
 
-        if (backgroundInt  != -1){
+        if (backgroundInt != -1) {
             loadingLayout.setBackground(getResources().getDrawable(backgroundInt));
             mRootView.setBackground(getResources().getDrawable(backgroundInt));
         }
@@ -190,18 +207,22 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case FIRST_LOGIN_PREFS_REQUEST: {
-                if(resultCode == RESULT_OK){
-
+                if (resultCode == RESULT_OK) {
                     afterFirstTimeLogin();
-                SharedPreferences prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-                int backgroundGradient = prefs.getInt("gradient", -1);
-                getWindow().setBackgroundDrawable(getResources().getDrawable(backgroundGradient));
+                    setUIFromSharedPrefs();
                 }
-            }
                 break;
             }
 
         }
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setUIFromSharedPrefs();
+    }
 
     private void afterFirstTimeLogin() {
 
@@ -213,19 +234,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-    }
-
-
-
-    public static Intent createIntent(Context context) {
-        Intent in = new Intent();
-        in.setClass(context, MainActivity.class);
-        return in;
-    }
-
-    @MainThread
-    private void showShortSnackbar(@StringRes int errorMessageRes) {
-        Snackbar.make(mRootView, errorMessageRes, Snackbar.LENGTH_SHORT).show();
     }
 
 
@@ -268,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
                 Long backgroundColor = (Long) dataSnapshot.getValue();
                 if (backgroundColor != null) {
                     int integer = new BigDecimal(backgroundColor).intValueExact();
-                    if (integer != -1){
+                    if (integer != -1) {
                         setBackgroundForView(view, integer);
                     }
 
@@ -295,6 +303,25 @@ public class MainActivity extends AppCompatActivity {
         util.setBackgroundToViewAndSavePreference(firebaseBackgroundInt);
 
     }
+
+    private void setUIFromSharedPrefs(){
+        SharedPreferences prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        int backgroundGradient = prefs.getInt("gradient", -1);
+        mRootView.setBackground(getResources().getDrawable(backgroundGradient));
+    }
+
+
+    public static Intent createIntent(Context context) {
+        Intent in = new Intent();
+        in.setClass(context, MainActivity.class);
+        return in;
+    }
+
+    @MainThread
+    private void showShortSnackbar(@StringRes int errorMessageRes) {
+        Snackbar.make(mRootView, errorMessageRes, Snackbar.LENGTH_SHORT).show();
+    }
+
 
 }
 

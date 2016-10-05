@@ -1,5 +1,6 @@
 package com.koshka.origami.activity.main;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,15 +42,20 @@ public class UserProfileActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-        SharedPreferences prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        int theme = prefs.getInt("theme", -1);
-
-        setTheme(theme);
+        beforeBindingViews();
 
         setContentView(R.layout.user_profile_layout);
         ButterKnife.bind(this);
 
+        afterBindingViews();
+
+    }
+
+    private void beforeBindingViews(){
+        setUIFromSharedPrefs();
+    }
+
+    private void afterBindingViews(){
 
         ParallaxPagerTransformer pt = new ParallaxPagerTransformer((R.id.image));
         pt.setBorder(0);
@@ -70,32 +77,18 @@ public class UserProfileActivity extends AppCompatActivity {
         }
     }
 
+    private void setUIFromSharedPrefs(){
+
+        SharedPreferences prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        int theme = prefs.getInt("theme", -1);
+
+        setTheme(theme);
+
+    }
+
     public static Intent createIntent(Context context) {
         Intent in = new Intent();
         in.setClass(context, UserProfileActivity.class);
         return in;
     }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.user_profile_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-
-            case R.id.map_view:
-                break;
-            default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item);
-
-        }
-        return true;
-    }
-
 }
