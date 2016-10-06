@@ -24,6 +24,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.login.LoginActivity;
 import com.koshka.origami.activity.settings.account.field_validator.CurrentPasswordFieldValidator;
+import com.koshka.origami.utils.SharedPrefs;
 import com.koshka.origami.utils.ui.UiNavigationUtil;
 
 import butterknife.BindView;
@@ -77,6 +78,8 @@ public class ChangeEmailActivity extends AppCompatActivity {
             finish();
             return;
         }
+
+        SharedPrefs.changeTheme(this);
 
         setContentView(R.layout.email_change_layout);
         ButterKnife.bind(this);

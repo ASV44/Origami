@@ -24,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.login.LoginActivity;
 import com.koshka.origami.activity.settings.account.field_validator.CurrentPasswordFieldValidator;
+import com.koshka.origami.utils.SharedPrefs;
 import com.koshka.origami.utils.ui.UiNavigationUtil;
 
 import butterknife.BindView;
@@ -59,6 +60,7 @@ public class DeleteAccountActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
             startActivity(LoginActivity.createIntent(this));
@@ -66,6 +68,7 @@ public class DeleteAccountActivity extends AppCompatActivity {
             return;
         }
 
+        SharedPrefs.changeTheme(this);
 
         setContentView(R.layout.activity_delete_account);
         ButterKnife.bind(this);

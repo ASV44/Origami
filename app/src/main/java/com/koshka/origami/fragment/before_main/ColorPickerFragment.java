@@ -28,6 +28,7 @@ import com.koshka.origami.R;
 import com.koshka.origami.activity.tutorial.FirstTimeLaunchPreferencesActivity;
 import com.koshka.origami.fragment.main.RecyclerItemClickListener;
 import com.koshka.origami.model.UserPreferences;
+import com.koshka.origami.utils.SharedPrefs;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,7 +36,6 @@ import butterknife.OnClick;
 
 import static android.R.id.message;
 import static android.content.Context.MODE_PRIVATE;
-import static com.koshka.origami.activity.main.MainActivity.SHARED_PREFS;
 
 /**
  * Created by qm0937 on 10/3/16.
@@ -177,12 +177,8 @@ public class ColorPickerFragment extends Fragment implements AdapterView.OnItemC
     }
 
     private void putIntInSharedPreference(int themeCode, int gradientCode){
-        SharedPreferences preferences = getActivity().getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putInt("theme", themeCode);
-        editor.putInt("gradient", gradientCode);
-        editor.commit();
-        editor.apply();
+        SharedPrefs.saveBackground(getActivity(), gradientCode);
+        SharedPrefs.saveTheme(getActivity(), themeCode);
     }
 
 }

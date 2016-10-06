@@ -75,6 +75,15 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<FriendsRecy
 
         holder.txtFooter.setText("Footer: " + mDataset.get(position));
 
+        int adapterPosition = holder.getLayoutPosition();
+
+        if (adapterPosition == 0){
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) holder.itemView.getLayoutParams();
+            params.topMargin = 50;
+
+            holder.itemView.setLayoutParams(params);
+        }
+
     }
 
     // Return the size of your dataset (invoked by the layout manager)

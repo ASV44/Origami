@@ -2,10 +2,8 @@ package com.koshka.origami.activity.main;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
@@ -15,13 +13,11 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.ui.database.DatabaseRefUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -38,6 +34,7 @@ import com.koshka.origami.activity.login.LoginActivity;
 import com.koshka.origami.activity.tutorial.FirstTimeLaunchPreferencesActivity;
 import com.koshka.origami.fragment.main.MainFragmentPagerAdapter;
 import com.koshka.origami.helpers.OrigamiActionBarHelper;
+import com.koshka.origami.utils.SharedPrefs;
 import com.koshka.origami.utils.ui.ParallaxPagerTransformer;
 import com.koshka.origami.utils.ui.ViewThemeUtil;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
@@ -53,7 +50,6 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity {
 
     private final static String TAG = "MainActivity";
-    public static final String SHARED_PREFS = "SharedPrefs";
 
     private static final int FIRST_LOGIN_PREFS_REQUEST = 11;
 
@@ -98,15 +94,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void beforeBindingViews(){
+    private void beforeBindingViews() {
 
-        SharedPreferences prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        int theme = prefs.getInt("theme", -1);
+        SharedPrefs.changeTheme(this);
 
-        setTheme(theme);
     }
 
-    private void afterBindingViews(){
+    private void afterBindingViews() {
         beforeStartingCheck();
 
         setTypeFace();
@@ -143,13 +137,7 @@ public class MainActivity extends AppCompatActivity {
     //StartLoading Page on another thread to prepare everything
     private void loadingPageStart() {
 
-        SharedPreferences prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        int backgroundInt = prefs.getInt("gradient", -1);
-
-        if (backgroundInt != -1) {
-            loadingLayout.setBackground(getResources().getDrawable(backgroundInt));
-            mRootView.setBackground(getResources().getDrawable(backgroundInt));
-        }
+        SharedPrefs.changeViewsBackground(this, loadingLayout, mRootView);
 
         setUpBackgroundFromFirebaseForView(mRootView);
         setUpBackgroundFromFirebaseForView(loadingLayout);
@@ -209,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
             case FIRST_LOGIN_PREFS_REQUEST: {
                 if (resultCode == RESULT_OK) {
                     afterFirstTimeLogin();
-                    setUIFromSharedPrefs();
+                    SharedPrefs.changeBackground(this, mRootView);
                 }
                 break;
             }
@@ -221,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        setUIFromSharedPrefs();
+        SharedPrefs.changeBackground(this, mRootView);
     }
 
     private void afterFirstTimeLogin() {
@@ -259,10 +247,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-
-        //startActivityForResult();
-
     }
 
     private void setUpBackgroundFromFirebaseForView(final View view) {
@@ -302,12 +286,6 @@ public class MainActivity extends AppCompatActivity {
         ViewThemeUtil util = new ViewThemeUtil(this, view);
         util.setBackgroundToViewAndSavePreference(firebaseBackgroundInt);
 
-    }
-
-    private void setUIFromSharedPrefs(){
-        SharedPreferences prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        int backgroundGradient = prefs.getInt("gradient", -1);
-        mRootView.setBackground(getResources().getDrawable(backgroundGradient));
     }
 
 

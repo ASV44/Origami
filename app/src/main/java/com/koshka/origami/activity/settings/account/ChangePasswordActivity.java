@@ -22,6 +22,7 @@ import com.koshka.origami.R;
 import com.koshka.origami.activity.login.LoginActivity;
 import com.koshka.origami.activity.settings.account.field_validator.CurrentPasswordFieldValidator;
 import com.koshka.origami.activity.settings.account.field_validator.NewPasswordFieldValidator;
+import com.koshka.origami.utils.SharedPrefs;
 import com.koshka.origami.utils.ui.UiNavigationUtil;
 
 import butterknife.BindView;
@@ -68,6 +69,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPrefs.changeTheme(this);
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {

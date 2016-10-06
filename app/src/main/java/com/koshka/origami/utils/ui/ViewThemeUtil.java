@@ -7,9 +7,9 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 
 import com.koshka.origami.R;
+import com.koshka.origami.utils.SharedPrefs;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.koshka.origami.activity.main.MainActivity.SHARED_PREFS;
 
 /**
  * Created by qm0937 on 10/3/16.
@@ -94,12 +94,8 @@ public class ViewThemeUtil {
     }
 
     private void putIntInSharedPreference(int themeCode, int gradientCode) {
-        SharedPreferences preferences = activity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putInt("theme", themeCode);
-        editor.putInt("gradient", gradientCode);
-        editor.commit();
-        editor.apply();
+        SharedPrefs.saveTheme(activity, themeCode);
+        SharedPrefs.saveBackground(activity, gradientCode);
     }
 
     public Activity getActivity() {

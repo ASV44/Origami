@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.login.LoginActivity;
+import com.koshka.origami.utils.SharedPrefs;
 
 import butterknife.ButterKnife;
 
@@ -27,6 +28,8 @@ public class NotificationsActivity extends AppCompatActivity {
             finish();
             return;
         }
+
+        SharedPrefs.changeTheme(this);
 
         setContentView(R.layout.notifications_settings_layout);
         ButterKnife.bind(this);
