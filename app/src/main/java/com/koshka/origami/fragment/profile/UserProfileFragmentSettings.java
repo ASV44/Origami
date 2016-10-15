@@ -19,12 +19,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.database.DatabaseRefUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.login.LoginActivity;
 import com.koshka.origami.activity.settings.about.AboutUsActivity;
@@ -36,14 +33,12 @@ import com.koshka.origami.activity.settings.account.ChangePasswordActivity;
 import com.koshka.origami.activity.settings.account.DeleteAccountActivity;
 import com.koshka.origami.activity.settings.application.UISettingsActivity;
 import com.koshka.origami.activity.settings.application.NotificationsActivity;
-import com.koshka.origami.activity.tutorial.FirstTimeLaunchPreferencesActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 
 /**
@@ -205,7 +200,10 @@ public class UserProfileFragmentSettings extends Fragment {
         if (requestCode == UI_PREFS_REQUEST) {
             SharedPreferences prefs = getActivity().getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
             int backgroundGradient = prefs.getInt("gradient", -1);
-            getActivity().getWindow().setBackgroundDrawable(getResources().getDrawable(backgroundGradient));
+            if (backgroundGradient != -1){
+                getActivity().getWindow().setBackgroundDrawable(getResources().getDrawable(backgroundGradient));
+            }
+
         }
 
     }

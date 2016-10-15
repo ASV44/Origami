@@ -1,5 +1,6 @@
 package com.koshka.origami.activity.settings.account;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,10 +14,12 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -24,6 +27,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.login.LoginActivity;
 import com.koshka.origami.activity.settings.account.field_validator.CurrentPasswordFieldValidator;
+import com.firebase.ui.database.service.UserServiceImpl;
 import com.koshka.origami.utils.SharedPrefs;
 import com.koshka.origami.utils.ui.UiNavigationUtil;
 
@@ -35,7 +39,6 @@ import butterknife.OnClick;
  * Created by imuntean on 8/29/16.
  */
 public class DeleteAccountActivity extends AppCompatActivity {
-
     private static final String TAG = "DeleteAccountActivity";
 
     @BindView(R.id.toolbar_delete_account)
@@ -135,23 +138,23 @@ public class DeleteAccountActivity extends AppCompatActivity {
         final String userUid = mAuth.getCurrentUser().getUid();
         if (userUid != null || userUid.isEmpty()){
 
-        //DELETE USER DATA BY HIS UID
-        deleteUserData(userUid);
+            //DELETE USER DATA BY HIS UID
+            deleteUserData(userUid);
 
-        mAuth.getCurrentUser()
-                .delete()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "User succesfully deleted" );
-                            startActivity(LoginActivity.createIntent(DeleteAccountActivity.this));
-                            finish();
-                        } else {
-                            Log.d(TAG, "Failed to delete account");
+            mAuth.getCurrentUser()
+                    .delete()
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d(TAG, "User succesfully deleted" );
+                                startActivity(LoginActivity.createIntent(DeleteAccountActivity.this));
+                                finish();
+                            } else {
+                                Log.d(TAG, "Failed to delete account");
+                            }
                         }
-                    }
-                });
+                    });
         } else {
             //In case uid is null which should never happen
             currentPasswordLayout.setError("Sorry, but something went wrong");
@@ -201,4 +204,3 @@ public class DeleteAccountActivity extends AppCompatActivity {
     }
 
 }
-

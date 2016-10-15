@@ -2,7 +2,6 @@ package com.koshka.origami.helpers;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
@@ -15,11 +14,11 @@ import com.koshka.origami.R;
  * Created by qm0937 on 10/4/16.
  */
 
-public class OrigamiActionBarHelper extends UIHelper {
+public class OrigamiActionBarHelper{
 
 
 
-    public static void setMainAttributes(Activity activity, ActionBar actionBar){
+    public static void setMainActivityAttributes(Activity activity, ActionBar actionBar){
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(false); // disable the button
             actionBar.setDisplayShowCustomEnabled(true);

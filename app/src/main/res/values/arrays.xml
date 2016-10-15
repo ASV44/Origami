@@ -4,9 +4,8 @@
     <string-array name="user_tables">
         <item>users</item>
         <item>friends</item>
-        <item>preferences</item>
+        <item>prefs</item>
         <item>user_current_location</item>
-
     </string-array>
 
     <array name="languages">
@@ -41,9 +40,19 @@
         <item>@style/sweet_morning_theme</item>
         <item>@style/virgin_theme</item>
         <item>@style/reef_theme</item>
-        <item>@style/bloody_mary__theme</item>
+        <item>@style/bloody_mary_theme</item>
         <item>@style/little_leaf_theme</item>
     </array>
+
+    <array name="night_style">
+        <item>@style/amethist_theme</item>
+        <item>@style/purple_bliss_theme</item>
+        <item>@style/kashmir_theme</item>
+        <item>@style/grapefruit_sunset_theme</item>
+        <item>@style/shroom_theme</item>
+        <item>@style/influenza_theme</item>
+    </array>
+
 
 
 </resources>

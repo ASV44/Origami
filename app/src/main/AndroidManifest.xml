@@ -60,7 +60,7 @@ _
             android:theme="@style/PurpleThemeNoActionBar" />
 
         <activity
-            android:name=".activity.tutorial.FirstTimeLaunchPreferencesActivity"
+            android:name=".activity.login.FirstTimeLoginActivity"
             android:parentActivityName=".activity.main.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/PurpleThemeNoActionBar" />

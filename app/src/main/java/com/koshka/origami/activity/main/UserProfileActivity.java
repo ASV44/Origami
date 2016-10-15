@@ -1,21 +1,11 @@
 package com.koshka.origami.activity.main;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
 
 import com.koshka.origami.R;
-import com.koshka.origami.fragment.profile.UserProfileFragmentPagerAdapter;
-import com.koshka.origami.utils.ui.ParallaxPagerTransformer;
+import com.koshka.origami.activity.GenericOrigamiActivity;
+import com.koshka.origami.adapter.fragment.FragmentAdapters;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import butterknife.BindView;
@@ -24,13 +14,7 @@ import butterknife.ButterKnife;
 /**
  * Created by imuntean on 7/19/16.
  */
-public class UserProfileActivity extends AppCompatActivity {
-
-    private static final String TAG = "UserProfileActivity";
-    public static final String SHARED_PREFS = "SharedPrefs";
-
-    @BindView(android.R.id.content)
-    View mRootView;
+public class UserProfileActivity extends GenericOrigamiActivity {
 
     @BindView(R.id.smart_pager_tab_layout)
     SmartTabLayout viewpagertab;
@@ -42,53 +26,21 @@ public class UserProfileActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        beforeBindingViews();
-
         setContentView(R.layout.user_profile_layout);
         ButterKnife.bind(this);
 
-        afterBindingViews();
+        uiSetup();
 
     }
 
-    private void beforeBindingViews(){
-        setUIFromSharedPrefs();
-    }
-
-    private void afterBindingViews(){
-
-        ParallaxPagerTransformer pt = new ParallaxPagerTransformer((R.id.image));
-        pt.setBorder(0);
-        pt.setSpeed(0.7f);
-
-        mPager.setPageTransformer(false, pt);
-        mPager.setAdapter(new UserProfileFragmentPagerAdapter(getSupportFragmentManager()));
-        mPager.setCurrentItem(0);
-
-        viewpagertab.setViewPager(mPager);
-
-        final ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setHomeButtonEnabled(true); // disable the button
-            actionBar.setDisplayShowCustomEnabled(true);
-            actionBar.setDisplayHomeAsUpEnabled(false); // remove the left caret
-            actionBar.setDisplayShowHomeEnabled(false); // remove the icon
-            actionBar.setDisplayShowTitleEnabled(false);
-        }
-    }
-
-    private void setUIFromSharedPrefs(){
-
-        SharedPreferences prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        int theme = prefs.getInt("theme", -1);
-
-        setTheme(theme);
+    @Override
+    protected void serviceSetup() {
 
     }
 
-    public static Intent createIntent(Context context) {
-        Intent in = new Intent();
-        in.setClass(context, UserProfileActivity.class);
-        return in;
+    @Override
+    protected void uiSetup() {
+        fragmentSetup(mPager, FragmentAdapters.PROFILE, 0, viewpagertab);
     }
+
 }

@@ -31,7 +31,7 @@ public class SharedPrefs {
         SharedPreferences prefs = activity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         int theme = prefs.getInt("theme", -1);
 
-        if (theme != 1) {
+        if (theme != -1) {
             activity.setTheme(theme);
         }
     }
@@ -40,6 +40,8 @@ public class SharedPrefs {
 
         SharedPreferences prefs = activity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         int backgroundGradient = prefs.getInt(BACKGROUND, -1);
+
+
 
         if (backgroundGradient != -1) {
             for (View view : views) {
@@ -56,7 +58,7 @@ public class SharedPrefs {
         saveInt(activity, BACKGROUND, code);
     }
 
-    public  static void saveTheme(Activity activity, int themeCode){
+    public static void saveTheme(Activity activity, int themeCode){
         saveInt(activity, THEME, themeCode);
     }
 

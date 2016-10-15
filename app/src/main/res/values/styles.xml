@@ -34,9 +34,13 @@
     
     <style name="NighPurpleTheme" parent="PurpleTheme">
 
-        
     </style>
-    
+
+
+    <!-- PERSONALIZED THEMES -->
+
+    <!-- ******************************************************************************** -->
+
     <style name="passion_theme" parent="DayPurpleTheme">
         <item name="android:windowBackground">@drawable/passion_gradient</item>
     </style>
@@ -57,7 +61,7 @@
     </style>
 
 
-    <style name="bloody_mary__theme" parent="DayPurpleTheme">
+    <style name="bloody_mary_theme" parent="DayPurpleTheme">
         <item name="android:windowBackground">@drawable/bloody_mary_gradient</item>
     </style>
 
@@ -73,6 +77,8 @@
         <item name="android:windowBackground">@drawable/purple_bliss_gradient</item>
     </style>
 
+
+    <!-- ******************************************************************************** -->
 
     <style name="kashmir_theme" parent="NighPurpleTheme">
         <item name="android:windowBackground">@drawable/kashmir_gradient</item>
@@ -95,6 +101,9 @@
         <item name="android:windowBackground">@drawable/moonrise_gradient</item>
     </style>
 
+
+
+    <!-- ******************************************************************************** -->
 
 
     <style name="ThemeActionBar"

@@ -18,7 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.koshka.origami.R;
-import com.koshka.origami.fragment.before_main.ColorsAdapter;
+import com.koshka.origami.fragment.firstlogin.ColorsAdapter;
 import com.koshka.origami.utils.SharedPrefs;
 
 import butterknife.BindView;
@@ -98,7 +98,7 @@ public class BackgroundColorPickFragment extends Fragment implements AdapterView
                 break;
             }
             case 1: {
-                setSharedPrefs(R.style.bloody_mary__theme, R.style.bloody_mary__theme);
+                setSharedPrefs(R.style.bloody_mary_theme, R.style.bloody_mary_theme);
                 break;
             }
             case 2: {

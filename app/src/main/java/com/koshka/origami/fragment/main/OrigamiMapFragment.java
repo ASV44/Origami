@@ -56,7 +56,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.maps.android.clustering.ClusterManager;
-import com.koshka.origami.DistanceCalculator;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.main.MainActivity;
 import com.koshka.origami.activity.origami.CreatePublicOrigamiActivity;
@@ -476,7 +475,7 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
         double currentOrigamiLocationLong = origamiLocation.longitude;
 
 
-        double distance = DistanceCalculator.getHaversineDistance(currentUserLocationLat, currentOrigamiLocationLat, currentUserLocationLong, currentOrigamiLocationLong, 0, 0);
+        double distance = HaversineAlgorithm.getHaversineDistance(currentUserLocationLat, currentOrigamiLocationLat, currentUserLocationLong, currentOrigamiLocationLong, 0, 0);
 
         Toast.makeText(getActivity(), "" + distance, Toast.LENGTH_SHORT);
 

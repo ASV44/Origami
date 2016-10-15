@@ -10,7 +10,7 @@ public class ParallaxPagerTransformer implements ViewPager.PageTransformer {
 
     private int id;
     private int border = 0;
-    private float speed = 0.2f;
+    private float speed = 0.7f;
 
     public ParallaxPagerTransformer(int id) {
         this.id = id;
