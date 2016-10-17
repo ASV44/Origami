@@ -1,12 +1,9 @@
-package com.koshka.origami.activity.settings.account;
+package com.koshka.origami.activity.profile.settings.account;
 
-import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -14,21 +11,17 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.koshka.origami.R;
+import com.koshka.origami.activity.GenericOrigamiActivity;
 import com.koshka.origami.activity.login.LoginActivity;
-import com.koshka.origami.activity.settings.account.field_validator.CurrentPasswordFieldValidator;
-import com.firebase.ui.database.service.UserServiceImpl;
-import com.koshka.origami.utils.SharedPrefs;
+import com.koshka.origami.activity.profile.settings.account.field_validator.CurrentPasswordFieldValidator;
 import com.koshka.origami.utils.ui.UiNavigationUtil;
 
 import butterknife.BindView;
@@ -38,8 +31,11 @@ import butterknife.OnClick;
 /**
  * Created by imuntean on 8/29/16.
  */
-public class DeleteAccountActivity extends AppCompatActivity {
+public class DeleteAccountActivity extends GenericOrigamiActivity {
+
     private static final String TAG = "DeleteAccountActivity";
+
+    //----------------------------------------------------------------------------------------------
 
     @BindView(R.id.toolbar_delete_account)
     Toolbar toolbar;
@@ -53,38 +49,20 @@ public class DeleteAccountActivity extends AppCompatActivity {
     @BindView(R.id.current_password_edit_text)
     EditText currentPasswordEditText;
 
+    //----------------------------------------------------------------------------------------------
+
     private String[] firebaseDbTables;
 
-
-    private FirebaseUser currentUser;
-    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    //----------------------------------------------------------------------------------------------
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser == null) {
-            startActivity(LoginActivity.createIntent(this));
-            finish();
-            return;
-        }
-
-        SharedPrefs.changeTheme(this);
-
         setContentView(R.layout.activity_delete_account);
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
-
-        final ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setHomeButtonEnabled(true); // disable the button
-            actionBar.setDisplayHomeAsUpEnabled(true); // remove the left caret
-            actionBar.setDisplayShowHomeEnabled(false); // remove the icon
-            actionBar.setDisplayShowTitleEnabled(false);
-        }
 
         Resources res = getResources();
 
@@ -92,6 +70,8 @@ public class DeleteAccountActivity extends AppCompatActivity {
         firebaseDbTables = res.getStringArray(R.array.user_tables);
 
     }
+
+    //----------------------------------------------------------------------------------------------
 
     @OnClick(R.id.button_delete_account)
     public void deleteAccountClicked() {

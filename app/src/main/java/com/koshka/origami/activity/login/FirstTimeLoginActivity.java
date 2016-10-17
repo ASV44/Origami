@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.koshka.origami.R;
+import com.koshka.origami.activity.GenericOrigamiActivity;
+import com.koshka.origami.adapter.fragment.FragmentAdapters;
 import com.koshka.origami.fragment.firstlogin.FirstLoginFragmentPagerAdapter;
 import com.koshka.origami.utils.SharedPrefs;
 
@@ -17,7 +19,7 @@ import butterknife.ButterKnife;
  * Created by qm0937 on 10/3/16.
  */
 
-public class FirstTimeLoginActivity extends AppCompatActivity {
+public class FirstTimeLoginActivity extends GenericOrigamiActivity {
 
     @BindView(R.id.first_time_login_pager)
     ViewPager viewPager;
@@ -27,21 +29,12 @@ public class FirstTimeLoginActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser == null) {
-            startActivity(LoginActivity.createIntent(this));
-            finish();
-            return;
-        }
 
-        SharedPrefs.changeTheme(this);
+        checkFirebase(this);
 
         setContentView(R.layout.first_login_activity);
         ButterKnife.bind(this);
 
-
-        pagerAdapter = new FirstLoginFragmentPagerAdapter(getSupportFragmentManager());
-        viewPager.setAdapter(pagerAdapter);
     }
 
         public void goToNextFragment(){

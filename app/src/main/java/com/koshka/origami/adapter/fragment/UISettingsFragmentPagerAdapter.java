@@ -2,9 +2,8 @@ package com.koshka.origami.adapter.fragment;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 
-import com.koshka.origami.activity.settings.application.OtherUISettingsFragment;
+import com.koshka.origami.fragment.settings.ui.OtherUISettingsFragment;
 import com.koshka.origami.fragment.settings.ui.BackgroundColorPickFragment;
 
 /**

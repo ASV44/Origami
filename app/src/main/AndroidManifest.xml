@@ -12,7 +12,7 @@
     <application
         android:name=".app.OrigamiApp"
         android:allowBackup="true"
-        android:icon="@drawable/origami"
+        android:icon="@drawable/origami_logo"
         android:label="@string/app_name"
         android:supportsRtl="true"
         tools:replace="android:icon">
@@ -43,7 +43,8 @@
             android:configChanges="locale"
             android:theme="@style/PurpleThemeNoActionBar"
             android:noHistory="false"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode = "singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 _
@@ -68,7 +69,7 @@ _
 
         <!-- USER PROFILE ACTIVITY -->
         <activity
-            android:name=".activity.main.UserProfileActivity"
+            android:name=".activity.profile.UserProfileActivity"
             android:parentActivityName=".activity.main.MainActivity"
             android:theme="@style/PurpleThemeNoActionBar" />
 
@@ -107,34 +108,34 @@ _
 
         <!-- Settings activities-->
         <activity
-            android:name=".activity.settings.about.FAQActivity"
+            android:name=".activity.profile.settings.about.FAQActivity"
             android:theme="@style/PurpleThemeNoActionBar" />
         <activity
-            android:name=".activity.settings.about.LicencesActivity"
+            android:name=".activity.profile.settings.about.LicencesActivity"
             android:theme="@style/PurpleThemeNoActionBar" />
         <activity
-            android:name=".activity.settings.about.AboutUsActivity"
+            android:name=".activity.profile.settings.about.AboutUsActivity"
             android:theme="@style/PurpleThemeNoActionBar" />
         <activity
-            android:name=".activity.settings.about.ToSActivity"
+            android:name=".activity.profile.settings.about.ToSActivity"
             android:theme="@style/PurpleThemeNoActionBar" />
         <activity
-            android:name=".activity.settings.account.ChangeEmailActivity"
+            android:name=".activity.profile.settings.account.ChangeEmailActivity"
             android:theme="@style/PurpleThemeNoActionBar"
-            android:parentActivityName=".activity.main.UserProfileActivity"/>
+            android:parentActivityName=".activity.profile.UserProfileActivity"/>
         <activity
-            android:name=".activity.settings.account.ChangePasswordActivity"
+            android:name=".activity.profile.settings.account.ChangePasswordActivity"
             android:theme="@style/PurpleThemeNoActionBar"
-            android:parentActivityName=".activity.main.UserProfileActivity"/>
+            android:parentActivityName=".activity.profile.UserProfileActivity"/>
         <activity
-            android:name=".activity.settings.account.DeleteAccountActivity"
+            android:name=".activity.profile.settings.account.DeleteAccountActivity"
             android:theme="@style/PurpleThemeNoActionBar"
-            android:parentActivityName=".activity.main.UserProfileActivity"/>
+            android:parentActivityName=".activity.profile.UserProfileActivity"/>
         <activity
-            android:name=".activity.settings.application.UISettingsActivity"
+            android:name=".activity.profile.settings.application.UISettingsActivity"
             android:theme="@style/PurpleThemeNoActionBar" />
         <activity
-            android:name=".activity.settings.application.NotificationsActivity"
+            android:name=".activity.profile.settings.application.NotificationsActivity"
             android:theme="@style/PurpleThemeNoActionBar" />
 
 

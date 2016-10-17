@@ -13,6 +13,7 @@ import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,15 +25,16 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.koshka.origami.R;
 import com.koshka.origami.activity.login.LoginActivity;
-import com.koshka.origami.activity.settings.about.AboutUsActivity;
-import com.koshka.origami.activity.settings.about.FAQActivity;
-import com.koshka.origami.activity.settings.about.LicencesActivity;
-import com.koshka.origami.activity.settings.about.ToSActivity;
-import com.koshka.origami.activity.settings.account.ChangeEmailActivity;
-import com.koshka.origami.activity.settings.account.ChangePasswordActivity;
-import com.koshka.origami.activity.settings.account.DeleteAccountActivity;
-import com.koshka.origami.activity.settings.application.UISettingsActivity;
-import com.koshka.origami.activity.settings.application.NotificationsActivity;
+import com.koshka.origami.activity.profile.settings.about.AboutUsActivity;
+import com.koshka.origami.activity.profile.settings.about.FAQActivity;
+import com.koshka.origami.activity.profile.settings.about.LicencesActivity;
+import com.koshka.origami.activity.profile.settings.about.ToSActivity;
+import com.koshka.origami.activity.profile.settings.account.ChangeEmailActivity;
+import com.koshka.origami.activity.profile.settings.account.ChangePasswordActivity;
+import com.koshka.origami.activity.profile.settings.account.DeleteAccountActivity;
+import com.koshka.origami.activity.profile.settings.application.UISettingsActivity;
+import com.koshka.origami.activity.profile.settings.application.NotificationsActivity;
+import com.koshka.origami.fragment.GenericOrigamiFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,20 +46,29 @@ import static android.content.Context.MODE_PRIVATE;
 /**
  * Created by imuntean on 8/6/16.
  */
-public class UserProfileFragmentSettings extends Fragment {
+public class UserProfileFragmentSettings extends GenericOrigamiFragment {
 
-    private static final String SHARED_PREFS = "SharedPrefs";
-    private FirebaseAuth mAuth;
+    private static final String TAG = "SettingsFragment";
+
+    //----------------------------------------------------------------------------------------------
+
+    @BindView(R.id.settings_toolbar)
+    Toolbar mToolbar;
 
     @BindView(R.id.origami_text_logo)
     TextView origamiTextLogo;
 
+    //----------------------------------------------------------------------------------------------
+
     private static final int UI_PREFS_REQUEST = 2;
     SweetAlertDialog dialog;
+
+    //----------------------------------------------------------------------------------------------
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_user_profile_settings, container, false);
         ButterKnife.bind(this, view);
 
@@ -76,6 +87,7 @@ public class UserProfileFragmentSettings extends Fragment {
 
     }
 
+    //----------------------------------------------------------------------------------------------
 
     @OnClick(R.id.sign_out)
     public void signOut() {
@@ -207,13 +219,5 @@ public class UserProfileFragmentSettings extends Fragment {
         }
 
     }
-
-
-    @MainThread
-    private void showSnackbar(@StringRes int errorMessageRes) {
-        Snackbar.make(getView(), errorMessageRes, Snackbar.LENGTH_LONG)
-                .show();
-    }
-
 
 }

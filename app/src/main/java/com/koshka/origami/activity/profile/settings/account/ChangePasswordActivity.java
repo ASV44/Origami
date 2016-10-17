@@ -1,10 +1,8 @@
-package com.koshka.origami.activity.settings.account;
+package com.koshka.origami.activity.profile.settings.account;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -16,13 +14,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.koshka.origami.R;
-import com.koshka.origami.activity.login.LoginActivity;
-import com.koshka.origami.activity.settings.account.field_validator.CurrentPasswordFieldValidator;
-import com.koshka.origami.activity.settings.account.field_validator.NewPasswordFieldValidator;
-import com.koshka.origami.utils.SharedPrefs;
+import com.koshka.origami.activity.GenericOrigamiActivity;
+import com.koshka.origami.activity.profile.settings.account.field_validator.CurrentPasswordFieldValidator;
+import com.koshka.origami.activity.profile.settings.account.field_validator.NewPasswordFieldValidator;
 import com.koshka.origami.utils.ui.UiNavigationUtil;
 
 import butterknife.BindView;
@@ -33,9 +28,11 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 /**
  * Created by imuntean on 8/9/16.
  */
-public class ChangePasswordActivity extends AppCompatActivity {
+public class ChangePasswordActivity extends GenericOrigamiActivity {
 
     private static final String TAG = "ChangePasswordActivity";
+
+    //----------------------------------------------------------------------------------------------
 
     @BindView(R.id.toolbar_change_password)
     Toolbar toolbar;
@@ -64,37 +61,22 @@ public class ChangePasswordActivity extends AppCompatActivity {
     @BindView(R.id.confirm_new_password)
     TextView confirmNewPasswordTextView;
 
-    private FirebaseUser currentUser;
+    //----------------------------------------------------------------------------------------------
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        SharedPrefs.changeTheme(this);
-
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser == null) {
-            startActivity(LoginActivity.createIntent(this));
-            finish();
-            return;
-        }
 
         setContentView(R.layout.password_change_layout);
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
 
-        final ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setHomeButtonEnabled(true); // disable the button
-            actionBar.setDisplayHomeAsUpEnabled(true); // remove the left caret
-            actionBar.setDisplayShowHomeEnabled(false); // remove the icon
-            actionBar.setDisplayShowTitleEnabled(false);
-        }
-
         clearPasswords();
 
     }
+
+    //----------------------------------------------------------------------------------------------
 
     private void clearPasswords() {
 

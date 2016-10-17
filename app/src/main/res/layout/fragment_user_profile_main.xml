@@ -2,25 +2,25 @@
     xmlns:autofit="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/tools"
     android:fitsSystemWindows="true">
 
-    <RelativeLayout
-        style="@style/FirebaseUI.WrapperStyle"
-        android:layout_width="wrap_content"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/profile_app_bar_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="50dp">
+        app:elevation="0dp"
+        android:background="@color/transparent4">
 
-
-        <RelativeLayout
-            android:id="@+id/user_data_layout"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/profile_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:background="@drawable/settings_layout_bg"
-            android:layout_marginBottom="20dp"
-            >
+            android:layout_height="@dimen/actionBarSize"
+            app:layout_scrollFlags="scroll|enterAlways"
+            android:titleTextColor="@color/white"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true">
+
 
             <LinearLayout
                 android:id="@+id/username_layout"
@@ -38,113 +38,33 @@
                     android:maxLines="1"
                     android:singleLine="true"
                     android:text="Hello world"
-                    android:textColor="@color/black"
-                    android:textSize="40sp"
-                    android:textStyle="bold"
-                    autofit:minTextSize="16sp" />
-
-
-            </LinearLayout>
-
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/map_layout"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:background="@drawable/settings_layout_bg"
-            android:layout_below="@id/user_data_layout">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="270dp"
-                android:layout_alignBottom="@+id/smart_pager_tab_layout"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/my_small_map"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:background="@drawable/rounded_corners"
-                android:id="@+id/map_layout_child">
-
-                <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:tools="http://schemas.android.com/tools"
-                    android:id="@+id/my_origami_map"
-                    android:name="com.google.android.gms.maps.SupportMapFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentTop="true"
-                    tools:context=".activity.main.OrigamiMapActivity" />
-
-                <ImageView
-                    android:id="@+id/maximize_image_view_button"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:background="@drawable/ic_settings_overscan_black_24dp"
-                    android:layout_gravity="right"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    />
-
-                <LinearLayout
-                    android:id="@+id/linearLayout2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true">
-
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="2dp"
-                        android:layout_weight="5"
-                        android:background="@drawable/rounded_corners"
-                        android:text="My origami"
-                        android:textColor="@color/black" />
-
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="2dp"
-                        android:layout_weight="5"
-                        android:background="@drawable/rounded_corners"
-                        android:text="Favorite places"
-                        android:textColor="@color/black" />
-
-                </LinearLayout>
-
-
-            </RelativeLayout>
-
-            <LinearLayout
-                android:id="@+id/my_small_map"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:orientation="vertical">
-
-                <me.grantland.widget.AutofitTextView
-                    android:id="@+id/my_small_map_text_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:text="My map"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textSize="30sp"
-                    android:textStyle="bold"
                     autofit:minTextSize="16sp" />
-
 
 
             </LinearLayout>
 
-        </RelativeLayout>
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <RelativeLayout
+        android:layout_below="@id/profile_app_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/profile_image_shape"
+        android:layout_margin="5dp">
+
+        <ImageView
+            android:id="@+id/profile_picture"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/origami_logo"/>
 
     </RelativeLayout>
+
 
 
 </RelativeLayout>

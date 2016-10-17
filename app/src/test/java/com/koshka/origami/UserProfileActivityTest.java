@@ -1,6 +1,6 @@
 package com.koshka.origami;
 
-import com.koshka.origami.activity.main.UserProfileActivity;
+import com.koshka.origami.activity.profile.UserProfileActivity;
 
 import org.junit.Test;
 
