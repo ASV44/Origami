@@ -19,10 +19,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.koshka.origami.R;
-import com.koshka.origami.activity.GenericOrigamiActivity;
+import com.koshka.origami.activity.AppCompatBase;
 import com.koshka.origami.activity.login.LoginActivity;
-import com.koshka.origami.activity.profile.settings.account.field_validator.CurrentPasswordFieldValidator;
-import com.koshka.origami.utils.ui.UiNavigationUtil;
+import com.koshka.origami.activity.profile.settings.account.validators.CurrentPasswordFieldValidator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,7 +30,7 @@ import butterknife.OnClick;
 /**
  * Created by imuntean on 8/29/16.
  */
-public class DeleteAccountActivity extends GenericOrigamiActivity {
+public class DeleteAccountActivity extends AppCompatBase {
 
     private static final String TAG = "DeleteAccountActivity";
 
@@ -169,14 +168,11 @@ public class DeleteAccountActivity extends GenericOrigamiActivity {
         }
     }
 
-    private void goHome(){
-        UiNavigationUtil.goHome(this);
-    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
 
-            goHome();
+            activityHelper.goHome();
             return true;
         } else {
             return super.onOptionsItemSelected(item);

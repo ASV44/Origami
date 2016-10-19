@@ -3,10 +3,12 @@ package com.koshka.origami.activity.profile.settings.application;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 
 import com.koshka.origami.R;
-import com.koshka.origami.activity.GenericOrigamiActivity;
+import com.koshka.origami.activity.AppCompatBase;
 import com.koshka.origami.adapter.fragment.FragmentAdapters;
+import com.koshka.origami.helpers.FragmentActivityHelper;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import butterknife.BindView;
@@ -15,7 +17,7 @@ import butterknife.ButterKnife;
 /**
  * Created by imuntean on 8/11/16.
  */
-public class UISettingsActivity extends GenericOrigamiActivity {
+public class UISettingsActivity extends AppCompatActivity {
 
     @BindView(R.id.ui_settings_view_pager)
     ViewPager mPager;
@@ -25,6 +27,8 @@ public class UISettingsActivity extends GenericOrigamiActivity {
 
     //----------------------------------------------------------------------------------------------
 
+    private FragmentActivityHelper fragmentActivityHelper;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,16 +36,12 @@ public class UISettingsActivity extends GenericOrigamiActivity {
         setContentView(R.layout.ui_settings_activity);
         ButterKnife.bind(this);
 
-        uiSetup();
+        fragmentActivityHelper = new FragmentActivityHelper(this);
+
+        fragmentActivityHelper.fragmentSetup(mPager, FragmentAdapters.UI_SETTINGS, 0, smartTab);
     }
 
     //----------------------------------------------------------------------------------------------
-
-    @Override
-    protected void uiSetup() {
-
-        fragmentSetup(mPager, FragmentAdapters.UI_SETTINGS, 0, smartTab);
-    }
 
     @Override
     public void onBackPressed() {

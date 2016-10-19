@@ -8,7 +8,7 @@ import android.support.annotation.StyleRes;
 
 import com.firebase.ui.auth.AuthUI;
 import com.koshka.origami.R;
-import com.koshka.origami.activity.GenericOrigamiActivity;
+import com.koshka.origami.activity.AppCompatBase;
 import com.koshka.origami.utils.ui.theme.OrigamiThemeHelper;
 
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
  * Created by qm0937 on 10/17/16.
  */
 
-public class GenericLoginActivity extends GenericOrigamiActivity {
+public class GenericLoginActivity extends AppCompatBase {
 
     private static final String TAG = "GenericLoginActivity";
 
@@ -25,7 +25,7 @@ public class GenericLoginActivity extends GenericOrigamiActivity {
 
     //----------------------------------------------------------------------------------------------
 
-    private OrigamiThemeHelper helper;
+    private OrigamiThemeHelper origamiThemeHelper;
     private int backButtonCount;
 
     //----------------------------------------------------------------------------------------------
@@ -34,8 +34,8 @@ public class GenericLoginActivity extends GenericOrigamiActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        helper = new OrigamiThemeHelper(this);
-        helper.randomThemeSetAndSave();
+        origamiThemeHelper = new OrigamiThemeHelper(this);
+        origamiThemeHelper.randomThemeSetAndSave();
     }
 
     //----------------------------------------------------------------------------------------------
@@ -44,8 +44,8 @@ public class GenericLoginActivity extends GenericOrigamiActivity {
     @StyleRes
     protected int getSelectedTheme() {
 
-        if (helper.getRandomPickedTheme() != -1) {
-            return helper.getRandomPickedTheme();
+        if (origamiThemeHelper.getRandomPickedTheme() != -1) {
+            return origamiThemeHelper.getRandomPickedTheme();
         } else {
             return R.style.amethist_theme;
         }

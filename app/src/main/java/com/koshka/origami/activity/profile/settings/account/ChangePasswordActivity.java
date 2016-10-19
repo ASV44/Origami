@@ -12,13 +12,11 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.EmailAuthProvider;
 import com.koshka.origami.R;
-import com.koshka.origami.activity.GenericOrigamiActivity;
-import com.koshka.origami.activity.profile.settings.account.field_validator.CurrentPasswordFieldValidator;
-import com.koshka.origami.activity.profile.settings.account.field_validator.NewPasswordFieldValidator;
-import com.koshka.origami.utils.ui.UiNavigationUtil;
+import com.koshka.origami.activity.AppCompatBase;
+import com.koshka.origami.activity.profile.settings.account.validators.CurrentPasswordFieldValidator;
+import com.koshka.origami.activity.profile.settings.account.validators.NewPasswordFieldValidator;
+import com.koshka.origami.helpers.PasswordHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,7 +26,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 /**
  * Created by imuntean on 8/9/16.
  */
-public class ChangePasswordActivity extends GenericOrigamiActivity {
+public class ChangePasswordActivity extends AppCompatBase {
 
     private static final String TAG = "ChangePasswordActivity";
 
@@ -63,9 +61,14 @@ public class ChangePasswordActivity extends GenericOrigamiActivity {
 
     //----------------------------------------------------------------------------------------------
 
+    private PasswordHelper passwordHelper;
+    private boolean userReauthenticatedSuccesfully;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        passwordHelper = new PasswordHelper(activityHelper);
 
         setContentView(R.layout.password_change_layout);
         ButterKnife.bind(this);
@@ -102,7 +105,11 @@ public class ChangePasswordActivity extends GenericOrigamiActivity {
         String currentPassword = currentPasswordTextView.getText().toString();
         boolean isCurrentPasswordValid = validator.validate(currentPassword);
 
-        if (isCurrentPasswordValid) {
+
+        passwordHelper.reauthenticate(currentPassword);
+
+
+  /*      if (isCurrentPasswordValid) {
             AuthCredential credential = EmailAuthProvider.getCredential(currentUser.getEmail(), currentPassword);
 
             currentUser.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -121,7 +128,7 @@ public class ChangePasswordActivity extends GenericOrigamiActivity {
                     }
                 }
             });
-        }
+        }*/
     }
 
     @OnClick(R.id.button_change_password)
@@ -136,14 +143,14 @@ public class ChangePasswordActivity extends GenericOrigamiActivity {
         NewPasswordFieldValidator validator1 = new NewPasswordFieldValidator(confirmNewPasswordLayout, 6);
         boolean newPasswordConfirmationIsOk = validator1.validate(newPasswordConfirmation);
 
-        final SweetAlertDialog successDialog =new SweetAlertDialog(this)
+        final SweetAlertDialog successDialog = new SweetAlertDialog(this)
                 .setTitleText("Success!")
                 .setContentText("Your password was changed")
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sDialog) {
                         sDialog.dismissWithAnimation();
-                        goHome();
+                        activityHelper.goHome();
                     }
                 });
 
@@ -156,7 +163,7 @@ public class ChangePasswordActivity extends GenericOrigamiActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Log.d(TAG, "Password changed");
-                       successDialog.show();
+                        successDialog.show();
                     }
                 });
             } else {
@@ -166,17 +173,23 @@ public class ChangePasswordActivity extends GenericOrigamiActivity {
         }
 
     }
-    private void goHome(){
-        UiNavigationUtil.goHome(this);
-    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
 
-          goHome();
+            activityHelper.goHome();
             return true;
         } else {
             return super.onOptionsItemSelected(item);
         }
+    }
+
+    public boolean isUserReauthenticatedSuccesfully() {
+        return userReauthenticatedSuccesfully;
+    }
+
+    public void setUserReauthenticatedSuccesfully(boolean userReauthenticatedSuccesfully) {
+        this.userReauthenticatedSuccesfully = userReauthenticatedSuccesfully;
     }
 }

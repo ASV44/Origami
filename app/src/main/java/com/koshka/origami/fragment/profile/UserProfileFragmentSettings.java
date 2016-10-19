@@ -42,6 +42,7 @@ import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.koshka.origami.utils.SharedPrefs.SHARED_PREFS;
 
 /**
  * Created by imuntean on 8/6/16.

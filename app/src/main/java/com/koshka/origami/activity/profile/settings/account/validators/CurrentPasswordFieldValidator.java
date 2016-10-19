@@ -1,4 +1,4 @@
-package com.koshka.origami.activity.profile.settings.account.field_validator;
+package com.koshka.origami.activity.profile.settings.account.validators;
 
 import android.support.design.widget.TextInputLayout;
 
@@ -7,10 +7,10 @@ import com.firebase.ui.auth.ui.email.field_validators.BaseValidator;
 /**
  * Created by imuntean on 8/25/16.
  */
-public class NewPasswordFieldValidator extends BaseValidator {
+public class CurrentPasswordFieldValidator extends BaseValidator {
     private int mMinLength;
 
-    public NewPasswordFieldValidator(TextInputLayout errorContainer, int minLength) {
+    public CurrentPasswordFieldValidator(TextInputLayout errorContainer, int minLength) {
         super(errorContainer);
         mMinLength = minLength;
         mErrorMessage = "Password incorrect";

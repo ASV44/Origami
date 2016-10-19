@@ -18,9 +18,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.koshka.origami.R;
-import com.koshka.origami.activity.GenericOrigamiActivity;
-import com.koshka.origami.activity.profile.settings.account.field_validator.CurrentPasswordFieldValidator;
-import com.koshka.origami.utils.ui.UiNavigationUtil;
+import com.koshka.origami.activity.AppCompatBase;
+import com.koshka.origami.activity.profile.settings.account.validators.CurrentPasswordFieldValidator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,7 +29,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 /**
  * Created by imuntean on 8/11/16.
  */
-public class ChangeEmailActivity extends GenericOrigamiActivity {
+public class ChangeEmailActivity extends AppCompatBase {
 
     private static final String TAG = "ChangeEmailActivity";
 
@@ -69,9 +68,10 @@ public class ChangeEmailActivity extends GenericOrigamiActivity {
         setContentView(R.layout.email_change_layout);
         ButterKnife.bind(this);
 
-        currentEmailTextView.setText(currentUser.getEmail());
+        currentEmailTextView.setText(activityHelper.getCurrentUser().getEmail());
 
         setSupportActionBar(toolbar);
+
 
         clearPasswords();
     }
@@ -84,7 +84,7 @@ public class ChangeEmailActivity extends GenericOrigamiActivity {
     }
 
     @OnClick(R.id.button_change_email_next)
-    public void next(View view){
+    public void next(View view) {
 
         CurrentPasswordFieldValidator validator = new CurrentPasswordFieldValidator(currentPasswordLayout, 6);
         String currentPassword = currentPasswordEdit.getText().toString();
@@ -115,14 +115,14 @@ public class ChangeEmailActivity extends GenericOrigamiActivity {
     public void changeEmail(View view) {
 
 
-        final SweetAlertDialog successDialog =new SweetAlertDialog(this)
+        final SweetAlertDialog successDialog = new SweetAlertDialog(this)
                 .setTitleText("Success!")
                 .setContentText("Your password was changed")
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sDialog) {
                         sDialog.dismissWithAnimation();
-                        goHome();
+                        activityHelper.goHome();
                     }
                 });
 
@@ -138,49 +138,43 @@ public class ChangeEmailActivity extends GenericOrigamiActivity {
         if (emailIsValid) {
 
             Resources res = getResources();
-                            String email = currentUser.getEmail();
-                            String password = currentPasswordEdit.getText().toString();
-                            AuthCredential credential = EmailAuthProvider.getCredential(email, password);
-                            currentUser.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+            String email = currentUser.getEmail();
+            String password = currentPasswordEdit.getText().toString();
+            AuthCredential credential = EmailAuthProvider.getCredential(email, password);
+            currentUser.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "User re-authenticated.");
+                        String updatedEmail = changeEmailEditText.getText().toString();
+                        if (updatedEmail != null && !updatedEmail.isEmpty()) {
+                            currentUser.updateEmail(updatedEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
-
-                                    if(task.isSuccessful()) {
-                                        Log.d(TAG, "User re-authenticated.");
-                                        String updatedEmail = changeEmailEditText.getText().toString();
-                                        if (updatedEmail != null && !updatedEmail.isEmpty()) {
-                                            currentUser.updateEmail(updatedEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    if(task.isSuccessful()){
-                                                        Log.d(TAG, "Email was updated.");
-                                                        successDialog.show();
-                                                        currentEmailTextView.setText(currentUser.getEmail());
-                                                    }
-                                                    else {
-                                                        Log.d(TAG, "Email was not updated.");
-                                                    }
-                                                }
-                                            });
-                                        }
-                                    }else {
-                                        Log.d(TAG, "User was not re-authenticated.");
+                                    if (task.isSuccessful()) {
+                                        Log.d(TAG, "Email was updated.");
+                                        successDialog.show();
+                                        currentEmailTextView.setText(currentUser.getEmail());
+                                    } else {
+                                        Log.d(TAG, "Email was not updated.");
                                     }
-
                                 }
                             });
                         }
-    }
+                    } else {
+                        Log.d(TAG, "User was not re-authenticated.");
+                    }
 
-    private void goHome(){
-        UiNavigationUtil.goHome(this);
+                }
+            });
+        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-
-           goHome();
+            activityHelper.goHome();
             return true;
         } else {
             return super.onOptionsItemSelected(item);

@@ -1,16 +1,17 @@
 package com.koshka.origami.activity.profile.settings.about;
 
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 import com.koshka.origami.R;
-import com.koshka.origami.activity.GenericOrigamiActivity;
+import com.koshka.origami.activity.AppCompatBase;
 
 import butterknife.ButterKnife;
 
 /**
  * Created by imuntean on 8/11/16.
  */
-public class FAQActivity extends GenericOrigamiActivity {
+public class FAQActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

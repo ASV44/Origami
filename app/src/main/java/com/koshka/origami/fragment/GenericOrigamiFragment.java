@@ -29,7 +29,6 @@ public class GenericOrigamiFragment extends Fragment {
 
     protected static final String TAG = "GenericFragment";
 
-    protected static final String SHARED_PREFS = "SharedPrefs";
 
     //----------------------------------------------------------------------------------------------
 

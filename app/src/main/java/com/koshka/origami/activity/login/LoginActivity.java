@@ -4,9 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.MainThread;
-import android.support.annotation.StyleRes;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.Button;
@@ -14,15 +12,10 @@ import android.widget.TextView;
 
 import com.firebase.ui.auth.AuthUI;
 import com.koshka.origami.R;
-import com.koshka.origami.activity.GenericOrigamiActivity;
+import com.koshka.origami.activity.AppCompatBase;
 import com.koshka.origami.activity.main.MainActivity;
 import com.koshka.origami.adapter.fragment.FragmentAdapters;
-import com.koshka.origami.adapter.fragment.LoginFragmentPagerAdapter;
-import com.koshka.origami.utils.net.NetworkUtil;
-import com.koshka.origami.utils.ui.ParallaxPagerTransformer;
-import com.koshka.origami.utils.ui.theme.OrigamiThemeHelper;
-
-import java.util.ArrayList;
+import com.koshka.origami.helpers.LoginActivityHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,7 +25,7 @@ import me.relex.circleindicator.CircleIndicator;
 /**
  * Created by imuntean on 7/19/16.
  */
-public class LoginActivity extends GenericLoginActivity {
+public class LoginActivity extends GenericLoginActivity{
 
     private static final String TAG = "LoginActivity";
 
@@ -54,6 +47,8 @@ public class LoginActivity extends GenericLoginActivity {
 
     //----------------------------------------------------------------------------------------------
 
+    private LoginActivityHelper loginActivityHelper;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +56,9 @@ public class LoginActivity extends GenericLoginActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
-        fragmentSetup(mPager, FragmentAdapters.LOGIN, 0, null);
+        loginActivityHelper = new LoginActivityHelper(this);
+
+        loginActivityHelper.fragmentSetup(mPager, null);
 
         circleIndicator.setViewPager(mPager);
 
@@ -79,7 +76,7 @@ public class LoginActivity extends GenericLoginActivity {
     @OnClick(R.id.sign_in)
     public void signIn(View view) {
 
-        if (isNetworkOn()) {
+        if (loginActivityHelper.isNetworkOn()) {
             startActivityForResult(
                     AuthUI.getInstance().createSignInIntentBuilder()
                             .setTheme(getSelectedTheme())
@@ -119,7 +116,6 @@ public class LoginActivity extends GenericLoginActivity {
         //TODO:UNKOWN SIGN IN RESPONSE, HANDLE THIS BY SENDING USER TO SUPPORT OR HELP PAGE.
         showSnackbar(R.string.unknown_sign_in_response);
     }
-
 
 
     //util method for intent creation from other activities
