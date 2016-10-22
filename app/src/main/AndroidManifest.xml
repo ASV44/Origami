@@ -39,7 +39,7 @@
 
         <!-- MAIN ACTIVITY -->
         <activity
-            android:name=".activity.main.MainActivity"
+            android:name=".activites.main.MainActivity"
             android:configChanges="locale"
             android:theme="@style/PurpleThemeNoActionBar"
             android:noHistory="false"
@@ -54,88 +54,88 @@ _
 
         <!-- LOGIN ACTIVITY -->
         <activity
-            android:name=".activity.login.LoginActivity"
+            android:name=".activites.login.LoginActivity"
             android:configChanges="locale"
-            android:parentActivityName=".activity.login.LoginActivity"
+            android:parentActivityName=".activites.login.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/PurpleThemeNoActionBar" />
 
         <activity
-            android:name=".activity.login.FirstTimeLoginActivity"
-            android:parentActivityName=".activity.main.MainActivity"
+            android:name=".activites.login.FirstTimeLoginActivity"
+            android:parentActivityName=".activites.main.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/PurpleThemeNoActionBar" />
 
 
         <!-- USER PROFILE ACTIVITY -->
         <activity
-            android:name=".activity.profile.UserProfileActivity"
-            android:parentActivityName=".activity.main.MainActivity"
+            android:name=".activites.profile.UserProfileActivity"
+            android:parentActivityName=".activites.main.MainActivity"
             android:theme="@style/PurpleThemeNoActionBar" />
 
         <!-- ORIGAMI ACTIVITY -->
         <activity
-            android:name=".activity.main.OrigamiMapActivity"
+            android:name=".activites.main.OrigamiMapActivity"
             android:theme="@style/PurpleThemeNoActionBar" />
 
         <activity
-            android:name=".activity.origami.CreatePublicOrigamiActivity"
+            android:name=".activites.origami.CreatePublicOrigamiActivity"
             android:theme="@style/PurpleThemeNoActionBar"
-            android:parentActivityName=".activity.main.MainActivity"/>
+            android:parentActivityName=".activites.main.MainActivity"/>
 
         <activity
-            android:name=".activity.origami.OpenedOrigamiActivity"
+            android:name=".activites.origami.OpenedOrigamiActivity"
             android:theme="@style/PurpleThemeNoActionBar"
-            android:parentActivityName=".activity.main.MainActivity"/>
+            android:parentActivityName=".activites.main.MainActivity"/>
 
 
         <!-- FRIENDS ACTIVITY -->
 
         <activity
-            android:name=".activity.friends.AddFriendActivity"
+            android:name=".activites.friends.AddFriendActivity"
             android:theme="@style/PurpleThemeNoActionBar"
-            android:parentActivityName=".activity.main.MainActivity"/>
+            android:parentActivityName=".activites.main.MainActivity"/>
 
         <activity
-            android:name=".activity.friends.InviteFriendActivity"
+            android:name=".activites.friends.InviteFriendActivity"
             android:theme="@style/PurpleThemeNoActionBar"
-            android:parentActivityName=".activity.main.MainActivity"/>
+            android:parentActivityName=".activites.main.MainActivity"/>
 
         <activity
-            android:name=".activity.friends.FriendProfileActivity"
+            android:name=".activites.friends.FriendProfileActivity"
             android:theme="@style/PurpleThemeNoActionBar"
-            android:parentActivityName=".activity.main.MainActivity"/>
+            android:parentActivityName=".activites.main.MainActivity"/>
 
         <!-- Settings activities-->
         <activity
-            android:name=".activity.profile.settings.about.FAQActivity"
+            android:name=".activites.profile.settings.about.FAQActivity"
             android:theme="@style/PurpleThemeNoActionBar" />
         <activity
-            android:name=".activity.profile.settings.about.LicencesActivity"
+            android:name=".activites.profile.settings.about.LicencesActivity"
             android:theme="@style/PurpleThemeNoActionBar" />
         <activity
-            android:name=".activity.profile.settings.about.AboutUsActivity"
+            android:name=".activites.profile.settings.about.AboutUsActivity"
             android:theme="@style/PurpleThemeNoActionBar" />
         <activity
-            android:name=".activity.profile.settings.about.ToSActivity"
+            android:name=".activites.profile.settings.about.ToSActivity"
             android:theme="@style/PurpleThemeNoActionBar" />
         <activity
-            android:name=".activity.profile.settings.account.ChangeEmailActivity"
+            android:name=".activites.profile.settings.account.ChangeEmailActivity"
             android:theme="@style/PurpleThemeNoActionBar"
-            android:parentActivityName=".activity.profile.UserProfileActivity"/>
+            android:parentActivityName=".activites.profile.UserProfileActivity"/>
         <activity
-            android:name=".activity.profile.settings.account.ChangePasswordActivity"
+            android:name=".activites.profile.settings.account.ChangePasswordActivity"
             android:theme="@style/PurpleThemeNoActionBar"
-            android:parentActivityName=".activity.profile.UserProfileActivity"/>
+            android:parentActivityName=".activites.profile.UserProfileActivity"/>
         <activity
-            android:name=".activity.profile.settings.account.DeleteAccountActivity"
+            android:name=".activites.profile.settings.account.DeleteAccountActivity"
             android:theme="@style/PurpleThemeNoActionBar"
-            android:parentActivityName=".activity.profile.UserProfileActivity"/>
+            android:parentActivityName=".activites.profile.UserProfileActivity"/>
         <activity
-            android:name=".activity.profile.settings.application.UISettingsActivity"
+            android:name=".activites.profile.settings.application.UISettingsActivity"
             android:theme="@style/PurpleThemeNoActionBar" />
         <activity
-            android:name=".activity.profile.settings.application.NotificationsActivity"
+            android:name=".activites.profile.settings.application.NotificationsActivity"
             android:theme="@style/PurpleThemeNoActionBar" />
 
 

@@ -3,12 +3,12 @@ package com.koshka.origami.factory;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.koshka.origami.adapter.fragment.EmptyFragmentPagerAdapter;
-import com.koshka.origami.adapter.fragment.FragmentAdapters;
-import com.koshka.origami.adapter.fragment.LoginFragmentPagerAdapter;
-import com.koshka.origami.adapter.fragment.MainFragmentPagerAdapter;
-import com.koshka.origami.adapter.fragment.UISettingsFragmentPagerAdapter;
-import com.koshka.origami.adapter.fragment.UserProfileFragmentPagerAdapter;
+import com.koshka.origami.adapters.fragment.EmptyFragmentPagerAdapter;
+import com.koshka.origami.adapters.fragment.FragmentAdapters;
+import com.koshka.origami.adapters.fragment.LoginFragmentPagerAdapter;
+import com.koshka.origami.adapters.fragment.MainFragmentPagerAdapter;
+import com.koshka.origami.adapters.fragment.UISettingsFragmentPagerAdapter;
+import com.koshka.origami.adapters.fragment.UserProfileFragmentPagerAdapter;
 
 /**
  * Created by qm0937 on 10/15/16.

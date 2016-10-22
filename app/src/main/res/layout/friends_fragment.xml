@@ -1,0 +1,353 @@
+<com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:sothree="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/friends_sliding_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="bottom"
+    sothree:umanoOverlay="true"
+    sothree:umanoPanelHeight="68dp"
+    sothree:umanoShadowHeight="4dp">
+
+    <RelativeLayout
+        android:id="@+id/parallaxContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true">
+
+        <RelativeLayout
+            android:id="@+id/app_bar_support_point"
+            android:layout_width="match_parent"
+            android:layout_height="90dp">
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/friends_small_bar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/small_bar_height"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/app_bar_support_point">
+
+            <LinearLayout
+                android:id="@+id/friends_small_bar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/small_bar_shape"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:id="@+id/my_friends_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="Friends"
+                    android:background="@color/transparent4"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:id="@+id/my_groups_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="Groups"
+                    android:textColor="@color/white" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/main_page_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipChildren="false"
+            android:layout_below="@id/friends_small_bar_layout"
+            android:layout_marginBottom="10dp">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/friends_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:clipChildren="false" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/groups_main_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipChildren="false"
+            android:layout_below="@id/friends_small_bar_layout"
+            android:layout_marginBottom="10dp"
+            android:visibility="gone">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/groups_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:clipChildren="false" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="90dp"
+        android:background="@color/transparent4"
+        android:focusable="false">
+
+
+        <RelativeLayout
+            android:id="@+id/collapsed_panel_elements"
+            android:layout_width="match_parent"
+            android:layout_height="68dp">
+
+            <LinearLayout
+                android:id="@+id/main_friends_panel_elements_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/find_friend_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:text="M"
+                    android:textColor="@color/white"
+                    android:textSize="40sp" />
+
+                <TextView
+                    android:id="@+id/add_friend_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:text="A"
+                    android:textColor="@color/white"
+                    android:textSize="50sp" />
+
+                <TextView
+                    android:id="@+id/invite_friend_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:text="A"
+                    android:textColor="@color/white"
+                    android:textSize="40sp" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/add_friend_relative_layout"
+            style="@style/FirebaseUI.WrapperStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/view2"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:id="@+id/friends_panel_title"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="75dp"
+                    android:gravity="center|top"
+                    android:text="Add Friend"
+                    android:textColor="@color/white"
+                    android:textSize="15dp" />
+            </LinearLayout>
+
+            <android.support.design.widget.TextInputLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/friends_text_input_layout"
+                style="@style/FirebaseUI.Text.TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="80dp"
+                android:paddingTop="16dp"
+                app:errorTextAppearance="@style/FirebaseUI.Text.ErrorText"
+                app:hintTextAppearance="@style/FirebaseUI.Text.HintText">
+
+                <EditText
+                    android:id="@+id/friends_email_nick_edit_text"
+                    style="@style/FirebaseUI.EditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-.@"
+                    android:hint="Friend\'s username/email"
+                    android:inputType="textEmailAddress"
+                    android:textColor="@color/white" />
+            </android.support.design.widget.TextInputLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true">
+
+                <Button
+                    android:id="@+id/button_add_friend"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:background="@color/transparent4"
+                    android:text="Add friend"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/userExistsTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="168dp"
+                    android:text=""
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/invite_friend_relative_layout"
+            style="@style/FirebaseUI.WrapperStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/collapsed_panel_elements"
+            android:layout_centerHorizontal="true"
+            android:visibility="gone">
+
+            <RelativeLayout
+                android:id="@+id/invite_friends_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Invite friends to Origami"
+                    android:textColor="@color/white" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/invite_friend_providers_buttons"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/invite_friends_title"
+                android:layout_centerHorizontal="true">
+
+                <TextView
+                    android:id="@+id/email_invite_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:text="0"
+                    android:textColor="@color/white"
+                    android:textSize="60sp" />
+
+                <TextView
+                    android:id="@+id/facebook_invite_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_toRightOf="@id/email_invite_button"
+                    android:text="f"
+                    android:textColor="@color/white"
+                    android:textSize="60sp" />
+
+
+                <TextView
+                    android:id="@+id/google_invite_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_toRightOf="@id/facebook_invite_button"
+                    android:text="G"
+                    android:textColor="@color/white"
+                    android:textSize="60sp" />
+
+                <TextView
+                    android:id="@+id/twitter_invite_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_toRightOf="@id/google_invite_button"
+                    android:text="T"
+                    android:textColor="@color/white"
+                    android:textSize="60sp" />
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/invite_friend_email_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/invite_friend_providers_buttons"
+                android:layout_marginTop="20dp"
+                android:visibility="gone">
+
+
+                <android.support.design.widget.TextInputLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/invite_friend_input_layout"
+                    style="@style/FirebaseUI.Text.TextInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:errorTextAppearance="@style/FirebaseUI.Text.ErrorText"
+                    app:hintTextAppearance="@style/FirebaseUI.Text.HintText">
+
+                    <EditText
+                        android:id="@+id/invite_email_text"
+                        style="@style/FirebaseUI.EditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-.@"
+                        android:hint="Email"
+                        android:inputType="textEmailAddress"
+                        android:textColor="@color/white" />
+                </android.support.design.widget.TextInputLayout>
+
+                <Button
+                    android:id="@+id/send_email_invitation_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:background="@color/transparent4"
+                    android:text="Send invitation"
+                    android:textColor="@android:color/white" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</com.sothree.slidinguppanel.SlidingUpPanelLayout>

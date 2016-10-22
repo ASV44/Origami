@@ -11,7 +11,7 @@ import android.support.v4.app.TaskStackBuilder;
 import android.widget.Toast;
 
 import com.koshka.origami.R;
-import com.koshka.origami.activity.main.MainActivity;
+import com.koshka.origami.activites.main.MainActivity;
 
 import java.util.Random;
 

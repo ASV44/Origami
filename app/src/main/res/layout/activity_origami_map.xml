@@ -11,6 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
-        tools:context=".activity.main.OrigamiMapActivity" />
+        tools:context=".activites.main.OrigamiMapActivity" />
 
 </LinearLayout>
