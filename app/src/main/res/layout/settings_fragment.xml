@@ -328,7 +328,8 @@
                         android:background="@drawable/settings_layout_bg"
                         android:layout_alignParentTop="true"
                         android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true" />
+                        android:layout_alignParentStart="true"
+                        android:textColor="@color/black"/>
 
                     <Button
                         android:id="@+id/sign_out"
@@ -339,7 +340,8 @@
                         android:text="@string/sign_out"
                         android:background="@drawable/settings_layout_bg"
                         android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true" />
+                        android:layout_alignParentEnd="true"
+                        android:textColor="@color/black"/>
                 </RelativeLayout>
                 </LinearLayout>
 

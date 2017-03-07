@@ -46,6 +46,8 @@ public class MainActivity extends OrigamiActivity {
         setContentView(R.layout.main_activity);
         ButterKnife.bind(this);
 
+        super.activityHelper.checkFirebase(this);
+
         mainActivityHelper = new MainActivityHelper(this);
 
         mainActivityHelper.fragmentSetup(mPager, mSmartTab);

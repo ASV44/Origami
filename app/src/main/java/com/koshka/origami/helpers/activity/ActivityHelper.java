@@ -62,7 +62,6 @@ public class ActivityHelper {
         if (getCurrentUser() == null) {
             activity.startActivity(LoginActivity.createIntent(activity));
             activity.finish();
-            return;
         }
     }
 
