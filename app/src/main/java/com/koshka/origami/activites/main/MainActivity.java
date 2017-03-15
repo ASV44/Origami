@@ -1,5 +1,6 @@
 package com.koshka.origami.activites.main;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,9 +9,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.facebook.FacebookSdk;
 import com.koshka.origami.R;
 import com.koshka.origami.activites.OrigamiActivity;
+import com.koshka.origami.activites.login.LoginActivity;
 import com.koshka.origami.helpers.activity.MainActivityHelper;
+import com.koshka.origami.utils.ui.theme.OrigamiThemeHelper;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import butterknife.BindView;
@@ -38,6 +42,8 @@ public class MainActivity extends OrigamiActivity {
 
     private MainActivityHelper mainActivityHelper;
 
+    public static Activity activity;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,14 +52,16 @@ public class MainActivity extends OrigamiActivity {
         setContentView(R.layout.main_activity);
         ButterKnife.bind(this);
 
-        super.activityHelper.checkFirebase(this);
+        activity = this;
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
 
         mainActivityHelper = new MainActivityHelper(this);
 
         mainActivityHelper.fragmentSetup(mPager, mSmartTab);
         mainActivityHelper.toolbarSetup(mToolbar);
 
-
+        super.checkFirebase(this);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -77,6 +85,10 @@ public class MainActivity extends OrigamiActivity {
     //util method for intent creation from other activities
     public static Intent createIntent(Context context) {
         return new Intent(context, MainActivity.class);
+    }
+
+    public void finishActivity() {
+        this.finish();
     }
 
 }

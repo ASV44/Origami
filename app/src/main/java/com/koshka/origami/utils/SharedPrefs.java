@@ -36,6 +36,12 @@ public class SharedPrefs {
         }
     }
 
+    public static void changeTheme(Activity activity, int theme) {
+        if (theme != -1) {
+            activity.setTheme(theme);
+        }
+    }
+
     public static void changeViewsBackground(Activity activity, View... views) {
 
         SharedPreferences prefs = activity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);

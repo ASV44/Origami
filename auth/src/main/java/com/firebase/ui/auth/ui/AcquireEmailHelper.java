@@ -134,7 +134,7 @@ public class AcquireEmailHelper {
             Intent registerIntent = RegisterEmailActivity.createIntent(
                     mActivityHelper.getApplicationContext(),
                     mActivityHelper.getFlowParams(),
-                    email);
+                    email,"email",null,null);
             mActivityHelper.startActivityForResult(registerIntent, RC_REGISTER_ACCOUNT);
             return;
         } else {

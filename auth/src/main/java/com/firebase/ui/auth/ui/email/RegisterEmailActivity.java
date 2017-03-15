@@ -70,6 +70,8 @@ import com.koshka.origami.model.Friend;
 import com.koshka.origami.model.User;
 import com.wang.avi.AVLoadingIndicatorView;
 
+import static android.R.style.Widget;
+
 public class RegisterEmailActivity extends AppCompatBase implements View.OnClickListener {
 
     private static final int RC_SAVE_CREDENTIAL = 3;
@@ -77,6 +79,8 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
     private EditText mEmailEditText;
     private EditText mPasswordEditText;
     private EditText mNameEditText;
+    private EditText mFirstNameEditText;
+    private EditText mLastNameEditText;
     private EmailFieldValidator mEmailFieldValidator;
     private PasswordFieldValidator mPasswordFieldValidator;
     private UsernameValidator mNameValidator;
@@ -84,6 +88,11 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
     private FirebaseAuth mAuth;
     private DatabaseReference mMeRef;
     private LoginActionBarHelper actionBarHelper;
+
+    private String email;
+    private String firstName;
+    private String lastName;
+    private String auth;
 
     private TextInputLayout mEmailInputLayout;
 
@@ -96,6 +105,8 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
         String email = getIntent().getStringExtra(ExtraConstants.EXTRA_EMAIL);
         mEmailEditText = (EditText) findViewById(R.id.email);
 
+        auth = getIntent().getStringExtra("auth");
+
         TypedValue visibleIcon = new TypedValue();
         TypedValue slightlyVisibleIcon = new TypedValue();
 
@@ -104,6 +115,7 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
 
         mPasswordEditText = (EditText) findViewById(R.id.password);
         mTogglePasswordImage = (ImageView) findViewById(R.id.toggle_visibility);
+        if(auth.equals("fb")) { mTogglePasswordImage.setVisibility(View.INVISIBLE);}
 
         mPasswordEditText.setOnFocusChangeListener(new ImageFocusTransparencyChanger(
                 mTogglePasswordImage,
@@ -122,6 +134,9 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
         mEmailFieldValidator = new EmailFieldValidator((TextInputLayout) findViewById(R.id
                 .email_layout));
 
+        mFirstNameEditText = (EditText) findViewById(R.id.firs_name);
+        mLastNameEditText = (EditText) findViewById(R.id.last_name);
+
         boolean emailValid;
         if (email != null){
             emailValid = Patterns.EMAIL_ADDRESS.matcher(email).matches();
@@ -133,7 +148,15 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
               // mNameEditText.setEnabled(false);
             }
         }
+        String firstName = getIntent().getStringExtra("firstName");
+        String lastName = getIntent().getStringExtra("lastName");
+        if(firstName != null && lastName != null) {
+            mFirstNameEditText.setText(firstName);
+            mLastNameEditText.setText(lastName);
+        }
 
+        TextInputLayout passwordLayout = (TextInputLayout) findViewById(R.id.password_layout);
+        if(auth.equals("fb")) { passwordLayout.setVisibility(View.INVISIBLE); }
 
         actionBarHelper = new LoginActionBarHelper(this, R.id.toolbar_sign_up);
         actionBarHelper.buildTitlePlusIndicatorActionBar("Register...");
@@ -279,7 +302,7 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
     private void initUserInDatabase(){
         mAuth = FirebaseAuth.getInstance();
         String uid = mAuth.getCurrentUser().getUid();
-        String email = mAuth.getCurrentUser().getEmail();
+        //String email = mAuth.getCurrentUser().getEmail();
         String username = mAuth.getCurrentUser().getDisplayName();
 
         //TAKE FIREBASE REFS
@@ -290,7 +313,7 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
         //-------------------------------------------
         //SETUP THE USER /users/uid
 
-        User user = new User(email, username);
+        User user = new User(email, username, firstName, lastName, auth);
         user.setFirstTimeIn(true);
         mMeRef.setValue(user, new DatabaseReference.CompletionListener() {
             @Override
@@ -361,18 +384,27 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
             String email2 = mEmailEditText.getText().toString();
             String password2 = mPasswordEditText.getText().toString();
             String name2 = mNameEditText.getText().toString();
+            firstName = mFirstNameEditText.getText().toString();
+            lastName = mLastNameEditText.getText().toString();
 
-            String email = email2.trim();
+            email = email2.trim();
             String password = password2.trim();
             String username = name2.trim();
+            firstName = firstName.trim();
+            lastName = lastName.trim();
 
             boolean emailValid = mEmailFieldValidator.validate(email);
             boolean usernameValid = mNameValidator.validate(username);
             boolean passwordValid = mPasswordFieldValidator.validate(password);
 
-            if (emailValid && passwordValid && usernameValid) {
+            if (emailValid && passwordValid && usernameValid && auth.equals("email")) {
                 actionBarHelper.showIndicatorHideTitle();
                 registerUser(email, username, password);
+            }
+
+            if(auth.equals("fb")) {
+                actionBarHelper.showIndicatorHideTitle();
+                registerUser_FB(username,password);
             }
         }
     }
@@ -380,9 +412,48 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
     public static Intent createIntent(
             Context context,
             FlowParameters flowParams,
-            String email) {
+            String email,
+            String auth,
+            String firstName,
+            String lastName) {
         return ActivityHelper.createBaseIntent(context, RegisterEmailActivity.class, flowParams)
-                .putExtra(ExtraConstants.EXTRA_EMAIL, email);
+                .putExtra(ExtraConstants.EXTRA_EMAIL, email)
+                .putExtra("auth",auth)
+                .putExtra("firstName",firstName)
+                .putExtra("lastName",lastName);
+    }
+
+    public void registerUser_FB(final String username, final String password) {
+        FirebaseAuth.AuthStateListener mAuthListener;
+
+        final String lower_username = username.toLowerCase();
+        final Resources res = getResources();
+        final Uri photoUri = Uri.parse(res.getString(R.string.default_photo_url));
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        Log.d("Register_FB: USER  ","" + user);
+        if(user != null) {
+            Log.d("Register_FB:USER_EMAIL ", "" + user.getEmail());
+        }
+        if(user != null) {
+            Task<Void> updateTask = user.updateProfile(
+                    new UserProfileChangeRequest
+                            .Builder()
+                            .setDisplayName(lower_username)
+                            .setPhotoUri(photoUri).build());
+            updateTask
+                    .addOnFailureListener(new TaskFailureLogger(
+                            TAG, "Error setting display name"))
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            actionBarHelper.hideIndicator();
+                            if (task.isSuccessful()) {
+                                startSaveCredentials(user, password);
+                            }
+                        }
+                    });
+        }
+
     }
 
     public static void hideKeyboard(Activity activity) {

@@ -2,15 +2,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/textView"
+    <!--<TextView-->
+        <!--android:id="@+id/textView"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_gravity="center_horizontal"-->
+        <!--android:layout_marginTop="181dp"-->
+        <!--android:text="Picture 3"-->
+        <!--android:textAppearance="?android:attr/textAppearanceLarge" />-->
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/fb_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="219dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="181dp"
-        android:text="Picture 3"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:background="@android:color/transparent"/>
 
 </RelativeLayout>

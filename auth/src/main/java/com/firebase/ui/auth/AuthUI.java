@@ -25,6 +25,7 @@ import android.support.annotation.StyleRes;
 import com.firebase.ui.auth.provider.IDPProviderParcel;
 import com.firebase.ui.auth.ui.FlowParameters;
 import com.firebase.ui.auth.ui.ChooseAccountActivity;
+import com.firebase.ui.auth.ui.email.SignInActivity;
 import com.firebase.ui.auth.ui.idp.AuthMethodPickerActivity;
 import com.firebase.ui.auth.util.CredentialsApiHelper;
 import com.firebase.ui.auth.util.Preconditions;
@@ -377,14 +378,22 @@ public class AuthUI {
             Context context = mApp.getApplicationContext();
             List<IDPProviderParcel> providerInfo =
                     ProviderHelper.getProviderParcels(context, mProviders);
-            return ChooseAccountActivity.createIntent(
-                    context,
+//            return ChooseAccountActivity.createIntent(
+//                    context,
+//                    new FlowParameters(
+//                            mApp.getName(),
+//                            providerInfo,
+//                            mTheme,
+//                            mLogo,
+//                            mTosUrl));
+            return SignInActivity.createIntent(context,
                     new FlowParameters(
                             mApp.getName(),
                             providerInfo,
                             mTheme,
                             mLogo,
-                            mTosUrl));
+                            mTosUrl
+                    ), null);
         }
     }
 }

@@ -2,14 +2,34 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:id="@+id/logo_layout">
+
+        <TextView
+            android:id="@+id/logo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Origami"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:textSize="80dp"
+            android:layout_centerInParent="true" />
+
+    </RelativeLayout>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/login_pager1"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:layout_above="@+id/linearLayout2"
+        android:layout_above="@+id/alternative_login"
         android:layout_below="@+id/relativeLayout" />
 
     <android.support.design.widget.AppBarLayout
@@ -17,7 +37,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:elevation="0dp"
-        android:background="@color/transparent6">
+        android:background="#00000000">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar_sign_in"
@@ -25,7 +45,7 @@
             android:layout_height="50dp"
             app:layout_scrollFlags="scroll|enterAlways"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"/>
 
     </android.support.design.widget.AppBarLayout>
 
@@ -34,14 +54,16 @@
     style="@style/FirebaseUI.WrapperStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_below="@+id/view2"
+    android:layout_below="@+id/logo_layout"
     android:layout_alignParentLeft="true"
     android:layout_alignParentStart="true"
-    android:id="@+id/relativeLayout">
+    android:id="@+id/relativeLayout"
+    android:visibility="invisible"
+    android:alpha="0">
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/email_nickname_layout"
-        android:paddingTop="24dp"
+        android:paddingTop="10dp"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         style="@style/FirebaseUI.Text.TextInputLayout"
         app:hintTextAppearance="@style/FirebaseUI.Text.HintText"
@@ -60,7 +82,7 @@
         android:id="@+id/password_layout"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         style="@style/FirebaseUI.Text.TextInputLayout"
-        android:paddingTop="136dp"
+        android:paddingTop="80dp"
         app:hintTextAppearance="@style/FirebaseUI.Text.HintText"
         app:errorTextAppearance="@style/FirebaseUI.Text.ErrorText"
         android:layout_width="match_parent"
@@ -78,77 +100,143 @@
         android:id="@+id/toggle_visibility"
         android:layout_alignEnd="@id/password_layout"
         android:layout_alignRight="@id/password_layout"
-        android:paddingTop="154dp">
+        android:paddingTop="90dp">
     </ImageView>
-
-</RelativeLayout>
-<LinearLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_alignParentBottom="true"
-    android:layout_alignParentLeft="true"
-    android:layout_alignParentStart="true"
-    android:id="@+id/linearLayout">
 
     <TextView
         android:id="@+id/trouble_signing_in"
         android:text="@string/trouble_signing_in"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:padding="8dp"
-        android:layout_margin="8dp"
+        android:layout_marginTop="10dp"
         style="@style/FirebaseUI.Text.Link"
-        android:textSize="13dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:textSize="13sp"
+        android:layout_below="@+id/password_layout"/>
 
-</LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+
+</RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/login_layout"
+        android:layout_alignParentBottom="true">
+
+
+        <Button
+            style="@style/FirebaseUI.Button"
+            android:id="@+id/button_done"
+            android:text="@string/button_text_next"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/alternative_login"
+        android:layout_above="@+id/register_layout"
+        android:layout_marginBottom="30dp"
+        android:visibility="invisible"
+        android:alpha="0">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="15dp"
+            android:id="@+id/login_border">
+
+            <TextView
+                android:id="@+id/tvText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:text="or"
+                android:textSize="23sp"
+                android:textColor="@android:color/black"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16dp"
+                android:layout_toLeftOf="@id/tvText"
+                android:background="@android:color/black"
+                />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="16dp"
+                android:layout_toRightOf="@id/tvText"
+                android:background="@android:color/black"
+                />
+
+        </RelativeLayout>
+
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/fb_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="40dp"
+            android:layout_centerHorizontal="true"
+            android:background="@android:color/transparent"
+            android:layout_below="@+id/login_border" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_toRightOf="@+id/linearLayout"
-        android:layout_toEndOf="@+id/linearLayout"
-        android:id="@+id/linearLayout2">
+        android:id="@+id/register_layout"
+        android:alpha="0"
+        android:visibility="invisible">
 
-    <Button
-        style="@style/FirebaseUI.Button"
-        android:id="@+id/button_register"
-        android:text="@string/button_text_register"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/white"
-        android:layout_weight="8"
-        android:layout_margin="1dp"/>
+        <Button
+            android:id="@+id/button_register"
+            style="@style/FirebaseUI.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="@string/button_text_register"
+            android:textColor="@android:color/white" />
 
-    <Button
-        style="@style/FirebaseUI.Button"
-        android:id="@+id/button_done"
-        android:text="@string/button_text_next"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/white"
-        android:layout_weight="8.70"
-        android:layout_margin="1dp"/>
-    </LinearLayout>
+    </RelativeLayout>
 
-    <TextView
-        android:gravity="center"
+
+
+    <ImageView
+        android:id="@+id/image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="D"
-        android:id="@+id/transparent_logo"
-        android:textColor="@color/transparent12"
-        android:textSize="200dp"
-        android:textAlignment="center"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/relativeLayout"
-        android:layout_above="@+id/linearLayout2" />
+        android:src="@drawable/picture1"
+        android:adjustViewBounds="true"
+        android:visibility="visible"/>
+
+
+
+    <!--<TextView-->
+        <!--android:gravity="center"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:text="D"-->
+        <!--android:id="@+id/transparent_logo"-->
+        <!--android:textColor="@color/transparent12"-->
+        <!--android:textSize="200dp"-->
+        <!--android:textAlignment="center"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_below="@+id/relativeLayout"-->
+        <!--android:layout_above="@+id/linearLayout2" />-->
 
 </RelativeLayout>

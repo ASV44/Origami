@@ -21,7 +21,7 @@ public class GenericLoginActivity extends OrigamiActivity {
 
     private static final String TAG = "GenericLoginActivity";
 
-    private static final String GOOGLE_TOS_URL = "https://www.google.com/policies/terms/";
+
 
     //----------------------------------------------------------------------------------------------
 
@@ -40,36 +40,7 @@ public class GenericLoginActivity extends OrigamiActivity {
 
     //----------------------------------------------------------------------------------------------
 
-    @MainThread
-    @StyleRes
-    protected int getSelectedTheme() {
 
-        if (origamiThemeHelper.getRandomPickedTheme() != -1) {
-            return origamiThemeHelper.getRandomPickedTheme();
-        } else {
-            return R.style.amethist_theme;
-        }
-
-    }
-
-    @MainThread
-    @DrawableRes
-    protected int getSelectedLogo() {
-        return AuthUI.NO_LOGO;
-    }
-
-    @MainThread
-    protected String[] getSelectedProviders() {
-
-        ArrayList<String> selectedProviders = new ArrayList<>();
-        selectedProviders.add(AuthUI.EMAIL_PROVIDER);
-        return selectedProviders.toArray(new String[selectedProviders.size()]);
-    }
-
-    @MainThread
-    protected String getSelectedTosUrl() {
-        return GOOGLE_TOS_URL;
-    }
 
 
     //----------------------------------------------------------------------------------------------
@@ -90,12 +61,12 @@ public class GenericLoginActivity extends OrigamiActivity {
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
     }
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
     }
 }

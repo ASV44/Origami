@@ -17,12 +17,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.facebook.login.LoginManager;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.koshka.origami.R;
 import com.koshka.origami.activites.login.LoginActivity;
+import com.koshka.origami.activites.main.MainActivity;
 import com.koshka.origami.activites.profile.settings.about.AboutUsActivity;
 import com.koshka.origami.activites.profile.settings.about.FAQActivity;
 import com.koshka.origami.activites.profile.settings.about.LicencesActivity;
@@ -33,6 +35,7 @@ import com.koshka.origami.activites.profile.settings.account.DeleteAccountActivi
 import com.koshka.origami.activites.profile.settings.application.UISettingsActivity;
 import com.koshka.origami.activites.profile.settings.application.NotificationsActivity;
 import com.koshka.origami.fragments.GenericOrigamiFragment;
+import com.koshka.origami.utils.ui.theme.OrigamiThemeHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,6 +62,7 @@ public class UserProfileFragmentSettings extends GenericOrigamiFragment {
 
     //----------------------------------------------------------------------------------------------
 
+    private static final int RC_SIGN_IN = 100;
     private static final int UI_PREFS_REQUEST = 2;
     SweetAlertDialog dialog;
 
@@ -117,7 +121,11 @@ public class UserProfileFragmentSettings extends GenericOrigamiFragment {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            startActivity(LoginActivity.createIntent(getActivity()));
+                            //startActivity(LoginActivity.createIntent(getActivity()));
+                            startSignIn();
+                            mAuth.signOut();
+                            LoginManager.getInstance().logOut();
+                            MainActivity.activity.finish();
                             getActivity().finish();
                         } else {
                             showSnackbar(R.string.sign_out_failed);
@@ -219,6 +227,11 @@ public class UserProfileFragmentSettings extends GenericOrigamiFragment {
 
         }
 
+    }
+
+    public void startSignIn() {
+        Intent intent = MainActivity.createIntent(getContext());
+        startActivity(intent);
     }
 
 }
