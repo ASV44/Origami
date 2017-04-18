@@ -46,7 +46,7 @@
 
 
             <LinearLayout
-                android:id="@+id/linearLayout3"
+                android:id="@+id/profile_account_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
@@ -107,7 +107,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_below="@+id/linearLayout3"
+                android:layout_below="@+id/profile_account_layout"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/settings_layout_bg"
                 android:orientation="vertical">
@@ -343,7 +343,7 @@
                         android:layout_alignParentEnd="true"
                         android:textColor="@color/black"/>
                 </RelativeLayout>
-                </LinearLayout>
+            </LinearLayout>
 
 
         </RelativeLayout>

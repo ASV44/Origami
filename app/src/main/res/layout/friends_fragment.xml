@@ -158,6 +158,36 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/search_friend_layout"
+            android:visibility="gone">
+
+            <android.support.design.widget.TextInputLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/friends_search_input_layout"
+                style="@style/FirebaseUI.Text.TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="40dp"
+                android:paddingTop="16dp"
+                app:errorTextAppearance="@style/FirebaseUI.Text.ErrorText"
+                app:hintTextAppearance="@style/FirebaseUI.Text.HintText">
+
+                <EditText
+                    android:id="@+id/friends_search_edit_text"
+                    style="@style/FirebaseUI.EditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-.@"
+                    android:hint="Search in your friends"
+                    android:inputType="textEmailAddress"
+                    android:textColor="@color/white" />
+            </android.support.design.widget.TextInputLayout>
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
             android:id="@+id/add_friend_relative_layout"
             style="@style/FirebaseUI.WrapperStyle"
             android:layout_width="match_parent"
@@ -203,6 +233,14 @@
                     android:inputType="textEmailAddress"
                     android:textColor="@color/white" />
             </android.support.design.widget.TextInputLayout>
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id = "@+id/friends_suggestions"
+                android:layout_below="@+id/friends_text_input_layout">
+
+            </ListView>
 
             <RelativeLayout
                 android:layout_width="wrap_content"

@@ -1,8 +1,8 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="40dp"
+    android:layout_height="50dp"
     android:padding="6dip"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:background="@drawable/clouds_gradient"
     android:layout_marginTop="1dp"
     android:layout_marginLeft="10dp"
@@ -15,6 +15,16 @@
         android:src="@drawable/origami_logo" />
 
     <TextView
+        android:id="@+id/firstLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/icon"
+        android:gravity="center_vertical"
+        android:text="Example application"
+        android:textSize="16sp"
+        android:textColor="@color/black"/>
+
+    <TextView
         android:id="@+id/secondLine"
         android:layout_width="wrap_content"
         android:layout_height="26dip"
@@ -22,18 +32,9 @@
         android:ellipsize="marquee"
         android:text="Description"
         android:textSize="12sp"
-        android:textColor="@color/black"/>
+        android:textColor="@color/black"
+        android:layout_below="@+id/firstLine"
+        />
 
-    <TextView
-        android:id="@+id/firstLine"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/secondLine"
-        android:layout_toRightOf="@id/icon"
-        android:gravity="center_vertical"
-        android:text="Example application"
-        android:textSize="16sp"
-        android:textColor="@color/black"/>
-
-</LinearLayout>
+</RelativeLayout>
 

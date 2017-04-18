@@ -42,6 +42,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.firebase.ui.auth.R;
 import com.firebase.ui.auth.ui.ActivityHelper;
 import com.firebase.ui.auth.ui.AppCompatBase;
@@ -64,6 +65,7 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.koshka.origami.model.Friend;
@@ -93,6 +95,8 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
     private String firstName;
     private String lastName;
     private String auth;
+    private boolean userNameExist = true;
+    private boolean logOut = true;
 
     private TextInputLayout mEmailInputLayout;
 
@@ -106,6 +110,7 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
         mEmailEditText = (EditText) findViewById(R.id.email);
 
         auth = getIntent().getStringExtra("auth");
+        mMeRef = FirebaseDatabase.getInstance().getReference("users");
 
         TypedValue visibleIcon = new TypedValue();
         TypedValue slightlyVisibleIcon = new TypedValue();
@@ -142,6 +147,7 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
             emailValid = Patterns.EMAIL_ADDRESS.matcher(email).matches();
             if (emailValid) {
                 mEmailEditText.setText(email);
+                if(auth.equals("fb")) {  mEmailEditText.setEnabled(false); }
                 /*mEmailEditText.setEnabled(false);*/
             } else {
                 mNameEditText.setText(email);
@@ -223,6 +229,24 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
         }
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(logOut) {
+            FirebaseAuth.getInstance().signOut();
+            LoginManager.getInstance().logOut();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(logOut) {
+            FirebaseAuth.getInstance().signOut();
+            LoginManager.getInstance().logOut();
+        }
+    }
+
     private void registerUser(final String email, final String username, final String password) {
         final FirebaseAuth firebaseAuth = mActivityHelper.getFirebaseAuth();
 
@@ -233,6 +257,7 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
         Query mUsernameQuery = mUsernameRef.orderByChild("username").equalTo(lowerCaseUserName);
         final Resources res = getResources();
         final Uri photoUri = Uri.parse(res.getString(R.string.default_photo_url));
+        logOut = false;
         mUsernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -380,6 +405,7 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
     @Override
     public void onClick(View view) {
         hideKeyboard(this);
+        userNameExist = true;
         if (view.getId() == R.id.button_create) {
             String email2 = mEmailEditText.getText().toString();
             String password2 = mPasswordEditText.getText().toString();
@@ -403,8 +429,7 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
             }
 
             if(auth.equals("fb")) {
-                actionBarHelper.showIndicatorHideTitle();
-                registerUser_FB(username,password);
+                checkUserNameAvailabilityAndRegister(username,password);
             }
         }
     }
@@ -430,6 +455,7 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
         final Resources res = getResources();
         final Uri photoUri = Uri.parse(res.getString(R.string.default_photo_url));
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        logOut = false;
         Log.d("Register_FB: USER  ","" + user);
         if(user != null) {
             Log.d("Register_FB:USER_EMAIL ", "" + user.getEmail());
@@ -465,5 +491,37 @@ public class RegisterEmailActivity extends AppCompatBase implements View.OnClick
             view = new View(activity);
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public void checkUserNameAvailabilityAndRegister(final String userName,final String password) {
+        //final boolean[] userNameExist = new boolean[1];
+        //userNameExist[0] = true;
+        Log.d("Register_username",userName);
+        mMeRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot user: dataSnapshot.getChildren()) {
+//                    Log.d("FacebookHelper","username:" + user.child("username").getValue().toString());
+//                    Log.d("FacebookHelper","authDB:" + user.child("auth").getValue().toString());
+                    if(user.child("username").exists() && user.child("username").getValue()
+                            .toString().equals(userName)) {
+                        TextInputLayout username_input_layout = (TextInputLayout) findViewById(R.id.name_layout);
+                        username_input_layout.setError("Username Already Taken");
+                        userNameExist = false;
+                        break;
+                    }
+
+                }
+                if(userNameExist) {
+                    actionBarHelper.showIndicatorHideTitle();
+                    registerUser_FB(userName, password);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e(TAG, "FacebookHelper:onCancelled", databaseError.toException());
+            }
+        });
     }
 }

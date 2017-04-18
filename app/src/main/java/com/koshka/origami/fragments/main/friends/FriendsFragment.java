@@ -4,29 +4,48 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.koshka.origami.R;
 import com.koshka.origami.fragments.main.friends.groups.Group;
 import com.koshka.origami.fragments.main.friends.groups.GroupsRecycleViewAdapter;
 import com.koshka.origami.helpers.fragment.FriendsFragmentHelper;
 import com.koshka.origami.utils.KeyboardUtil;
 import com.koshka.origami.utils.TypefaceUtil;
+import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
+import java.lang.ref.Reference;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -55,6 +74,9 @@ public class FriendsFragment extends Fragment {
     @BindView(R.id.invite_friend_relative_layout)
     RelativeLayout inviteFriendLayout;
 
+    @BindView(R.id.search_friend_layout)
+    RelativeLayout searchFriendLayout;
+
     @BindView(R.id.add_friend_relative_layout)
     RelativeLayout addFriendLayout;
 
@@ -71,6 +93,9 @@ public class FriendsFragment extends Fragment {
 
     @BindView(R.id.invite_friend_button)
     TextView inviteFriendButton;
+
+    @BindView(R.id.friends_search_edit_text)
+    EditText searchFriendEditText;
 
     @BindView(R.id.friends_email_nick_edit_text)
     EditText nicknameEditText;
@@ -119,6 +144,8 @@ public class FriendsFragment extends Fragment {
     @BindView(R.id.my_groups_button)
     TextView myGroupsSmallButton;
 
+    ViewPager mPager;
+
 
     private int previousState;
 
@@ -152,12 +179,26 @@ public class FriendsFragment extends Fragment {
 
     //------------------------------------------------
 
+    private View view;
+
+    private ArrayList<String> friendsList;
+    private ArrayList<String> friendsSuggestionsList;
+    private ArrayAdapter<String> friendsSearchAdapter;
+    private DatabaseReference mDatabase;
+    private String UserIdNewFriend;
+    private ArrayList<String> localSearchFriendsList;
+    private FriendsRecyclerViewAdapter localSearchAdapter = null;
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.friends_fragment, container, false);
 
         friendsFragmentHelper = new FriendsFragmentHelper(getActivity());
+        mPager = (ViewPager) getActivity().findViewById(R.id.main_view_pager);
+        this.view = view;
+
         return view;
     }
 
@@ -167,9 +208,24 @@ public class FriendsFragment extends Fragment {
         ButterKnife.bind(this, view);
         mAuth = FirebaseAuth.getInstance();
 
+        friendsList = new ArrayList<>();
+        //mDatabase = FirebaseDatabase.getInstance().getReference("users");
+
         setUpUI();
 
-
+        searchFriendEditText.setFocusableInTouchMode(true);
+        searchFriendEditText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if( keyCode == KeyEvent.KEYCODE_BACK )
+                {
+                    hideKeyboard();
+                    returnSlidingPanelToInitialState();
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
 
@@ -200,7 +256,17 @@ public class FriendsFragment extends Fragment {
     @OnClick(R.id.button_add_friend)
     public void buttonAddFriend() {
         hideKeyboard();
-
+        if (friendsSuggestionsList.size() != 0) {
+            String friend = friendsSuggestionsList.get(0);
+            if (!friendsList.contains(friend)) {
+                friendsList.add(0, friend);
+                mFriendsAdapter.notifyDataSetChanged();
+                nicknameEditText.setText("");
+                friendsSuggestionsList.clear();
+                friendsSearchAdapter.notifyDataSetChanged();
+                slidingPaneLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+            }
+        }
     }
 
     //---------------------------------------------------------------------------------------------
@@ -306,13 +372,16 @@ public class FriendsFragment extends Fragment {
 
         slidingPaneLayout.addPanelSlideListener(mainPanelSlideListener);
         setTouchListenersForPanel();
+        setUpFriendsSearch();
+        setUpLocalSearch();
+        getUserFriends();
     }
 
     private void attachRecycleViews() {
         // use a linear layout manager
         mFriendsLayoutManager = new LinearLayoutManager(getActivity());
         friendsRecycleView.setLayoutManager(mFriendsLayoutManager);
-        mFriendsAdapter = new FriendsRecyclerViewAdapter(getDummyArrayList());
+        mFriendsAdapter = new FriendsRecyclerViewAdapter(mPager,friendsList);
         friendsRecycleView.setAdapter(mFriendsAdapter);
 
         mGroupsLayoutManager = new GridLayoutManager(getContext(), 3);
@@ -324,8 +393,8 @@ public class FriendsFragment extends Fragment {
     }
 
     private void setTypefaces() {
-        final Typeface bottomBarIcons = TypefaceUtil.getTypeFace(getContext(),ICONS_FONT);
-        final Typeface socialFont = TypefaceUtil.getTypeFace(getContext(),SOCIAL_ICONS_FONT);
+        final Typeface bottomBarIcons = TypefaceUtil.getTypeFace(getContext(), ICONS_FONT);
+        final Typeface socialFont = TypefaceUtil.getTypeFace(getContext(), SOCIAL_ICONS_FONT);
 
         if (bottomBarIcons != null) {
             addFriendButton.setTypeface(bottomBarIcons);
@@ -355,9 +424,14 @@ public class FriendsFragment extends Fragment {
         findFriendButton.setGravity(Gravity.RIGHT);
 
         addFriendLayout.setVisibility(View.GONE);
+        searchFriendLayout.setVisibility(View.GONE);
         inviteFriendLayout.setVisibility(View.GONE);
         friendsSmallBarLayout.setVisibility(View.VISIBLE);
         KeyboardUtil.hide(getActivity());
+
+        if(friendsRecycleView.getAdapter() != mFriendsAdapter) {
+            friendsRecycleView.setAdapter(mFriendsAdapter);
+        }
 
     }
 
@@ -392,16 +466,18 @@ public class FriendsFragment extends Fragment {
     }
 
     //-----------------------------SEARCH LAYOUT SETUP----------------------------------------------
-    private void searchLayoutGO(){
+    private void searchLayoutGO() {
         panelNumber = 0;
         findFriendButton.setGravity(Gravity.RIGHT);
         slidingPaneLayout.setAnchorPoint(0.01f);
         addFriendButton.setVisibility(View.GONE);
         inviteFriendButton.setVisibility(View.GONE);
-
+        searchFriendLayout.setVisibility(View.VISIBLE);
+        searchFriendEditText.requestFocus();
     }
+
     //-----------------------------ADD FRIEND LAYOUT SETUP------------------------------------------
-    private void addFriendLayoutGO(){
+    private void addFriendLayoutGO() {
         panelNumber = 1;
         slidingPaneLayout.setAnchorPoint(1.0f);
         addFriendLayout.setVisibility(View.VISIBLE);
@@ -409,8 +485,9 @@ public class FriendsFragment extends Fragment {
         findFriendButton.setVisibility(View.GONE);
         nicknameEditText.requestFocus();
     }
+
     //-----------------------------INVITE FRIEND LAYOUT SETUP---------------------------------------
-    private void inviteFriendLayoutGO(){
+    private void inviteFriendLayoutGO() {
         panelNumber = 2;
         inviteFriendButton.setGravity(Gravity.CENTER_HORIZONTAL);
         slidingPaneLayout.setAnchorPoint(0.3f);
@@ -430,7 +507,6 @@ public class FriendsFragment extends Fragment {
     private void setUpEmailInvitationLayout() {
 
         slidingPaneLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
-
         inviteFriendEmailLayout.setVisibility(View.VISIBLE);
         inviteEmailEditText.requestFocus();
     }
@@ -464,9 +540,172 @@ public class FriendsFragment extends Fragment {
             list.add(i, new Group("Test group", getResources().getDrawable(R.drawable.origami_logo)));
         }
 
-        list.add(0,new Group("dkajskdjalsdjkasdjklasjdklasjdlkasdjlkasjdlkasdjafkjdfkljsdlkfjdlskfjldksfjlkdsfjlkdsjflkdsjflkdjslfkjsdlfkjdslkfjldksjflkdsjflkdsjflkdjsfkldjslfjdsklfjdslkfj",getResources().getDrawable(R.drawable.mapmarker) ));
+        list.add(0, new Group("dkajskdjalsdjkasdjklasjdklasjdlkasdjlkasjdlkasdjafkjdfkljsdlkfjdlskfjldksfjlkdsfjlkdsjflkdsjflkdjslfkjsdlfkjdslkfjldksjflkdsjflkdsjflkdjsfkldjslfjdsklfjdslkfj", getResources().getDrawable(R.drawable.mapmarker)));
         return list;
 
+    }
+
+    public void setUpFriendsSearch() {
+        ListView friendsSearchSuggestion = (ListView) view.findViewById(R.id.friends_suggestions);
+        friendsSuggestionsList = new ArrayList<>();
+        friendsSearchAdapter = new ArrayAdapter<String>(getContext(),
+                R.layout.search_friends_suggestion_list_item, friendsSuggestionsList);
+        friendsSearchSuggestion.setAdapter(friendsSearchAdapter);
+        nicknameEditText.addTextChangedListener(getNewTextWatcher());
+        friendsSearchSuggestion.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                TextView textView = (TextView) view;
+                String friend = textView.getText().toString();
+                if (!friendsList.contains(friend)) {
+                    friendsList.add(0, friend);
+                    addFriendToDB(friend);
+                    mFriendsAdapter.notifyDataSetChanged();
+                    nicknameEditText.setText("");
+                    friendsSuggestionsList.clear();
+                    friendsSearchAdapter.notifyDataSetChanged();
+                    slidingPaneLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+                }
+            }
+        });
+    }
+
+    public TextWatcher getNewTextWatcher() {
+        return new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.d("Search_Friend_onChanged","" + s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                final String request = s.toString();
+                Log.d("Search_Friend", request);
+                mDatabase = FirebaseDatabase.getInstance().getReference("users");
+                friendsSuggestionsList.clear();
+                if (!request.equals("")) {
+                    mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot user : dataSnapshot.getChildren()) {
+                                if (user.child("email").exists() && user.child("username").exists()
+                                        && (user.child("email").getValue().toString().contains(request)
+                                        || user.child("username").getValue().toString().contains(request))) {
+                                    friendsSuggestionsList.add(user.child("username").getValue().toString()
+                                            + "\n" + user.child("email").getValue().toString());
+                                }
+                            }
+                            friendsSearchAdapter.notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                } else {
+                    friendsSearchAdapter.notifyDataSetChanged();
+                }
+            }
+        };
+    }
+
+    public void addFriendToDB(String friend) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        Map<String, String> friendProfile = new HashMap<String, String>();
+        friendProfile.put("username", friend.substring(0, friend.indexOf("\n")));
+        friendProfile.put("email", friend.substring(friend.indexOf("\n") + 1));
+        DatabaseReference dataBase = FirebaseDatabase.getInstance().getReference("friends");
+        String key = dataBase.child(currentUser.getUid()).push().getKey();
+        dataBase.child(currentUser.getUid()).child(key).setValue(friendProfile);
+        addToFriendDB(friend.substring(0, friend.indexOf("\n")), currentUser.getDisplayName(), currentUser.getEmail());
+    }
+
+    public void getUserFriends() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference dataBase = FirebaseDatabase.getInstance().getReference("friends/" + currentUser.getUid());
+        dataBase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                friendsList.clear();
+                for (DataSnapshot friend : dataSnapshot.getChildren()) {
+                    String friendData = friend.child("username").getValue().toString() + "\n"
+                            + friend.child("email").getValue().toString();
+                    friendsList.add(0, friendData);
+                }
+                mFriendsAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+    private  void addToFriendDB(final String username, final String self_username, final String self_email) {
+        mDatabase = FirebaseDatabase.getInstance().getReference("users");
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot user : dataSnapshot.getChildren()) {
+                    if (user.child("username").exists()
+                            && user.child("username").getValue().toString().equals(username)) {
+                        //UserIdNewFriend =
+                        //Log.d("UserIdNewFriend",UserIdNewFriend);
+                        Map<String, String> friendProfile = new HashMap<String, String>();
+                        friendProfile.put("username", self_username);
+                        friendProfile.put("email", self_email);
+                        DatabaseReference dataBase = FirebaseDatabase.getInstance().getReference("friends");
+                        String key = dataBase.child(user.getKey()).push().getKey();
+                        dataBase.child(user.getKey()).child(key).setValue(friendProfile);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void setUpLocalSearch() {
+        searchFriendEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String request = s.toString();
+                if(localSearchFriendsList == null) {
+                    localSearchFriendsList = new ArrayList<String>();
+                }
+                if(localSearchAdapter == null) {
+                    localSearchAdapter = new FriendsRecyclerViewAdapter(mPager,localSearchFriendsList);
+                }
+                localSearchFriendsList.clear();
+                for(String friend : friendsList) {
+                    if(friend.contains(request)) {
+                        localSearchFriendsList.add(0,friend);
+                    }
+                }
+                if(friendsRecycleView.getAdapter() != localSearchAdapter) {
+                    friendsRecycleView.setAdapter(localSearchAdapter);
+                }
+                localSearchAdapter.notifyDataSetChanged();
+            }
+        });
     }
 }
 
