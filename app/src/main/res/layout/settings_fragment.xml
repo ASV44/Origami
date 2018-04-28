@@ -79,7 +79,7 @@
 
 
                 <TextView
-                    style="@style/FirebaseUI.Text.Settings"
+                    style="@style/FirebaseUI"
                     android:id="@+id/change_password_textview"
                     android:text="@string/change_password"/>
 
@@ -95,7 +95,7 @@
 
                 <TextView
                     android:id="@+id/change_email_textview"
-                    style="@style/FirebaseUI.Text.Settings"
+                    style="@style/FirebaseUI"
                     android:text="@string/change_email" />
 
 
@@ -137,7 +137,7 @@
 
                 <TextView
                     android:id="@+id/notifications_settings_text_button"
-                    style="@style/FirebaseUI.Text.Settings"
+                    style="@style/FirebaseUI"
                     android:text="Notifications" />
 
                 <ImageView
@@ -151,7 +151,7 @@
 
                 <TextView
                     android:id="@+id/blocked_users_text_button"
-                    style="@style/FirebaseUI.Text.Settings"
+                    style="@style/FirebaseUI"
                     android:text="Blocked users" />
 
                 <ImageView
@@ -166,7 +166,7 @@
 
                 <TextView
                     android:id="@+id/connect_with_facebook_text_button"
-                    style="@style/FirebaseUI.Text.Settings"
+                    style="@style/FirebaseUI"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Connect with facebook"
@@ -184,7 +184,7 @@
 
                 <TextView
                     android:id="@+id/design_settings_text_button"
-                    style="@style/FirebaseUI.Text.Settings"
+                    style="@style/FirebaseUI"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Design" />
@@ -228,7 +228,7 @@
 
                 <TextView
                     android:id="@+id/about_us_text_button"
-                    style="@style/FirebaseUI.Text.Settings"
+                    style="@style/FirebaseUI"
                     android:text="About us" />
 
                 <ImageView
@@ -243,7 +243,7 @@
 
                 <TextView
                     android:id="@+id/faq_text_button"
-                    style="@style/FirebaseUI.Text.Settings"
+                    style="@style/FirebaseUI"
                     android:text="FAQ" />
 
                 <ImageView
@@ -257,7 +257,7 @@
 
                 <TextView
                     android:id="@+id/licences_text_button"
-                    style="@style/FirebaseUI.Text.Settings"
+                    style="@style/FirebaseUI"
                     android:text="Licences" />
 
                 <ImageView
@@ -272,7 +272,7 @@
 
                 <TextView
                     android:id="@+id/tos_text_button"
-                    style="@style/FirebaseUI.Text.Settings"
+                    style="@style/FirebaseUI"
                     android:text="Terms of services" />
 
 

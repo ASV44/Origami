@@ -21,6 +21,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
+import android.util.Log;
 
 import com.firebase.ui.auth.provider.IDPProviderParcel;
 import com.firebase.ui.auth.ui.FlowParameters;
@@ -327,6 +328,7 @@ public class AuthUI {
          * a default theme will be used.
          */
         public SignInIntentBuilder setTheme(@StyleRes int theme) {
+            Log.e("ThemeForSetUp", "" + theme);
             Preconditions.checkValidStyle(
                     mApp.getApplicationContext(),
                     theme,

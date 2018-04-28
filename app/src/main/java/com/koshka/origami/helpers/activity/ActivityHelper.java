@@ -30,7 +30,7 @@ public class ActivityHelper {
     public ActivityHelper(Activity mActivity) { this.mActivity = mActivity; }
 
     public void configureTheme() {
-        if(mActivity.getIntent().getExtras() != null) {
+        if(mActivity.getIntent().getExtras().getInt("theme") != 0) {
             //SharedPrefs.changeTheme(mActivity,mActivity.getIntent().getExtras().getInt("theme"));
             themeHelper = new OrigamiThemeHelper(mActivity,
                     mActivity.getIntent().getExtras().getInt("theme"));

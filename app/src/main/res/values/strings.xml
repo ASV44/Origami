@@ -101,6 +101,8 @@
     <string name="faq">FAQ</string>
     <string name="about_us">About us</string>
     <string name="cancel">Cancel</string>
+    <string name="button_next">Next</string>
+    <string name="change_email_hint">Change Email</string>
 
 
     <!-- Firebase references -->

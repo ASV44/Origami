@@ -2,14 +2,11 @@ package com.koshka.origami.activites.login;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -25,15 +22,12 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.koshka.origami.R;
 import com.koshka.origami.activites.main.MainActivity;
 import com.koshka.origami.helpers.activity.LoginActivityHelper;
-import com.koshka.origami.helpers.fragment.FacebookLogInHelper;
 import com.koshka.origami.utils.ui.theme.OrigamiThemeHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import me.relex.circleindicator.CircleIndicator;
 
 /**
