@@ -4,23 +4,35 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.facebook.login.LoginManager;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.koshka.origami.R;
 import com.koshka.origami.activites.login.LoginActivity;
+import com.koshka.origami.activites.main.MainActivity;
 import com.koshka.origami.activites.profile.settings.about.AboutUsActivity;
 import com.koshka.origami.activites.profile.settings.about.FAQActivity;
 import com.koshka.origami.activites.profile.settings.about.LicencesActivity;
@@ -31,6 +43,7 @@ import com.koshka.origami.activites.profile.settings.account.DeleteAccountActivi
 import com.koshka.origami.activites.profile.settings.application.UISettingsActivity;
 import com.koshka.origami.activites.profile.settings.application.NotificationsActivity;
 import com.koshka.origami.fragments.GenericOrigamiFragment;
+import com.koshka.origami.utils.ui.theme.OrigamiThemeHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -47,6 +60,8 @@ public class UserProfileFragmentSettings extends GenericOrigamiFragment {
 
     private static final String TAG = "SettingsFragment";
 
+    private String auth = null;
+
     //----------------------------------------------------------------------------------------------
 
     @BindView(R.id.settings_toolbar)
@@ -57,6 +72,7 @@ public class UserProfileFragmentSettings extends GenericOrigamiFragment {
 
     //----------------------------------------------------------------------------------------------
 
+    private static final int RC_SIGN_IN = 100;
     private static final int UI_PREFS_REQUEST = 2;
     SweetAlertDialog dialog;
 
@@ -71,6 +87,24 @@ public class UserProfileFragmentSettings extends GenericOrigamiFragment {
 
         mAuth = FirebaseAuth.getInstance();
 
+        final LinearLayout account = (LinearLayout) view.findViewById(R.id.profile_account_layout);
+        DatabaseReference user = FirebaseDatabase.getInstance()
+                .getReference("users/" + mAuth.getCurrentUser().getUid());
+        user.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                auth = dataSnapshot.child("auth").getValue().toString();
+                Log.d("Profile","" + auth.toString());
+                if(auth != null && auth.equals("fb")) {
+                    account.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         return view;
     }
 
@@ -103,6 +137,8 @@ public class UserProfileFragmentSettings extends GenericOrigamiFragment {
                 .create();
 
         dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.parseColor("#26A69A"));
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.parseColor("#26A69A"));
 
     }
 
@@ -113,7 +149,11 @@ public class UserProfileFragmentSettings extends GenericOrigamiFragment {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            startActivity(LoginActivity.createIntent(getActivity()));
+                            //startActivity(LoginActivity.createIntent(getActivity()));
+                            startSignIn();
+                            mAuth.signOut();
+                            LoginManager.getInstance().logOut();
+                            MainActivity.activity.finish();
                             getActivity().finish();
                         } else {
                             showSnackbar(R.string.sign_out_failed);
@@ -215,6 +255,11 @@ public class UserProfileFragmentSettings extends GenericOrigamiFragment {
 
         }
 
+    }
+
+    public void startSignIn() {
+        Intent intent = MainActivity.createIntent(getContext());
+        startActivity(intent);
     }
 
 }

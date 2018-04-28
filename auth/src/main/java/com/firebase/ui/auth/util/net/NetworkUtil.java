@@ -1,5 +1,4 @@
-
-package com.koshka.origami.utils.net;
+package com.firebase.ui.auth.util.net;
 
 
 import android.app.Activity;
@@ -52,3 +51,4 @@ public class NetworkUtil {
     }
 
 }
+

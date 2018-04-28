@@ -21,10 +21,12 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
+import android.util.Log;
 
 import com.firebase.ui.auth.provider.IDPProviderParcel;
 import com.firebase.ui.auth.ui.FlowParameters;
 import com.firebase.ui.auth.ui.ChooseAccountActivity;
+import com.firebase.ui.auth.ui.email.SignInActivity;
 import com.firebase.ui.auth.ui.idp.AuthMethodPickerActivity;
 import com.firebase.ui.auth.util.CredentialsApiHelper;
 import com.firebase.ui.auth.util.Preconditions;
@@ -326,6 +328,7 @@ public class AuthUI {
          * a default theme will be used.
          */
         public SignInIntentBuilder setTheme(@StyleRes int theme) {
+            Log.e("ThemeForSetUp", "" + theme);
             Preconditions.checkValidStyle(
                     mApp.getApplicationContext(),
                     theme,
@@ -377,14 +380,22 @@ public class AuthUI {
             Context context = mApp.getApplicationContext();
             List<IDPProviderParcel> providerInfo =
                     ProviderHelper.getProviderParcels(context, mProviders);
-            return ChooseAccountActivity.createIntent(
-                    context,
+//            return ChooseAccountActivity.createIntent(
+//                    context,
+//                    new FlowParameters(
+//                            mApp.getName(),
+//                            providerInfo,
+//                            mTheme,
+//                            mLogo,
+//                            mTosUrl));
+            return SignInActivity.createIntent(context,
                     new FlowParameters(
                             mApp.getName(),
                             providerInfo,
                             mTheme,
                             mLogo,
-                            mTosUrl));
+                            mTosUrl
+                    ), null);
         }
     }
 }

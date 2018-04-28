@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.koshka.origami.R;
 import com.koshka.origami.activites.OrigamiActivity;
 import com.koshka.origami.activites.profile.settings.account.validators.CurrentPasswordFieldValidator;
@@ -109,7 +111,7 @@ public class ChangePasswordActivity extends OrigamiActivity {
         passwordHelper.reauthenticate(currentPassword);
 
 
-  /*      if (isCurrentPasswordValid) {
+        if (isCurrentPasswordValid) {
             AuthCredential credential = EmailAuthProvider.getCredential(currentUser.getEmail(), currentPassword);
 
             currentUser.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -128,7 +130,7 @@ public class ChangePasswordActivity extends OrigamiActivity {
                     }
                 }
             });
-        }*/
+        }
     }
 
     @OnClick(R.id.button_change_password)

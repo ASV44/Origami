@@ -38,7 +38,7 @@
         com.google.android.gms.samples.appinvite.DEEP_LINK_ACTION
     </string>
 
-    <string name="facebook_app_id">334820646862307</string>
+    <string name="facebook_app_id">1392797817408129</string>
 
     <string name="invite">Send invitations!</string>
     <string name="welcome">Invites</string>
@@ -79,6 +79,7 @@
     <!--ERROR MESSAGES-->
     <string name="no_internet_connection">Sorry, but you are not connected to internet!</string>
     <string name="no_place">You didn\'t pick a place</string>
+    <string name="authentication_failed">Authentication Failed</string>
 
     <!-- ACTION BAR -->
     <string name="action_profile">Profile</string>
@@ -100,6 +101,8 @@
     <string name="faq">FAQ</string>
     <string name="about_us">About us</string>
     <string name="cancel">Cancel</string>
+    <string name="button_next">Next</string>
+    <string name="change_email_hint">Change Email</string>
 
 
     <!-- Firebase references -->

@@ -78,7 +78,7 @@
     <string name="username_no_character_start">The username must start with a character</string>
     <string name="username_no_character_end">The username must end with a character or number</string>
     <string name="empty_nickname">You can\'t leave nickname empty</string>
-    <string name="button_text_register">Register</string>
+    <string name="button_text_register">Not a member yet? Sign Up</string>
 
     <string name="new_password_hint">New password</string>
     <string name="new_password_confirm_hint">Confirm password</string>
@@ -86,4 +86,8 @@
     <string name="login_quote1">”Who in the world am I? Ah, thats the great puzzle.”</string>
     <string name="login_quote2">”Imagination is the only weapon in the war against reality.”</string>
     <string name="login_quote3">”Im not strange, weird, off, nor crazy, my reality is just different from yours.”</string>
+    <string name="input_name">Please insert your name so your friends can find you easier</string>
+
+    <string name="no_internet_connection">Sorry, but you are not connected to internet!</string>
+    <string name="authentication_failed">Authentication Failed</string>
 </resources>

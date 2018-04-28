@@ -27,11 +27,11 @@
         <item name="android:windowActionBarOverlay">true</item>
 
     </style>
-    
+
     <style name="DayPurpleTheme" parent="PurpleTheme">
-        
+
     </style>
-    
+
     <style name="NighPurpleTheme" parent="PurpleTheme">
 
     </style>

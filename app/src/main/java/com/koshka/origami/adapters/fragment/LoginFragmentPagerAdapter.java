@@ -3,6 +3,7 @@ package com.koshka.origami.adapters.fragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
+import com.facebook.CallbackManager;
 import com.koshka.origami.fragments.login.FirstPageFragment1;
 import com.koshka.origami.fragments.login.FirstPageFragment2;
 import com.koshka.origami.fragments.login.FirstPageFragment3;
@@ -31,7 +32,8 @@ public class LoginFragmentPagerAdapter extends GenericFragmentPagerAdapter {
     }
 
     @Override
-    protected Fragment[] getmFragments() {
+    public Fragment[] getmFragments() {
         return mFragments;
     }
+
 }

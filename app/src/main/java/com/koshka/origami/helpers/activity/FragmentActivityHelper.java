@@ -1,10 +1,14 @@
 package com.koshka.origami.helpers.activity;
 
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 
 import com.koshka.origami.R;
+import com.koshka.origami.adapters.fragment.LoginFragmentPagerAdapter;
 import com.koshka.origami.factory.FragmentPagerAdapterFactory;
 import com.koshka.origami.utils.ui.ParallaxPagerTransformer;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
@@ -16,6 +20,8 @@ import com.ogaclejapan.smarttablayout.SmartTabLayout;
 public class FragmentActivityHelper {
 
     private FragmentActivity fragmentActivity;
+
+    private PagerAdapter pagerAdapter;
 
     public FragmentActivityHelper(FragmentActivity fragmentActivity) {
         this.fragmentActivity = fragmentActivity;
@@ -29,8 +35,8 @@ public class FragmentActivityHelper {
 
     //Just a faster way to set view pager and smart tab layout
     public void fragmentSetup(ViewPager viewPager, String adapter, int currentFragment, SmartTabLayout smartTabLayout) {
-
-        viewPager.setAdapter(buildPagerAdapter(adapter));
+        pagerAdapter = (buildPagerAdapter(adapter));
+        viewPager.setAdapter(pagerAdapter);
         viewPager.setCurrentItem(currentFragment);
 
 
@@ -40,7 +46,7 @@ public class FragmentActivityHelper {
         if (smartTabLayout != null) {
             smartTabLayout.setViewPager(viewPager);
         }
-
-
     }
+
+    public Fragment[] getmFragments() { return ((LoginFragmentPagerAdapter) this.pagerAdapter).getmFragments(); }
 }

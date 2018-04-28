@@ -16,6 +16,9 @@ public class User {
     private String photoUrl;
     private String backgroundDrawable;
     private boolean firstTimeIn;
+    private String firstName;
+    private String lastName;
+    private String auth;
 
     public User() {
     }
@@ -24,9 +27,12 @@ public class User {
         this.email = email;
     }
 
-    public User(String email, String username) {
+    public User(String email, String username, String firstName, String lastName, String auth) {
         this.email = email;
         this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.auth = auth;
     }
 
 
@@ -37,13 +43,13 @@ public class User {
     }
 
 
-    public User(String uid, String email, String username, String displayName, String photoUrl) {
-        this.uid = uid;
-        this.email = email;
-        this.username = username;
-        this.displayName = displayName;
-        this.photoUrl = photoUrl;
-    }
+//    public User(String uid, String email, String username, String displayName, String photoUrl) {
+//        this.uid = uid;
+//        this.email = email;
+//        this.username = username;
+//        this.displayName = displayName;
+//        this.photoUrl = photoUrl;
+//    }
 
     public String getUsername() {
         return username;
@@ -101,4 +107,16 @@ public class User {
     public void setFirstTimeIn(boolean firstTimeIn) {
         this.firstTimeIn = firstTimeIn;
     }
+
+    public String getFirstName() { return this.firstName; }
+
+    public String getLastName() { return this.lastName; }
+
+    public String getAuth() { return this.auth; }
+
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+
+    public void setLastName(String lastName) { this.lastName = lastName; }
+
+    public void setAuth(String auth) { this.auth = auth; }
 }

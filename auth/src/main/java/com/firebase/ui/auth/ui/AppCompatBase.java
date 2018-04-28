@@ -14,21 +14,49 @@
 
 package com.firebase.ui.auth.ui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.MainThread;
+import android.support.annotation.StringRes;
+import android.support.design.widget.Snackbar;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.firebase.ui.auth.util.net.NetworkUtil;
+
+import butterknife.BindView;
 
 public class AppCompatBase extends android.support.v7.app.AppCompatActivity {
     protected ActivityHelper mActivityHelper;
+
+    protected View mRootView;
 
     @Override
     protected void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
         mActivityHelper = new ActivityHelper(this, getIntent());
         mActivityHelper.configureTheme();
+        mRootView = (this.findViewById(android.R.id.content)).getRootView();
     }
 
     public void finish(int resultCode, Intent intent) {
         mActivityHelper.finish(resultCode, intent);
     }
 
+    @MainThread
+    protected void showSnackbar(@StringRes int errorMessageRes) {
+        Snackbar.make(mRootView, errorMessageRes, Snackbar.LENGTH_LONG).show();
+    }
+
+    @MainThread
+    protected void showShortSnackbar(@StringRes int errorMessageRes) {
+        Snackbar.make(mRootView, errorMessageRes, Snackbar.LENGTH_SHORT).show();
+    }
+
+    public boolean isNetworkOn(Activity activity) {
+        return NetworkUtil.isNetworkConnected(activity);
+    }
+
+    public ActivityHelper getmActivityHelper() { return this.mActivityHelper; }
 }

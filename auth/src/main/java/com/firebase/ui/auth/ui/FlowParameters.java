@@ -13,6 +13,7 @@
  */
 package com.firebase.ui.auth.ui;
 
+import android.content.Intent;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.DrawableRes;

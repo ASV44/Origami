@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.koshka.origami.R;
+import com.koshka.origami.activites.main.MainActivity;
 import com.koshka.origami.activites.main.OrigamiMapActivity;
 import com.koshka.origami.activites.profile.UserProfileActivity;
 import com.koshka.origami.adapters.fragment.FragmentAdapters;
@@ -60,9 +61,11 @@ public class MainActivityHelper {
     }
 
     public void onOptionsItemSelected(MenuItem item) {
+        MainActivity mainActivity = (MainActivity) activity;
         switch (item.getItemId()) {
             case R.id.action_profile:
-                activity.startActivity(new Intent(activity, UserProfileActivity.class));
+                activity.startActivity(new Intent(activity, UserProfileActivity.class)
+                        .putExtra("theme",mainActivity.getActivityHelper().getThemeHelper().getSelectedTheme()));
                 break;
             case R.id.map_view:
                 activity.startActivity(new Intent(activity, OrigamiMapActivity.class));
