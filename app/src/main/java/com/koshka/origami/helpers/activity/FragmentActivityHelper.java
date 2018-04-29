@@ -49,4 +49,6 @@ public class FragmentActivityHelper {
     }
 
     public Fragment[] getmFragments() { return ((LoginFragmentPagerAdapter) this.pagerAdapter).getmFragments(); }
+
+    public PagerAdapter getPagerAdapter() {return pagerAdapter;}
 }

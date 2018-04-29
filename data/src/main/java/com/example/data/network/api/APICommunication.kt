@@ -20,16 +20,19 @@ import org.reactivestreams.Subscriber
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.Error
 
 class APICommunication(private val retrofitAPI: RetrofitAPI, private val requestExecutor: RequestExecutor) : APIService {
 
     companion object {
-        fun <T> execute(observable: Observable<T>) {
+        fun <T> execute(observable: Observable<T>, onSucces: Consumer<T>, onError: Consumer<Throwable>) {
             val subscription = observable
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({result -> Log.e("Succes", "" + result) },
-                            {error -> Log.e("Error", error.message)})
+                    .subscribe({result -> Log.e("Server_Request", "Success")
+                                          onSucces.accept(result)},
+                            {error -> Log.e("Server_Request", "Error " + error.message)
+                                      onError.accept(error)})
         }
 
         fun getInstance(context: Context, coockieCOnsumer: Consumer<String>?, cookieSupplier: Supplier<String>?): APICommunication {

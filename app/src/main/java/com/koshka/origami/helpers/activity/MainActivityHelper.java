@@ -73,4 +73,6 @@ public class MainActivityHelper {
 
         }
     }
+
+    public FragmentActivityHelper getActivityHelper() { return activityHelper; }
 }

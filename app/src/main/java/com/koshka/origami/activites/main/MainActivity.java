@@ -21,9 +21,13 @@ import com.example.data.network.util.AddCookiesInterceptor;
 import com.example.data.network.util.ReceivedCookiesInterceptor;
 import com.example.data.network.util.RequestExecutor;
 import com.facebook.FacebookSdk;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.koshka.origami.R;
 import com.koshka.origami.activites.OrigamiActivity;
 import com.koshka.origami.activites.login.LoginActivity;
+import com.koshka.origami.adapters.fragment.MainFragmentPagerAdapter;
+import com.koshka.origami.fragments.main.map.OrigamiMapFragment;
 import com.koshka.origami.helpers.activity.MainActivityHelper;
 import com.koshka.origami.utils.ui.theme.OrigamiThemeHelper;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
@@ -69,6 +73,8 @@ public class MainActivity extends OrigamiActivity {
 
     public static Activity activity;
 
+    private OrigamiMapFragment mapFragment;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -89,11 +95,12 @@ public class MainActivity extends OrigamiActivity {
         super.checkFirebase(this);
 
 
-//        Observable<ApiResponse<UserMe>> observable = api.login("EAAFK8OaO3FkBAFN4sNs7TNeU8nzRUVrVe6G1y4ZCwwAvV5OQUPVx15WZB6etHGvRnZAxRs4kGYLoW5DPBSchlH8yakuEnLDZA2RyuHwikZCZBPuOOhksJEOmzliVIFxAibtO93Wq27JdhYthbBFI0S3SUQoMFQhJIdurCELgB7nXAZCuXAKkg7PzB61ZCduCeZB0IOADjY9dUvAZDZD");
-//        APICommunication.Companion.execute(observable);
-//
-//        Observable<ApiResponse<List<Tag>>> tagObservable = api.getTags();
-//        APICommunication.Companion.execute(tagObservable);
+        APICommunication api = APICommunication.Companion.getInstance(this, null, this::getCookie);
+        Observable<ApiResponse<List<Tag>>> tagObservable = api.getTags();
+        APICommunication.Companion.execute(tagObservable, this::onTagsReceived, this::onTagsReceiveError);
+
+        MainFragmentPagerAdapter mainFragmentPagerAdapter = (MainFragmentPagerAdapter) mainActivityHelper.getActivityHelper().getPagerAdapter();
+        mapFragment = mainFragmentPagerAdapter.getMapFragment();
     }
 
     //----------------------------------------------------------------------------------------------
@@ -123,16 +130,22 @@ public class MainActivity extends OrigamiActivity {
         this.finish();
     }
 
-    public void saveCookie(String cookie) {
-        SharedPreferences preferences = getSharedPreferences("com.koshka.origami", Activity.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("Token", cookie);
-        editor.apply();
-    }
-
     public String getCookie() {
         SharedPreferences preferences = getSharedPreferences("com.koshka.origami", Activity.MODE_PRIVATE);
         return preferences.getString("Token", "");
+    }
+
+    public void onTagsReceived(ApiResponse<List<Tag>> tags) {
+        for(Tag tag: tags.getData()) {
+            Log.e("Tag", tag.getId() + tag.getDescription());
+            mapFragment.getMap().addMarker(new MarkerOptions()
+                    .position(new LatLng(tag.getLat(), tag.getLong()))
+                    .title(tag.getDescription()));
+        }
+    }
+
+    public void onTagsReceiveError(Throwable error) {
+        error.printStackTrace();
     }
 
 }

@@ -1,11 +1,13 @@
 package com.koshka.origami.fragments.main.origami;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.koshka.origami.R;
 import com.koshka.origami.helpers.fragment.OrigamiFragmentHelper;
@@ -23,6 +25,8 @@ public class OrigamiFragment extends Fragment {
 
     @BindView(R.id.origami_sliding_layout)
     SlidingUpPanelLayout slidingUpPanelLayout;
+    @BindView(R.id.origami_create_button)
+    TextView origamiText;
 
     private OrigamiFragmentHelper fragmentHelper;
 
@@ -40,7 +44,8 @@ public class OrigamiFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         fragmentHelper = new OrigamiFragmentHelper(getActivity(), slidingUpPanelLayout);
-
+        Typeface font = Typeface.createFromAsset(getActivity().getAssets(),"fonts/actonia.ttf");
+        origamiText.setTypeface(font);
 
     }
 

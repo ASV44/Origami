@@ -34,4 +34,8 @@ public class MainFragmentPagerAdapter extends GenericFragmentPagerAdapter {
     protected Fragment[] getmFragments() {
         return mFragments;
     }
+
+    public OrigamiMapFragment getMapFragment() {
+        return (OrigamiMapFragment) mFragments[0];
+    }
 }

@@ -220,6 +220,10 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
         mMap.setOnMarkerClickListener(this);
         setUpClusterer();
 
+        mMap.addMarker(new MarkerOptions()
+        .position(new LatLng(40, 43))
+                .title("My custom marker"));
+
     }
 
     @OnClick(R.id.map_settings_button)
@@ -569,5 +573,7 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
         // Don't receive any more updates from either sensor.
         mSensorManager.unregisterListener(this);
     }
+
+    public GoogleMap getMap() { return  mMap; }
 
 }
