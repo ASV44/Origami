@@ -14,6 +14,7 @@ import android.os.Environment
 import android.support.v4.app.FragmentActivity
 import android.support.v4.content.FileProvider
 import android.view.View
+import com.example.data.util.UploadUtil
 import kotlinx.android.synthetic.main.activity_spray_art.*
 import java.io.File
 import java.text.SimpleDateFormat
@@ -42,7 +43,6 @@ class SprayArt: AppCompatActivity() {
             Log.e("HelloAR", "Initialization Failed.")
         }
 
-        photosMap["${R.drawable.sausages}"] = "idback.jpg"
         glView = GLView(this, photosMap)
         preview.addView(glView, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
 
@@ -69,6 +69,8 @@ class SprayArt: AppCompatActivity() {
             photosMap[selectedGrafitti.toString()] = mCurrentPhotoPath
             reloadGlView()
             //save data to server here
+            UploadUtil.uploadToFirebase(this, selectedGrafitti.path)
+            UploadUtil.uploadToFirebase(this, mCurrentPhotoPath)
         }
     }
 
