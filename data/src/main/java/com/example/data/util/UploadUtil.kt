@@ -37,11 +37,6 @@ class UploadUtil {
             } catch (e: IOException) {
                 e.printStackTrace()
             }
-
-        }
-
-        fun uploadToFirebase(context: Context, uri: Uri) {
-            uploadToFirebase(context, File(uri.))
         }
     }
 }

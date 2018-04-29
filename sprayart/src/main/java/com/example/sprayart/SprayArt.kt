@@ -1,5 +1,6 @@
 package com.example.sprayart
 
+import android.content.Context
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -9,6 +10,8 @@ import android.view.WindowManager
 import cn.easyar.Engine
 import android.provider.MediaStore
 import android.content.Intent
+import android.database.Cursor
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Environment
 import android.support.v4.app.FragmentActivity
@@ -17,6 +20,9 @@ import android.view.View
 import com.example.data.util.UploadUtil
 import kotlinx.android.synthetic.main.activity_spray_art.*
 import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.net.URI
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -69,9 +75,34 @@ class SprayArt: AppCompatActivity() {
             photosMap[selectedGrafitti.toString()] = mCurrentPhotoPath
             reloadGlView()
             //save data to server here
-            UploadUtil.uploadToFirebase(this, selectedGrafitti.path)
-            UploadUtil.uploadToFirebase(this, mCurrentPhotoPath)
+            val file1 = generateFileFromURI(selectedGrafitti)
+            val file2 = File(mCurrentPhotoPath)
+            UploadUtil.uploadToFirebase(this, file1)
+            UploadUtil.uploadToFirebase(this, file2)
         }
+    }
+
+    private fun generateFileFromURI(uri: Uri): File {
+        val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
+        val file = createImageFile(false)
+        var out: FileOutputStream? = null
+        try {
+            out = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out) // bmp is your Bitmap instance
+            // PNG is a lossless format, the compression factor (100) is ignored
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            try {
+                if (out != null) {
+                    out.close()
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+
+        }
+        return file
     }
 
     override fun onPause() {
@@ -109,7 +140,7 @@ class SprayArt: AppCompatActivity() {
         preview.addView(glView)
     }
 
-    private fun createImageFile(): File {
+    private fun createImageFile(setPhotoPath : Boolean): File {
         // Create an image file name
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
         val imageFileName = "JPEG_" + timeStamp + "_"
@@ -121,14 +152,15 @@ class SprayArt: AppCompatActivity() {
         )
 
         // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = image.absolutePath
+        if(setPhotoPath)
+            mCurrentPhotoPath = image.absolutePath
         return image
     }
 
     private fun dispatchTakePictureIntent() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (takePictureIntent.resolveActivity(packageManager) != null) {
-            val photoFile : File = createImageFile()
+            val photoFile : File = createImageFile(true)
             val photoURI = FileProvider.getUriForFile(this@SprayArt, "com.koshka.origami.fileprovider", photoFile)
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
