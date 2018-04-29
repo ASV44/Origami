@@ -1,11 +1,15 @@
 package com.koshka.origami.activites.main;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -76,6 +80,9 @@ public class MainActivity extends OrigamiActivity {
     private OrigamiMapFragment mapFragment;
 
 
+    String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.CAMERA};
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +100,13 @@ public class MainActivity extends OrigamiActivity {
         mainActivityHelper.toolbarSetup(mToolbar);
 
         super.checkFirebase(this);
+
+        for(String permission: PERMISSIONS) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, PERMISSIONS, 1);
+                break;
+            }
+        }
 
 
         APICommunication api = APICommunication.Companion.getInstance(this, null, this::getCookie);

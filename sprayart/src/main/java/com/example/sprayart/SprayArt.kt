@@ -127,7 +127,7 @@ class SprayArt: AppCompatActivity() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (takePictureIntent.resolveActivity(packageManager) != null) {
             val photoFile : File = createImageFile()
-            val photoURI = FileProvider.getUriForFile(this@SprayArt, "com.example.sprayart.fileprovider", photoFile)
+            val photoURI = FileProvider.getUriForFile(this@SprayArt, "com.koshka.origami.fileprovider", photoFile)
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
         }
