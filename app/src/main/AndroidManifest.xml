@@ -137,8 +137,6 @@
         <activity
             android:name=".activites.profile.settings.application.NotificationsActivity"
             android:theme="@style/PurpleThemeNoActionBar" />
-
-
     </application>
 
 </manifest>

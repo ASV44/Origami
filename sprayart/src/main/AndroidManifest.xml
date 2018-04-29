@@ -1,0 +1,12 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.sprayart">
+
+    <application>
+        <activity
+        android:name="com.example.sprayart.SprayArt"
+        android:screenOrientation="landscape"
+        android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize"
+        android:theme="@style/AppTheme.NoActionBar"/>
+    </application>
+
+</manifest>
