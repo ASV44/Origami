@@ -38,6 +38,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.data.network.api.APICommunication;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
@@ -524,7 +525,9 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
     }
 
     public void handleFacebookAccessToken(AccessToken token) {
-        Log.d(TAG, "handleFacebookAccessToken:" + token);
+        Log.d(TAG, "handleFacebookAccessToken:" + token.getToken());
+        APICommunication api =  APICommunication.Companion.getInstance(this, null, null);
+        APICommunication.Companion.execute(api.login(token.getToken()));
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         Log.d("HandleFacebookAccess","Credential = " + credential);
         getProfileData(token);

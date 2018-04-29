@@ -2,6 +2,7 @@ package com.koshka.origami.activites.login;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
@@ -10,6 +11,11 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.data.network.api.APICommunication;
+import com.example.data.network.api.RetrofitAPI;
+import com.example.data.network.models.ApiResponse;
+import com.example.data.network.models.response.UserMe;
+import com.example.data.network.util.RequestExecutor;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
@@ -28,7 +34,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import butterknife.BindView;
+import io.reactivex.Observable;
 import me.relex.circleindicator.CircleIndicator;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by imuntean on 7/19/16.
@@ -122,7 +132,7 @@ public class LoginActivity extends GenericLoginActivity{
     //----------------------------------------------------------------------------------------------
 
     public void handleFacebookAccessToken(AccessToken token) {
-        Log.d(TAG, "handleFacebookAccessToken:" + token);
+        Log.d(TAG, "handleFacebookAccessToken:" + token.getToken());
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         Log.d("HandleFacebookAccess","Credential = " + credential);
         getProfileData(token);

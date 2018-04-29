@@ -88,27 +88,12 @@ public class MainActivity extends OrigamiActivity {
 
         super.checkFirebase(this);
 
-        OkHttpClient okHttpClient = new OkHttpClient().newBuilder().addInterceptor(new AddCookiesInterceptor(this::getCookie))
-                                                                .addInterceptor(new ReceivedCookiesInterceptor(this::saveCookie))
-                .build();
 
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl("https://theorigamiapp.herokuapp.com/")
-                .client(okHttpClient)
-                .build();
-
-        RetrofitAPI retrofitAPI = retrofit.create(RetrofitAPI.class);
-
-        RequestExecutor requestExecutor = new RequestExecutor((ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE));
-        APICommunication api = new APICommunication(retrofitAPI, requestExecutor);
-        Observable<ApiResponse<UserMe>> observable = api.login("EAAFK8OaO3FkBAFN4sNs7TNeU8nzRUVrVe6G1y4ZCwwAvV5OQUPVx15WZB6etHGvRnZAxRs4kGYLoW5DPBSchlH8yakuEnLDZA2RyuHwikZCZBPuOOhksJEOmzliVIFxAibtO93Wq27JdhYthbBFI0S3SUQoMFQhJIdurCELgB7nXAZCuXAKkg7PzB61ZCduCeZB0IOADjY9dUvAZDZD");
-        APICommunication.Companion.execute(observable);
-
-        Observable<ApiResponse<List<Tag>>> tagObservable = api.getTags();
-        APICommunication.Companion.execute(tagObservable);
+//        Observable<ApiResponse<UserMe>> observable = api.login("EAAFK8OaO3FkBAFN4sNs7TNeU8nzRUVrVe6G1y4ZCwwAvV5OQUPVx15WZB6etHGvRnZAxRs4kGYLoW5DPBSchlH8yakuEnLDZA2RyuHwikZCZBPuOOhksJEOmzliVIFxAibtO93Wq27JdhYthbBFI0S3SUQoMFQhJIdurCELgB7nXAZCuXAKkg7PzB61ZCduCeZB0IOADjY9dUvAZDZD");
+//        APICommunication.Companion.execute(observable);
+//
+//        Observable<ApiResponse<List<Tag>>> tagObservable = api.getTags();
+//        APICommunication.Companion.execute(tagObservable);
     }
 
     //----------------------------------------------------------------------------------------------

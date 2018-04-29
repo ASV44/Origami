@@ -7,7 +7,7 @@ import android.util.Log
 import com.example.data.portability.Consumer
 
 
-class ReceivedCookiesInterceptor(val consumer: Consumer<String>): Interceptor {
+class ReceivedCookiesInterceptor(val consumer: Consumer<String>?): Interceptor {
     override fun intercept(chain: Interceptor.Chain?): Response {
         val originalResponse = chain!!.proceed(chain.request())
 
@@ -16,7 +16,7 @@ class ReceivedCookiesInterceptor(val consumer: Consumer<String>): Interceptor {
 
             for (header in originalResponse.headers("Set-Cookie")) {
                 Log.e("Cookie", header)
-                consumer.accept(header)
+                consumer?.accept(header)
             }
         }
 
