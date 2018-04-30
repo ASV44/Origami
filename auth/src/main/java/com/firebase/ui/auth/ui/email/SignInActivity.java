@@ -17,6 +17,7 @@ package com.firebase.ui.auth.ui.email;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -38,6 +39,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.data.network.api.APICommunication;
+import com.example.data.network.models.ApiResponse;
+import com.example.data.network.models.response.UserMe;
+import com.example.data.portability.Consumer;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
@@ -524,7 +529,9 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
     }
 
     public void handleFacebookAccessToken(AccessToken token) {
-        Log.d(TAG, "handleFacebookAccessToken:" + token);
+        Log.d(TAG, "handleFacebookAccessToken:" + token.getToken());
+        APICommunication api =  APICommunication.Companion.getInstance(this, this::saveCookie, null);
+        APICommunication.Companion.execute(api.login(token.getToken()), userMeApiResponse -> {}, throwable -> {});
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         Log.d("HandleFacebookAccess","Credential = " + credential);
         getProfileData(token);
@@ -575,5 +582,12 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
         parameters.putString("fields", "email,first_name,last_name,gender,id,link,location,birthday");
         request.setParameters(parameters);
         request.executeAsync();
+    }
+
+    public void saveCookie(String cookie) {
+        SharedPreferences preferences = getSharedPreferences("com.koshka.origami", Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("Token", cookie);
+        editor.apply();
     }
 }

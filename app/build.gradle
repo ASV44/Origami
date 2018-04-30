@@ -28,8 +28,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
 
@@ -61,6 +61,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:15.0.0'
     implementation 'com.google.firebase:firebase-invites:15.0.0'
     implementation 'com.google.firebase:firebase-messaging:15.0.0'
+    implementation 'com.google.firebase:firebase-storage:15.0.0'
     //implementation "com.google.android.gms:play-services:${project.ext.firebase_version}"
     implementation 'com.google.android.gms:play-services-places:15.0.0'
     implementation 'com.google.android.gms:play-services-location:15.0.0'
@@ -88,5 +89,12 @@ dependencies {
     implementation project(':auth')
     implementation project(':logix')
     implementation project(':model')
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    compile project(path: ':data')
+    implementation project(':sprayart')
 }
 apply plugin: 'com.google.gms.google-services'
