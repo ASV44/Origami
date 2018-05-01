@@ -17,7 +17,13 @@ import android.os.Environment
 import android.support.v4.app.FragmentActivity
 import android.support.v4.content.FileProvider
 import android.view.View
+import com.example.data.network.api.APICommunication
+import com.example.data.network.models.ApiResponse
+import com.example.data.network.models.request.TagRequestApi
+import com.example.data.network.models.response.Tag
+import com.example.data.portability.Consumer
 import com.example.data.util.UploadUtil
+import com.google.firebase.storage.UploadTask
 import kotlinx.android.synthetic.main.activity_spray_art.*
 import java.io.File
 import java.io.FileOutputStream
@@ -39,6 +45,7 @@ class SprayArt: AppCompatActivity() {
     private val helper by lazy { TextureHelper(BitmapFactory.decodeResource(resources, R.drawable.sausages)) }
     private val photosMap = mutableMapOf<String, String>()
     private var selectedGrafitti : Uri = Uri.EMPTY
+    private var api: APICommunication? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,9 +84,11 @@ class SprayArt: AppCompatActivity() {
             //save data to server here
             val file1 = generateFileFromURI(selectedGrafitti)
             val file2 = File(mCurrentPhotoPath)
-            UploadUtil.uploadToFirebase(this, file1)
-            UploadUtil.uploadToFirebase(this, file2)
+            UploadUtil.uploadToFirebase(file1, this::onImageUploaded, this::onImageUploadError)
+            UploadUtil.uploadToFirebase(file2, this::onImageUploaded, this::onImageUploadError)
         }
+
+        api = APICommunication.getInstance(this)
     }
 
     private fun generateFileFromURI(uri: Uri): File {
@@ -165,5 +174,14 @@ class SprayArt: AppCompatActivity() {
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
         }
+    }
+
+    fun onImageUploaded(uri: Uri?) {
+//        val tagObservable = api.postTags(TagRequestApi())
+//        APICommunication.execute(tagObservable, Consumer<ApiResponse<List<Tag>>> { this.onTagsReceived(it) }, Consumer<Throwable> { this.onTagsReceiveError(it) })
+    }
+
+    fun onImageUploadError(exeception: Exception) {
+
     }
 }

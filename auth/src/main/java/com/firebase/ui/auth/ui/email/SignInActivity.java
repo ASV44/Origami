@@ -530,7 +530,7 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
 
     public void handleFacebookAccessToken(AccessToken token) {
         Log.d(TAG, "handleFacebookAccessToken:" + token.getToken());
-        APICommunication api =  APICommunication.Companion.getInstance(this, this::saveCookie, null);
+        APICommunication api =  APICommunication.Companion.getInstance(this);
         APICommunication.Companion.execute(api.login(token.getToken()), userMeApiResponse -> {}, throwable -> {});
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         Log.d("HandleFacebookAccess","Credential = " + credential);
@@ -584,10 +584,5 @@ public class SignInActivity extends AppCompatBase implements View.OnClickListene
         request.executeAsync();
     }
 
-    public void saveCookie(String cookie) {
-        SharedPreferences preferences = getSharedPreferences("com.koshka.origami", Activity.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("Token", cookie);
-        editor.apply();
-    }
+
 }
