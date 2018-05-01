@@ -221,8 +221,41 @@ public class OrigamiMapFragment extends Fragment implements OnMapReadyCallback, 
         setUpClusterer();
 
         mMap.addMarker(new MarkerOptions()
-        .position(new LatLng(40, 43))
-                .title("My custom marker"));
+        .position(new LatLng(47.063385, 28.867335))
+                .title("Grafiti"));
+        mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(45.063385, 27.867335))
+                .title("Grafiti"));
+        mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(48.063385, 25.867335))
+                .title("Grafiti"));
+        mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(49.063385, 26.867335))
+                .title("Grafiti"));
+        mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(47.83385, 28.067335))
+                .title("Grafiti"));
+        mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(46.063385, 27.367335))
+                .title("Grafiti"));
+        mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(45.963385, 27.167335))
+                .title("Grafiti"));
+        mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(44.063385, 30.867335))
+                .title("Grafiti"));
+        mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(47.063385, 28.467335))
+                .title("Grafiti"));
+        mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(47.685, 28.167335))
+                .title("Grafiti"));
+        mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(46.763385, 28.47335))
+                .title("Grafiti"));
+        mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(46.063385, 27.867335))
+                .title("Grafiti"));
 
     }
 

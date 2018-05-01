@@ -35,10 +35,10 @@ class APICommunication(private val retrofitAPI: RetrofitAPI, private val request
                                       onError.accept(error)})
         }
 
-        fun getInstance(context: Context, coockieCOnsumer: Consumer<String>?, cookieSupplier: Supplier<String>?): APICommunication {
-            val okHttpClient = OkHttpClient().newBuilder().addInterceptor(AddCookiesInterceptor(cookieSupplier))
-                                                          .addInterceptor(ReceivedCookiesInterceptor(coockieCOnsumer))
-                                                          .build();
+        fun getInstance(context: Context): APICommunication {
+            val okHttpClient = OkHttpClient().newBuilder().addInterceptor(AddCookiesInterceptor(context))
+                                                          .addInterceptor(ReceivedCookiesInterceptor(context))
+                                                          .build()
 
             val retrofit = Retrofit.Builder()
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())

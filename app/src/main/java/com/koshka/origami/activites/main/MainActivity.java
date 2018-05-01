@@ -109,7 +109,7 @@ public class MainActivity extends OrigamiActivity {
         }
 
 
-        APICommunication api = APICommunication.Companion.getInstance(this, null, this::getCookie);
+        APICommunication api = APICommunication.Companion.getInstance(this);
         Observable<ApiResponse<List<Tag>>> tagObservable = api.getTags();
         APICommunication.Companion.execute(tagObservable, this::onTagsReceived, this::onTagsReceiveError);
 
@@ -144,10 +144,7 @@ public class MainActivity extends OrigamiActivity {
         this.finish();
     }
 
-    public String getCookie() {
-        SharedPreferences preferences = getSharedPreferences("com.koshka.origami", Activity.MODE_PRIVATE);
-        return preferences.getString("Token", "");
-    }
+
 
     public void onTagsReceived(ApiResponse<List<Tag>> tags) {
         for(Tag tag: tags.getData()) {
